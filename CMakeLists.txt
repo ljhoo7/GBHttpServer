@@ -1,7 +1,11 @@
-cmake_minimum_required(3.8.0)
+cmake_minimum_required (VERSION 3.18.1)
 
-file(GLOB CORE_SRC ./src/*.cpp)
+project(GBHttpServer)
 
-file(GLOB CORE_HEADER ./include/*.h)
+file(GLOB GBHttpServer_SRC src/*.cpp)
 
-add_library(CORE STATIC CORE_SRC CORE_HEADER)
+file(GLOB GBHttpServer_HEADER include/*.h)
+
+add_executable(GBHttpServer ${GBHttpServer_SRC} ${GBHttpServer_HEADER})
+
+set_property(TARGET GBHttpServer PROPERTY CXX_STANDARD 20)
