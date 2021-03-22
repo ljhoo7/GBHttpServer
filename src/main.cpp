@@ -5,6 +5,7 @@
 #include <string>
 #include <string>
 #include <string_view>
+#include <iostream>
 
 #pragma comment(lib, "ws2_32.lib")
  
@@ -56,7 +57,7 @@ int main()
 	int sockaddr_in_size = sizeof(struct sockaddr_in);
 	int recv_len = 0;
 	char buf[1024];
-	char path[1024];
+	std::string path;
 	char html[1024];
  
 	//IP 어드레스 표시
@@ -116,43 +117,54 @@ int main()
 		}
  
 		// 버퍼 초기화
-		memset(path, 0, 1024);
 		memset(html, 0, 1024);
  
-		// 접속 
+		// 접속
 		recv_len = recvfrom(sockw, buf, 1024, 0, (struct sockaddr *)&client, &sockaddr_in_size);
+
+		std::string_view bufString(buf);
 		buf[recv_len - 1] = 0;
-		if (buf[0] == '\0')
+		if ('\0' == buf[0])
 		{
 			strcpy(buf, NULL);
 		}
 
 		// 통신 표시
-		printf("%s \n", buf);
+		std::cout << buf << '\n';
  
 		// method
-		for (int i = 0; i < strlen(buf); i++)
+		for(int i = 0; i < bufString.length(); ++i)
 		{
-			printf("%d\n",i);
-			if (buf[i] == 'G' && buf[i + 1] == 'E' && buf[i + 2] == 'T' && buf[i + 3] == ' ')
+			switch (buf[i])
 			{
-				for (int j = 0; buf[i + 4 + j] != ' '; j++)
+			case 'G':
+				if (bufString.length() <= i + 4)
 				{
-					path[j] = buf[i + 4 + j];
+					break;
+				}
+
+				if ("GET " == bufString.substr(i, 4))
+				{
+					size_t token = bufString.find_first_of(' ', 4);
+					path = bufString.substr(4, token - 4);
 				}
 				break;
-			}
-			else if (buf[i] == 'P' && buf[i + 1] == 'O' && buf[i + 2] == 'S' && buf[i + 3] == 'T' && buf[i + 4] == ' ')
-			{
-				for (int j = 0; buf[i + 4 + j] != ' '; j++)
+			case 'P':
+				if (bufString.length() <= i + 4)
 				{
-					path[j] = buf[i + 4 + j];
+					break;
+				}
+
+				if ("PUT " == bufString.substr(i, 4))
+				{
+					size_t token = bufString.find_first_of(' ', 4);
+					path = bufString.substr(4, token - 4);
 				}
 				break;
 			}
 		}
 
-		printf("request: %s \n",path);
+		std::cout << "request: " << path << '\n';
  
 		// HTTP
 		char *header =  
@@ -163,7 +175,7 @@ int main()
 		send(sockw, header, strlen(header), 0);
  
 		// 라우팅 
-		if (strcmp(path, "/page1") == 0)
+		if ("/page1" == path)
 		{
 			strcpy(html,
 			"<!DOCTYPE html>\n"
@@ -177,7 +189,7 @@ int main()
 			"</body>"
 			"</html>");
 		}
-		else if (strcmp(path, "/page2") == 0)
+		else if ("/page2" == path)
 		{
 			strcpy(html,
 			"<!DOCTYPE html>\n"
