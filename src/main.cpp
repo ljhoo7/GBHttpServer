@@ -1,11 +1,5 @@
-#include <windows.h>
-#include <stdio.h>
-#include <conio.h>
-#include <tchar.h>
-#include <string>
-#include <string>
-#include <string_view>
-#include <iostream>
+#include "../include/stdafx.h"
+#include "../include/GBRouter.h"
 
 #pragma comment(lib, "ws2_32.lib")
  
@@ -57,7 +51,6 @@ int main()
 	int sockaddr_in_size = sizeof(struct sockaddr_in);
 	int recv_len = 0;
 	char buf[1024];
-	std::string path;
 	char html[1024];
  
 	//IP 어드레스 표시
@@ -131,40 +124,13 @@ int main()
 
 		// 통신 표시
 		std::cout << buf << '\n';
+
+		GenericBoson::GBRouter router({ "GET", "PUT", "POST" });
  
 		// method
-		for(int i = 0; i < bufString.length(); ++i)
-		{
-			switch (buf[i])
-			{
-			case 'G':
-				if (bufString.length() <= i + 4)
-				{
-					break;
-				}
+		std::string_view path = router.Route(bufString);
 
-				if ("GET " == bufString.substr(i, 4))
-				{
-					size_t token = bufString.find_first_of(' ', 4);
-					path = bufString.substr(4, token - 4);
-				}
-				break;
-			case 'P':
-				if (bufString.length() <= i + 4)
-				{
-					break;
-				}
-
-				if ("PUT " == bufString.substr(i, 4))
-				{
-					size_t token = bufString.find_first_of(' ', 4);
-					path = bufString.substr(4, token - 4);
-				}
-				break;
-			}
-		}
-
-		std::cout << "request: " << path << '\n';
+		std::cout << "request: " << path.data() << '\n';
  
 		// HTTP
 		char *header =  
