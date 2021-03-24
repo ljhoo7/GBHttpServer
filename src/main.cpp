@@ -1,4 +1,6 @@
 #include "../include/stdafx.h"
+
+#include "../include/GBMethod.h"
 #include "../include/GBRouter.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -125,7 +127,19 @@ int main()
 		// 통신 표시
 		std::cout << buf << '\n';
 
-		GenericBoson::GBRouter router({ "GET", "PUT", "POST" });
+		GenericBoson::GBRouter router;
+		router.m_methodList.emplace_back("GET", []()
+		{
+			std::cout << "test1" << std::endl;
+		});
+		router.m_methodList.emplace_back("PUT", []()
+		{
+			std::cout << "test2" << std::endl;
+		});
+		router.m_methodList.emplace_back("POST", []()
+		{
+			std::cout << "test3" << std::endl;
+		});
  
 		// method
 		std::string_view path = router.Route(bufString);

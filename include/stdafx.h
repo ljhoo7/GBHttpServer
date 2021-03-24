@@ -11,3 +11,4 @@
 #include <string_view>
 #include <cassert>
 #include <map>
+#include <functional>
