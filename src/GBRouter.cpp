@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	std::string_view GBRouter::Route(const std::string_view subStr)
+	bool GBRouter::Route(const std::string_view subStr)
 	{
 		// method
 		for (int i = 0; i < subStr.length(); ++i)
@@ -13,11 +13,6 @@ namespace GenericBoson
 			{
 				assert(0 < iMethod.m_methodName.length());
 
-				if (subStr[i] != iMethod.m_methodName[0])
-				{
-					continue;
-				}
-
 				if (subStr.length() <= i + iMethod.m_methodName.length())
 				{
 					continue;
@@ -25,12 +20,16 @@ namespace GenericBoson
 
 				if (iMethod.m_methodName == subStr.substr(i, iMethod.m_methodName.length()))
 				{
-					size_t token = subStr.find_first_of(' ', 4);
-					return subStr.substr(4, token - 4);
+					size_t lengthToSkip = iMethod.m_methodName.length() + 1;
+					size_t token = subStr.find_first_of(' ', lengthToSkip);
+
+					std::string_view path = subStr.substr(lengthToSkip, token - lengthToSkip);
+
+					iMethod.m_method(path);
 				}
 			}
 		}
 
-		return nullptr;
+		return false;
 	}
 }

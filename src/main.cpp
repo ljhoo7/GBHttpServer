@@ -53,7 +53,6 @@ int main()
 	int sockaddr_in_size = sizeof(struct sockaddr_in);
 	int recv_len = 0;
 	char buf[1024];
-	char html[1024];
  
 	//IP 어드레스 표시
 	if (getAddrHost() != 0) {
@@ -111,9 +110,6 @@ int main()
 			break;
 		}
  
-		// 버퍼 초기화
-		memset(html, 0, 1024);
- 
 		// 접속
 		recv_len = recvfrom(sockw, buf, 1024, 0, (struct sockaddr *)&client, &sockaddr_in_size);
 
@@ -127,83 +123,96 @@ int main()
 		// 통신 표시
 		std::cout << buf << '\n';
 
+		auto SendResponseTask = [](const std::string_view path)
+		{
+			char html[1024] = { 0, };
+
+			// HTTP
+			char *header =
+				"HTTP/1.0 200 OK\n"
+				"Content-type: text/html\n"
+				"\n";
+
+			send(sockw, header, strlen(header), 0);
+
+			// 라우팅 
+			if ("/page1" == path)
+			{
+				strcpy(html,
+					"<!DOCTYPE html>\n"
+					"<html lang = \"ja\">\n"
+					"<head>\n"
+					"<meta charset = \"utf-8\">\n"
+					"</head>\n"
+					"<body>\n"
+					"<h1>Page1</h1>\n"
+					"<a href=\"/page2\">->page2</a>\n"
+					"</body>"
+					"</html>");
+			}
+			else if ("/page2" == path)
+			{
+				strcpy(html,
+					"<!DOCTYPE html>\n"
+					"<html lang = \"ja\">\n"
+					"<head>\n"
+					"<meta charset = \"utf-8\">\n"
+					"</head>\n"
+					"<body>\n"
+					"<h1>Page2</h1>\n"
+					"<a href=\"/page1\">->page1</a>\n"
+					"</body>"
+					"</html>");
+			}
+			else
+			{
+				strcpy(html,
+					"<!DOCTYPE html>\n"
+					"<html lang = \"ja\">\n"
+					"<head>\n"
+					"<meta charset = \"utf-8\">\n"
+					"</head>\n"
+					"<body>\n"
+					"<h1>404- Not Found</h1>\n"
+					"</body>"
+					"</html>");
+			}
+
+			// 응답（HTML을 보낸다）
+			if (send(sockw, html, strlen(html), 0) < 1)
+			{
+				printf("send : %d\n", WSAGetLastError());
+			};
+		};
+
 		GenericBoson::GBRouter router;
-		router.m_methodList.emplace_back("GET", []()
+		router.m_methodList.emplace_back("GET", [&SendResponseTask](const std::string_view path)
 		{
-			std::cout << "test1" << std::endl;
+			std::cout << "GET : path = " << path.data() << std::endl;
+
+			SendResponseTask(path);
 		});
-		router.m_methodList.emplace_back("PUT", []()
+		router.m_methodList.emplace_back("PUT", [&SendResponseTask](const std::string_view path)
 		{
-			std::cout << "test2" << std::endl;
+			std::cout << "PUT : path = " << path.data() << std::endl;
+
+			SendResponseTask(path);
 		});
-		router.m_methodList.emplace_back("POST", []()
+		router.m_methodList.emplace_back("POST", [&SendResponseTask](const std::string_view path)
 		{
-			std::cout << "test3" << std::endl;
+			std::cout << "POST : path = " << path.data() << std::endl;
+
+			SendResponseTask(path);
 		});
  
 		// method
-		std::string_view path = router.Route(bufString);
+		bool routingResult = router.Route(bufString);
 
-		std::cout << "request: " << path.data() << '\n';
- 
-		// HTTP
-		char *header =  
-			"HTTP/1.0 200 OK\n"
-			"Content-type: text/html\n"
-			"\n";
- 
-		send(sockw, header, strlen(header), 0);
- 
-		// 라우팅 
-		if ("/page1" == path)
+		if (false == routingResult)
 		{
-			strcpy(html,
-			"<!DOCTYPE html>\n"
-			"<html lang = \"ja\">\n"
-			"<head>\n"
-			"<meta charset = \"utf-8\">\n"
-			"</head>\n"
-			"<body>\n"
-			"<h1>Page1</h1>\n"
-			"<a href=\"/page2\">->page2</a>\n"
-			"</body>"
-			"</html>");
+			std::cout << "Routing failed." << std::endl;
 		}
-		else if ("/page2" == path)
-		{
-			strcpy(html,
-			"<!DOCTYPE html>\n"
-			"<html lang = \"ja\">\n"
-			"<head>\n"
-			"<meta charset = \"utf-8\">\n"
-			"</head>\n"
-			"<body>\n"
-			"<h1>Page2</h1>\n"
-			"<a href=\"/page1\">->page1</a>\n"
-			"</body>"
-			"</html>");
-		}
-		else
-		{
-			strcpy(html,
-			"<!DOCTYPE html>\n"
-			"<html lang = \"ja\">\n"
-			"<head>\n"
-			"<meta charset = \"utf-8\">\n"
-			"</head>\n"
-			"<body>\n"
-			"<h1>404- Not Found</h1>\n"
-			"</body>"
-			"</html>");
-		}
- 
-		// 응답（HTML을 보낸다）
-		if (send(sockw, html, strlen(html), 0) < 1)
-		{
-			printf("send : %d\n", WSAGetLastError());
-			break;
-		}
- 
+
 		// 소켓 닫기
 		closesocket(sockw);
 	}

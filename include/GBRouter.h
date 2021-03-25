@@ -12,6 +12,6 @@ namespace GenericBoson
 		std::vector<GBMethod> m_methodList;
 
 		GBRouter() = default;
-		std::string_view Route(const std::string_view subStr);
+		bool Route(const std::string_view subStr);
 	};
 }

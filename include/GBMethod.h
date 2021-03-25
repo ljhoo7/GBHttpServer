@@ -11,10 +11,10 @@ namespace GenericBoson
 		// #ToDo
 		// 템플릿으로 callable을 받지 못해서 아쉽다.
 		// 추후 방법을 모색해보자.
-		const std::function<void()> m_method;
+		const std::function<void(const std::string_view)> m_method;
 		const std::string m_methodName;
 
-		GBMethod(std::string_view methodName, const std::function<void()>& method)
+		GBMethod(std::string_view methodName, const std::function<void(const std::string_view)>& method)
 			: m_method(method), m_methodName(methodName.data()){}
 	};
 }
