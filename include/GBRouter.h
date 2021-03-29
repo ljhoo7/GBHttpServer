@@ -8,10 +8,11 @@ namespace GenericBoson
 
 	class GBRouter
 	{
+		const SOCKET& m_acceptedSocket;
 	public:
 		std::vector<GBMethod> m_methodList;
 
-		GBRouter() = default;
+		GBRouter(const SOCKET& accpetedSocket) : m_acceptedSocket(accpetedSocket) {}
 		bool Route(const std::string_view subStr);
 	};
 }

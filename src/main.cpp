@@ -6,8 +6,6 @@
 #pragma comment(lib, "ws2_32.lib")
  
 WSADATA     wsaData;
-SOCKET      sock0;
-SOCKET      sockw;
 struct      sockaddr_in addr;
 struct      sockaddr_in client;
 #define PORT_NUM 8000
@@ -70,8 +68,8 @@ int main()
 	}
  
 	// 소켓 만들기
-	sock0 = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock0 == INVALID_SOCKET)
+	SOCKET listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (listeningSocket == INVALID_SOCKET)
 	{
 		printf("socket : %d\n", WSAGetLastError());
 		getch();
@@ -84,7 +82,7 @@ int main()
 	addr.sin_addr.S_un.S_addr = INADDR_ANY;
  
 	// 소켓 바인드
-	if (bind(sock0, (struct sockaddr *)&addr, sizeof(addr)) != 0)
+	if (bind(listeningSocket, (struct sockaddr *)&addr, sizeof(addr)) != 0)
 	{
 		printf("bind : %d\n", WSAGetLastError());
 		getch();
@@ -92,7 +90,7 @@ int main()
 	}
  
 	// TCP 클라이언트로부터의 접속 요구를 기다리면서 대기한다
-	if (listen(sock0, 5) != 0)
+	if (listen(listeningSocket, 5) != 0)
 	{
 		printf("listen : %d\n", WSAGetLastError());
 		getch();
@@ -103,15 +101,15 @@ int main()
 	while (1)
 	{
 		len = sizeof(client);
-		sockw = accept(sock0, (struct sockaddr *)&client, &len);
-		if (sockw == INVALID_SOCKET)
+		SOCKET acceptedSocket = accept(listeningSocket, (struct sockaddr *)&client, &len);
+		if (acceptedSocket == INVALID_SOCKET)
 		{
 			printf("accept : %d\n", WSAGetLastError());
 			break;
 		}
  
 		// 접속
-		recv_len = recvfrom(sockw, buf, 1024, 0, (struct sockaddr *)&client, &sockaddr_in_size);
+		recv_len = recvfrom(acceptedSocket, buf, 1024, 0, (struct sockaddr *)&client, &sockaddr_in_size);
 
 		std::string_view bufString(buf);
 		buf[recv_len - 1] = 0;
@@ -123,86 +121,18 @@ int main()
 		// 통신 표시
 		std::cout << buf << '\n';
 
-		auto SendResponseTask = [](const std::string_view path)
-		{
-			char html[1024] = { 0, };
-
-			// HTTP
-			char *header =
-				"HTTP/1.0 200 OK\n"
-				"Content-type: text/html\n"
-				"\n";
-
-			send(sockw, header, strlen(header), 0);
-
-			// 라우팅 
-			if ("/page1" == path)
-			{
-				strcpy(html,
-					"<!DOCTYPE html>\n"
-					"<html lang = \"ja\">\n"
-					"<head>\n"
-					"<meta charset = \"utf-8\">\n"
-					"</head>\n"
-					"<body>\n"
-					"<h1>Page1</h1>\n"
-					"<a href=\"/page2\">->page2</a>\n"
-					"</body>"
-					"</html>");
-			}
-			else if ("/page2" == path)
-			{
-				strcpy(html,
-					"<!DOCTYPE html>\n"
-					"<html lang = \"ja\">\n"
-					"<head>\n"
-					"<meta charset = \"utf-8\">\n"
-					"</head>\n"
-					"<body>\n"
-					"<h1>Page2</h1>\n"
-					"<a href=\"/page1\">->page1</a>\n"
-					"</body>"
-					"</html>");
-			}
-			else
-			{
-				strcpy(html,
-					"<!DOCTYPE html>\n"
-					"<html lang = \"ja\">\n"
-					"<head>\n"
-					"<meta charset = \"utf-8\">\n"
-					"</head>\n"
-					"<body>\n"
-					"<h1>404- Not Found</h1>\n"
-					"</body>"
-					"</html>");
-			}
-
-			// 응답（HTML을 보낸다）
-			if (send(sockw, html, strlen(html), 0) < 1)
-			{
-				printf("send : %d\n", WSAGetLastError());
-			};
-		};
-
-		GenericBoson::GBRouter router;
-		router.m_methodList.emplace_back("GET", [&SendResponseTask](const std::string_view path)
+		GenericBoson::GBRouter router(acceptedSocket);
+		router.m_methodList.emplace_back("GET", [](const std::string_view path)
 		{
 			std::cout << "GET : path = " << path.data() << std::endl;
-
-			SendResponseTask(path);
 		});
-		router.m_methodList.emplace_back("PUT", [&SendResponseTask](const std::string_view path)
+		router.m_methodList.emplace_back("PUT", [](const std::string_view path)
 		{
 			std::cout << "PUT : path = " << path.data() << std::endl;
-
-			SendResponseTask(path);
 		});
-		router.m_methodList.emplace_back("POST", [&SendResponseTask](const std::string_view path)
+		router.m_methodList.emplace_back("POST", [](const std::string_view path)
 		{
 			std::cout << "POST : path = " << path.data() << std::endl;
-
-			SendResponseTask(path);
 		});
  
 		// method
@@ -214,11 +144,11 @@ int main()
 		}
 
 		// 소켓 닫기
-		closesocket(sockw);
+		closesocket(acceptedSocket);
 	}
  
 	// winsock2 종료 처리
-	closesocket(sock0);
+	closesocket(listeningSocket);
 	WSACleanup();
 	return 0;
 }

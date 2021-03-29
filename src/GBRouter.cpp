@@ -1,5 +1,6 @@
 #include "../include/stdafx.h"
 #include "../include/GBMethod.h"
+#include "../include/GBResponse.h"
 #include "../include/GBRouter.h"
 
 namespace GenericBoson
@@ -26,6 +27,8 @@ namespace GenericBoson
 					std::string_view path = subStr.substr(lengthToSkip, token - lengthToSkip);
 
 					iMethod.m_method(path);
+
+					GenericBoson::SendResponse(m_acceptedSocket, path);
 				}
 			}
 		}
