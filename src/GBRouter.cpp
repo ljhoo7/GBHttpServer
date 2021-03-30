@@ -28,7 +28,7 @@ namespace GenericBoson
 
 					iMethod.m_method(path);
 
-					GenericBoson::SendResponse(m_acceptedSocket, path);
+					return GenericBoson::SendResponse(m_acceptedSocket, path);
 				}
 			}
 		}
