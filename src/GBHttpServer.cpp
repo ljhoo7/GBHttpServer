@@ -1,6 +1,7 @@
 #include "../include/stdafx.h"
 
 #include "../include/GBHttpServer.h"
+#include "../include/GBHttpRequestLineReader.h"
 
 namespace GenericBoson
 {
@@ -74,6 +75,13 @@ namespace GenericBoson
 			// 통신 표시
 			std::cout << m_buffer << '\n';
 #endif
+			GenericBoson::GBHttpRequestLineReader requestLineReader;
+			bool ret = requestLineReader.Read(m_buffer);
+			if (false == ret)
+			{
+				std::cout << "An abnormal line exists in HTTP message.\n";
+				return false;
+			}
 
 			GenericBoson::GBRouter router(acceptedSocket);
 			router.m_methodList.emplace_back("GET", [](const std::string_view path)
