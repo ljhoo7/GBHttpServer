@@ -1,0 +1,3 @@
+[submodule "lib/GBString"]
+	path = lib/GBString
+	url = https://github.com/ljhoo7/GBString

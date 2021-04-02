@@ -9,3 +9,7 @@ file(GLOB GBHttpServer_HEADER include/*.h)
 add_executable(GBHttpServer ${GBHttpServer_SRC} ${GBHttpServer_HEADER})
 
 set_property(TARGET GBHttpServer PROPERTY CXX_STANDARD 20)
+
+add_subdirectory(lib/GBString)
+
+add_dependencies(GBHttpServer GBString)
