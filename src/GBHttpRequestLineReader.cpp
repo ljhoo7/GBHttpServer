@@ -4,5 +4,8 @@
 
 namespace GenericBoson
 {
-
+	bool GBHttpRequestLineReader::Read(std::string_view)
+	{
+		return false;
+	}
 }

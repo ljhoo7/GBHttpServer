@@ -10,6 +10,8 @@ add_executable(GBHttpServer ${GBHttpServer_SRC} ${GBHttpServer_HEADER})
 
 set_property(TARGET GBHttpServer PROPERTY CXX_STANDARD 20)
 
+target_compile_definitions(GBHttpServer PRIVATE _UNICODE UNICODE)
+
 add_subdirectory(lib/GBString)
 
 add_dependencies(GBHttpServer GBString)
