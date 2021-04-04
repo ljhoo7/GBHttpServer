@@ -8,6 +8,9 @@ namespace GenericBoson
 		Tokens parsed by Parse function.
 		*/
 		std::vector<std::string> m_parsed;
+	public:
+		GBHttpLineReader() = default;
+		virtual ~GBHttpLineReader() = default;
 
 		/*
 		Parse a line in the HTTP message.
@@ -15,8 +18,5 @@ namespace GenericBoson
 		\return Was It succeeded?
 		*/
 		bool Parse(const std::string_view);
-	public:
-		GBHttpLineReader() = default;
-		virtual ~GBHttpLineReader() = default;
 	};
 }

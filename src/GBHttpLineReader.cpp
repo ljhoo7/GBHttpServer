@@ -19,7 +19,8 @@ namespace GenericBoson
 			case '\n':
 				if (true == CRReadJustBefore)
 				{
-					token.push_back(iChar);
+					m_parsed.push_back(token);
+					token.clear();
 					return true;
 				}
 				CRReadJustBefore = false;
@@ -27,6 +28,7 @@ namespace GenericBoson
 			case ' ':
 				CRReadJustBefore = false;
 				m_parsed.push_back(token);
+				token.clear();
 				break;
 			default:
 				CRReadJustBefore = false;
