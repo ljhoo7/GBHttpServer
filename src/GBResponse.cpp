@@ -9,10 +9,9 @@ namespace GenericBoson
 		char html[1024] = { 0, };
 
 		// HTTP
-		char *header =
+		const char* header =
 			"HTTP/1.0 200 OK\n"
-			"Content-type: text/html\n"
-			"\n";
+			"Content-type: text/html\n";
 
 		int sendResult = send(acceptedSocket, header, strlen(header), 0);
 		if (sendResult < 1)

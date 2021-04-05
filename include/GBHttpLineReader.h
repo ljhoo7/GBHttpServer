@@ -4,6 +4,7 @@ namespace GenericBoson
 {
 	class GBHttpLineReader
 	{
+	protected:
 		/*
 		Tokens parsed by Parse function.
 		*/

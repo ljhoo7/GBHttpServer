@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GBRouter.h"
+#include "GBHttpRouter.h"
 #include "GBMethod.h"
 
 namespace GenericBoson
