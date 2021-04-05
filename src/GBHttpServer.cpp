@@ -62,18 +62,18 @@ namespace GenericBoson
 			}
 
 			// 접속
-			int recved = recvfrom(acceptedSocket, m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
+			int recved = recvfrom(acceptedSocket, (char*)m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
 
-			std::string_view bufString(m_buffer);
+			GBStringView bufString(m_buffer);
 			m_buffer[recved - 1] = 0;
 			if ('\0' == m_buffer[0])
 			{
-				strcpy(m_buffer, NULL);
+				_tcscpy(m_buffer, NULL);
 			}
 
 #if defined(_DEBUG)
 			// 통신 표시
-			std::cout << m_buffer << '\n';
+			GBCout << m_buffer << '\n';
 #endif
 			GenericBoson::GBHttpRequestLineReader requestLineReader;
 			bool ret = requestLineReader.Read(m_buffer);
@@ -83,28 +83,28 @@ namespace GenericBoson
 				return false;
 			}
 
-			GenericBoson::GBRouter router(acceptedSocket);
-			router.m_methodList.emplace_back("GET", [](const std::string_view path)
-			{
-				std::cout << "GET : path = " << path.data() << std::endl;
-			});
-			router.m_methodList.emplace_back("PUT", [](const std::string_view path)
-			{
-				std::cout << "PUT : path = " << path.data() << std::endl;
-			});
-			router.m_methodList.emplace_back("POST", [](const std::string_view path)
-			{
-				std::cout << "POST : path = " << path.data() << std::endl;
-			});
+			//GenericBoson::GBHttpRouter router(acceptedSocket);
+			//router.m_methodList.emplace_back("GET", [](const std::string_view path)
+			//{
+			//	std::cout << "GET : path = " << path.data() << std::endl;
+			//});
+			//router.m_methodList.emplace_back("PUT", [](const std::string_view path)
+			//{
+			//	std::cout << "PUT : path = " << path.data() << std::endl;
+			//});
+			//router.m_methodList.emplace_back("POST", [](const std::string_view path)
+			//{
+			//	std::cout << "POST : path = " << path.data() << std::endl;
+			//});
 
-			// method
-			bool routingResult = router.Route(bufString);
+			//// method
+			//bool routingResult = router.Route(bufString);
 
-			if (false == routingResult)
-			{
-				std::cout << "Routing failed." << '\n';
-				return false;
-			}
+			//if (false == routingResult)
+			//{
+			//	std::cout << "Routing failed." << '\n';
+			//	return false;
+			//}
 
 			// 소켓 닫기
 			closesocket(acceptedSocket);

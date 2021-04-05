@@ -13,6 +13,6 @@ namespace GenericBoson
 		GBHttpRequestLineReader() = default;
 		virtual ~GBHttpRequestLineReader() = default;
 
-		bool Read(std::string_view);
+		bool Read(const GBStringView);
 	};
 }

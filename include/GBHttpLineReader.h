@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../lib/GBString/include/GBString.h"
+
 namespace GenericBoson
 {
 	class GBHttpLineReader
@@ -8,7 +10,7 @@ namespace GenericBoson
 		/*
 		Tokens parsed by Parse function.
 		*/
-		std::vector<std::string> m_parsed;
+		std::vector<GBString> m_parsed;
 	public:
 		GBHttpLineReader() = default;
 		virtual ~GBHttpLineReader() = default;
@@ -18,6 +20,6 @@ namespace GenericBoson
 
 		\return Was It succeeded?
 		*/
-		bool Parse(const std::string_view);
+		bool Parse(const GBStringView);
 	};
 }

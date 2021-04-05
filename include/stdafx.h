@@ -12,3 +12,4 @@
 #include <cassert>
 #include <map>
 #include <functional>
+#include <tchar.h>

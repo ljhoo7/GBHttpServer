@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	bool SendResponse(const SOCKET& acceptedSocket, const std::string_view path)
+	bool SendResponse(const SOCKET& acceptedSocket, const GBStringView path)
 	{
 		char html[1024] = { 0, };
 
@@ -22,7 +22,7 @@ namespace GenericBoson
 		}
 
 		// ¶ó¿ìÆÃ 
-		if ("/page1" == path)
+		if (_T("/page1") == path)
 		{
 			strcpy(html,
 				"<!DOCTYPE html>\n"
@@ -36,7 +36,7 @@ namespace GenericBoson
 				"</body>"
 				"</html>");
 		}
-		else if ("/page2" == path)
+		else if (_T("/page2") == path)
 		{
 			strcpy(html,
 				"<!DOCTYPE html>\n"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include "../lib/GBString/include/GBString.h"
 
 namespace GenericBoson
 {
@@ -11,10 +12,10 @@ namespace GenericBoson
 		// #ToDo
 		// 템플릿으로 callable을 받지 못해서 아쉽다.
 		// 추후 방법을 모색해보자.
-		const std::function<void(const std::string_view)> m_method;
-		const std::string m_methodName;
+		const std::function<void(const GBStringView)> m_method;
+		const GBString m_methodName;
 
-		GBMethod(std::string_view methodName, const std::function<void(const std::string_view)>& method)
+		GBMethod(GBStringView methodName, const std::function<void(const GBStringView)>& method)
 			: m_method(method), m_methodName(methodName.data()){}
 	};
 }
