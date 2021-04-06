@@ -21,7 +21,7 @@ namespace GenericBoson
 
 		if (2 == parsedSize)
 		{
-			pRouter = std::make_unique<GBHttp09Router>();
+			pRouter = std::make_unique<GBHttp09Router>(m_acceptedSocket);
 		}
 		else if (3 == parsedSize)
 		{
@@ -30,12 +30,14 @@ namespace GenericBoson
 
 			}
 
-			pRouter = std::make_unique<GBHttp10Router>();
+			pRouter = std::make_unique<GBHttp10Router>(m_acceptedSocket);
 		}
 		else
 		{
 			// Invalid request-line.
 			return false;
 		}
+
+		return true;
 	}
 }

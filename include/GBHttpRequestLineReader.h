@@ -9,8 +9,9 @@ namespace GenericBoson
 	*/
 	class GBHttpRequestLineReader : public GBHttpLineReader
 	{
+		const SOCKET& m_acceptedSocket;
 	public:
-		GBHttpRequestLineReader() = default;
+		GBHttpRequestLineReader(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket){}
 		virtual ~GBHttpRequestLineReader() = default;
 
 		bool Read(const GBStringView);

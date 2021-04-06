@@ -75,7 +75,7 @@ namespace GenericBoson
 			// 통신 표시
 			GBCout << m_buffer << '\n';
 #endif
-			GenericBoson::GBHttpRequestLineReader requestLineReader;
+			GenericBoson::GBHttpRequestLineReader requestLineReader(acceptedSocket);
 			bool ret = requestLineReader.Read(m_buffer);
 			if (false == ret)
 			{
