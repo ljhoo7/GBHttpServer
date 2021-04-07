@@ -8,7 +8,7 @@ file(GLOB ROUTER_FILES src/*Router.cpp include/*Router.h)
 
 file(GLOB GBHttpServer_HEADER include/*.h)
 
-source_group("Router" FILES ${ROUTER_FILES})
+source_group("Router" FILES ${ROUTER_FILES} GBPathSegment.*)
 
 add_executable(GBHttpServer ${GBHttpServer_SRC} ${GBHttpServer_HEADER})
 
