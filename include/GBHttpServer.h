@@ -11,7 +11,7 @@ namespace GenericBoson
 		SOCKET m_listeningSocket;
 		sockaddr_in m_addr, m_client;
 
-		TCHAR m_buffer[1024];
+		char m_buffer[1024];
 
 		int m_addrSize = sizeof(sockaddr_in);
 	public:

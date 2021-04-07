@@ -1,16 +1,17 @@
 #include "../include/stdafx.h"
 
-#include "../include/GBHttp1.0Router.h"
+#include "../include/GBHttp1.1Router.h"
 #include "../include/GBHttpRequestLineReader.h"
 
 namespace GenericBoson
 {
-	bool GBHttpRequestLineReader::Read(const GBStringView target)
+	bool GBHttpRequestLineReader::Read(const std::string_view target)
 	{
 		bool ret = Parse(target);
 
 		if (false == ret)
 		{
+			// #ToDo
 			// Invalid line exists.
 			return false;
 		}
@@ -25,15 +26,33 @@ namespace GenericBoson
 		}
 		else if (3 == parsedSize)
 		{
-			if (false == m_parsed[2].starts_with(_T("HTTP")))
+			std::string_view httpStr("HTTP/");
+			if (false == m_parsed[2].starts_with(httpStr))
 			{
-
+				// #ToDo
+				// Invalid request-line.
+				return false;
 			}
 
-			pRouter = std::make_unique<GBHttp10Router>(m_acceptedSocket);
+			std::string_view versionString(m_parsed[2]);
+			std::string_view versionNumber = versionString.substr(httpStr.size());
+
+			if ("0.9" == versionNumber)
+			{
+				pRouter = std::make_unique<GBHttp09Router>(m_acceptedSocket);
+			}
+			else if ("1.0" == versionNumber)
+			{
+				pRouter = std::make_unique<GBHttp10Router>(m_acceptedSocket);
+			}
+			else if ("1.1" == versionNumber)
+			{
+				pRouter = std::make_unique<GBHttp11Router>(m_acceptedSocket);
+			}
 		}
 		else
 		{
+			// #ToDo
 			// Invalid request-line.
 			return false;
 		}

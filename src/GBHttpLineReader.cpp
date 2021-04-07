@@ -3,9 +3,9 @@
 
 namespace GenericBoson
 {
-	bool GBHttpLineReader::Parse(const GBStringView target)
+	bool GBHttpLineReader::Parse(const std::string_view target)
 	{
-		GBString token;
+		std::string token;
 
 		// All Http message ( except for Entity-Body ) must be ended by CRLF.
 		bool CRReadJustBefore = false;

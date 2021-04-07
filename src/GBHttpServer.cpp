@@ -62,13 +62,13 @@ namespace GenericBoson
 			}
 
 			// Á¢¼Ó
-			int recved = recvfrom(acceptedSocket, (char*)m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
+			int recved = recvfrom(acceptedSocket, m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
 
-			GBStringView bufString(m_buffer);
+			std::string_view bufString(m_buffer);
 			m_buffer[recved - 1] = 0;
 			if ('\0' == m_buffer[0])
 			{
-				_tcscpy(m_buffer, NULL);
+				strcpy(m_buffer, NULL);
 			}
 
 #if defined(_DEBUG)

@@ -4,7 +4,11 @@ project(GBHttpServer)
 
 file(GLOB GBHttpServer_SRC src/*.cpp)
 
+file(GLOB ROUTER_FILES src/*Router.cpp include/*Router.h)
+
 file(GLOB GBHttpServer_HEADER include/*.h)
+
+source_group("Router" FILES ${ROUTER_FILES})
 
 add_executable(GBHttpServer ${GBHttpServer_SRC} ${GBHttpServer_HEADER})
 

@@ -10,7 +10,7 @@ namespace GenericBoson
 		/*
 		Tokens parsed by Parse function.
 		*/
-		std::vector<GBString> m_parsed;
+		std::vector<std::string> m_parsed;
 	public:
 		GBHttpLineReader() = default;
 		virtual ~GBHttpLineReader() = default;
@@ -20,6 +20,6 @@ namespace GenericBoson
 
 		\return Was It succeeded?
 		*/
-		bool Parse(const GBStringView);
+		bool Parse(const std::string_view);
 	};
 }
