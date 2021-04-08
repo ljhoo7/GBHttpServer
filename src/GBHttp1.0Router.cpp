@@ -6,7 +6,7 @@ namespace GenericBoson
 	bool GBHttp10Router::Route(const GBStringView subStr)
 	{
 		// method
-		for (int i = 0; i < subStr.length(); ++i)
+		/*for (int i = 0; i < subStr.length(); ++i)
 		{
 			for (auto& iMethod : m_methodList)
 			{
@@ -29,7 +29,7 @@ namespace GenericBoson
 					return GenericBoson::SendResponse(m_acceptedSocket, path);
 				}
 			}
-		}
+		}*/
 
 		return false;
 	}
