@@ -1,16 +1,22 @@
 #pragma once
 
-#include <set>
+#include <map>
 #include <variant>
+#include <memory>
+
+#include "../include/GBMethod.h"
 
 namespace GenericBoson
 {
-	//using METHOD = std::variant<GET,HEAD,POST>;
-
+	template<typename CALLABLE>
 	class PathSegment
 	{
-		std::set<PathSegment> m_subPath;
+		std::map<std::string, std::shared_ptr<PathSegment>> m_subTreeMap;
 
-		//std::vector<METHOD> m_methodArray;
+		/*
+		key - method name ( small letter only ).
+		value - GBMethod pointer.
+		*/
+		std::map<std::string, std::shared_ptr<GBMethod<CALLABLE>>> m_methodMap;
 	};
 }
