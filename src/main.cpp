@@ -8,6 +8,12 @@ using namespace GenericBoson;
 int main()
 {
 	GBHttpServer srv;
+
+	//srv.AddGET([]() {}, "/home/test");
+	//srv.AddHEAD([]() {}, "/home/test2");
+	//srv.AddPOST([]() {}, "/home");
+
+
 	srv.Start();
 
 	return 0;
