@@ -8,13 +8,12 @@ namespace GenericBoson
 	/*
 	http에서 GET, PUT, POST 같은 것을 뜻합니다.
 	*/
-	template<typename METHOD>
 	class GBMethod
 	{
 	public:
-		const METHOD& m_method;
+		const std::function<void(int)>& m_method;
 
-		GBMethod(const METHOD& method)
+		GBMethod(const std::function<void(int)>& method)
 			: m_method(method) {}
 	};
 }

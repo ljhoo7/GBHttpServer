@@ -1,5 +1,6 @@
 #include "../include/stdafx.h"
 #include "../include/GBHttpServer.h"
+#include "main.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -9,7 +10,7 @@ int main()
 {
 	GBHttpServer srv;
 
-	//srv.AddGET([]() {}, "/home/test");
+	srv.Add<GET>([](int arg) {});
 	//srv.AddHEAD([]() {}, "/home/test2");
 	//srv.AddPOST([]() {}, "/home");
 

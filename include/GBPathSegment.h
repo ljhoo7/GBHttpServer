@@ -8,7 +8,6 @@
 
 namespace GenericBoson
 {
-	template<typename CALLABLE>
 	class PathSegment
 	{
 		std::map<std::string, std::shared_ptr<PathSegment>> m_subTreeMap;
@@ -17,6 +16,6 @@ namespace GenericBoson
 		key - method name ( small letter only ).
 		value - GBMethod pointer.
 		*/
-		std::map<std::string, std::shared_ptr<GBMethod<CALLABLE>>> m_methodMap;
+		std::map<std::string, std::shared_ptr<GBMethod>> m_methodMap;
 	};
 }

@@ -2,6 +2,7 @@
 
 #include "GBHttpRouter.h"
 #include "GBMethod.h"
+#include "GBGETMethod.h"
 
 namespace GenericBoson
 {
@@ -18,6 +19,10 @@ namespace GenericBoson
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum);
 		virtual ~GBHttpServer();
+
+		void Add(std::function<void(int)> callable)
+		{
+		}
 
 		bool Start();
 	};
