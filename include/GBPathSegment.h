@@ -8,8 +8,10 @@
 
 namespace GenericBoson
 {
+	template<typename ROUTER>
 	class PathSegment
 	{
+	public:
 		std::map<std::string, std::shared_ptr<PathSegment>> m_subTreeMap;
 
 		/*
