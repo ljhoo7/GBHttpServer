@@ -4,8 +4,7 @@
 
 namespace GenericBoson
 {
-	template<typename METHOD>
-	class GET : public GBMethod<METHOD>
+	class GET : public GBMethod
 	{
 
 	};

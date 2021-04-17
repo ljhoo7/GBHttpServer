@@ -6,18 +6,54 @@
 #include "../lib/GBString/include/GBString.h"
 #include "GBResponse.h"
 #include "GBPathSegment.h"
+#include "GBHttpVersionTypes.h"
 
 namespace GenericBoson
 {
-	template<typename T>
+	struct SOCKET;
+
+	class GBHttpRouterBase
+	{
+		const SOCKET& m_acceptedSocket;
+	public:
+		GBHttpRouterBase(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket) {}
+		virtual ~GBHttpRouterBase() = default;
+		virtual bool Route(const GBStringView subStr) = 0;
+	};
+
+	template<typename HTTPVERSION>
 	class GBHttpRouter
 	{
-	protected:
-		const SOCKET& m_acceptedSocket;
-		std::map<std::string, PathSegment<T>> m_methodTree;
+		GBHttpRouter() = delete;
+	};
+
+	template<>
+	class GBHttpRouter<GBHttp09> : public GBHttpRouterBase
+	{
+		std::map<std::string, PathSegment<GBHttp09>> m_methodTree;
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket) {}
+		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;
-		virtual bool Route(const GBStringView subStr) = 0;
+		virtual bool Route(const GBStringView subStr) override;
+	};
+
+	template<>
+	class GBHttpRouter<GBHttp10> : public GBHttpRouterBase
+	{
+		std::map<std::string, PathSegment<GBHttp10>> m_methodTree;
+	public:
+		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
+		virtual ~GBHttpRouter() = default;
+		virtual bool Route(const GBStringView subStr) override;
+	};
+
+	template<>
+	class GBHttpRouter<GBHttp11> : public GBHttpRouterBase
+	{
+		std::map<std::string, PathSegment<GBHttp11>> m_methodTree;
+	public:
+		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
+		virtual ~GBHttpRouter() = default;
+		virtual bool Route(const GBStringView subStr) override;
 	};
 }

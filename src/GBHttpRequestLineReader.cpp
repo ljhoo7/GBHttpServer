@@ -1,6 +1,6 @@
 #include "../include/stdafx.h"
 
-#include "../include/GBHttp1.1Router.h"
+#include "../include/GBHttpRouter.h"
 #include "../include/GBHttpRequestLineReader.h"
 
 namespace GenericBoson
@@ -18,11 +18,11 @@ namespace GenericBoson
 
 		size_t parsedSize = m_parsed.size();
 
-		std::unique_ptr<GBHttpRouter> pRouter = nullptr;
+		std::unique_ptr<GBHttpRouterBase> pRouter = nullptr;
 
 		if (2 == parsedSize)
 		{
-			pRouter = std::make_unique<GBHttp09Router>(m_acceptedSocket);
+			pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(m_acceptedSocket);
 		}
 		else if (3 == parsedSize)
 		{
@@ -39,15 +39,15 @@ namespace GenericBoson
 
 			if ("0.9" == versionNumber)
 			{
-				pRouter = std::make_unique<GBHttp09Router>(m_acceptedSocket);
+				pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(m_acceptedSocket);
 			}
 			else if ("1.0" == versionNumber)
 			{
-				pRouter = std::make_unique<GBHttp10Router>(m_acceptedSocket);
+				pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(m_acceptedSocket);
 			}
 			else if ("1.1" == versionNumber)
 			{
-				pRouter = std::make_unique<GBHttp11Router>(m_acceptedSocket);
+				pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(m_acceptedSocket);
 			}
 		}
 		else
