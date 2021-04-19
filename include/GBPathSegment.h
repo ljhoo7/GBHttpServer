@@ -3,6 +3,7 @@
 #include <map>
 #include <variant>
 #include <memory>
+#include <cassert>
 
 #include "../include/GBGETMethod.h"
 #include "../include/GBHEADMethod.h"
@@ -20,9 +21,8 @@ namespace GenericBoson
 	template<>
 	class PathSegment<GBHttp09>
 	{
-		GET* m_pGetMethod = nullptr;
+		GBHttp09 test;
 	public:
-		PathSegment() = default;
 		std::map<std::string, std::shared_ptr<PathSegment<GBHttp09>>> m_subTreeMap;
 	};
 
@@ -30,15 +30,14 @@ namespace GenericBoson
 	class PathSegment<GBHttp10>
 	{
 		GET* m_pGetMethod = nullptr;
-		HEAD* m_pGetMethod = nullptr;
-		POST* m_pGetMethod = nullptr;
+		HEAD* m_pHeadMethod = nullptr;
+		POST* m_pPostMethod = nullptr;
 	public:
-		PathSegment() = default;
-		std::map<std::string, std::shared_ptr<PathSegment<GBHttp09>>> m_subTreeMap;
+		std::map<std::string, std::shared_ptr<PathSegment<GBHttp10>>> m_subTreeMap;
 	};
 
 	template<>
-	class PathSegment<GBHttp09>
+	class PathSegment<GBHttp11>
 	{
 		GET* m_pGetMethod = nullptr;
 
@@ -48,7 +47,6 @@ namespace GenericBoson
 		// OPTIONS*
 		// TRACE*
 	public:
-		PathSegment() = default;
-		std::map<std::string, std::shared_ptr<PathSegment<GBHttp09>>> m_subTreeMap;
+		std::map<std::string, std::shared_ptr<PathSegment<GBHttp11>>> m_subTreeMap;
 	};
 }

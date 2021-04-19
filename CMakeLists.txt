@@ -18,6 +18,8 @@ set_property(TARGET GBHttpServer PROPERTY CXX_STANDARD 20)
 
 target_compile_definitions(GBHttpServer PRIVATE _UNICODE UNICODE)
 
+target_link_libraries(GBHttpServer PRIVATE ws2_32.lib)
+
 add_subdirectory(lib/GBString)
 
 add_dependencies(GBHttpServer GBString)

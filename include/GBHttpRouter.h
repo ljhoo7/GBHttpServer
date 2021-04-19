@@ -10,15 +10,16 @@
 
 namespace GenericBoson
 {
-	struct SOCKET;
-
 	class GBHttpRouterBase
 	{
 		const SOCKET& m_acceptedSocket;
 	public:
 		GBHttpRouterBase(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket) {}
 		virtual ~GBHttpRouterBase() = default;
-		virtual bool Route(const GBStringView subStr) = 0;
+		bool Route(const GBStringView subStr)
+		{
+			return true;
+		}
 	};
 
 	template<typename HTTPVERSION>
@@ -34,7 +35,6 @@ namespace GenericBoson
 	public:
 		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;
-		virtual bool Route(const GBStringView subStr) override;
 	};
 
 	template<>
@@ -44,7 +44,6 @@ namespace GenericBoson
 	public:
 		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;
-		virtual bool Route(const GBStringView subStr) override;
 	};
 
 	template<>
@@ -54,6 +53,5 @@ namespace GenericBoson
 	public:
 		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;
-		virtual bool Route(const GBStringView subStr) override;
 	};
 }
