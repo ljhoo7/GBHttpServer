@@ -5,11 +5,11 @@
 
 namespace GenericBoson
 {
-	bool GBHttpRequestLineReader::Read(const std::string_view target)
+	HttpVersion GBHttpRequestLineReader::Read(const std::string_view target)
 	{
-		bool ret = Parse(target);
+		bool parseResult = Parse(target);
 
-		if (false == ret)
+		if (false == parseResult)
 		{
 			// #ToDo
 			// Invalid line exists.
@@ -18,11 +18,9 @@ namespace GenericBoson
 
 		size_t parsedSize = m_parsed.size();
 
-		std::unique_ptr<GBHttpRouterBase> pRouter = nullptr;
-
 		if (2 == parsedSize)
 		{
-			pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(m_acceptedSocket);
+			return GBHttp09;
 		}
 		else if (3 == parsedSize)
 		{
@@ -39,15 +37,15 @@ namespace GenericBoson
 
 			if ("0.9" == versionNumber)
 			{
-				pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(m_acceptedSocket);
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(m_acceptedSocket);
 			}
 			else if ("1.0" == versionNumber)
 			{
-				pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(m_acceptedSocket);
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(m_acceptedSocket);
 			}
 			else if ("1.1" == versionNumber)
 			{
-				pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(m_acceptedSocket);
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(m_acceptedSocket);
 			}
 		}
 		else

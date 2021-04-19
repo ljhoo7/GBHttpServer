@@ -14,6 +14,6 @@ namespace GenericBoson
 		GBHttpRequestLineReader(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket){}
 		virtual ~GBHttpRequestLineReader() = default;
 
-		bool Read(const std::string_view);
+		HttpVersion Read(const std::string_view);
 	};
 }

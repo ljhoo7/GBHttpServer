@@ -65,40 +65,35 @@ namespace GenericBoson
 			int recved = recvfrom(acceptedSocket, m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
 
 			std::string_view bufString(m_buffer);
-			m_buffer[recved - 1] = 0;
-			if ('\0' == m_buffer[0])
-			{
-				strcpy(m_buffer, NULL);
-			}
 
 #if defined(_DEBUG)
 			// 통신 표시
 			GBCout << m_buffer << '\n';
 #endif
 			GenericBoson::GBHttpRequestLineReader requestLineReader(acceptedSocket);
-			bool ret = requestLineReader.Read(m_buffer);
-			if (false == ret)
+			HttpVersion ret = requestLineReader.Read(m_buffer);
+			if (HttpVersion::None == ret)
 			{
 				std::cout << "An abnormal line exists in HTTP message.\n";
 				return false;
 			}
 
-			//GenericBoson::GBHttpRouter router(acceptedSocket);
-			//router.m_methodList.emplace_back("GET", [](const std::string_view path)
+			//m_pRouter = std::make_unique<>(acceptedSocket);
+			//m_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
 			//{
 			//	std::cout << "GET : path = " << path.data() << std::endl;
 			//});
-			//router.m_methodList.emplace_back("PUT", [](const std::string_view path)
+			//m_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
 			//{
 			//	std::cout << "PUT : path = " << path.data() << std::endl;
 			//});
-			//router.m_methodList.emplace_back("POST", [](const std::string_view path)
+			//m_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
 			//{
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
 			//// method
-			//bool routingResult = router.Route(bufString);
+			//bool routingResult = m_pRouter->Route(bufString);
 
 			//if (false == routingResult)
 			//{
