@@ -13,14 +13,14 @@ namespace GenericBoson
 		{
 			// #ToDo
 			// Invalid line exists.
-			return false;
+			return HttpVersion::None;
 		}
 
 		size_t parsedSize = m_parsed.size();
 
 		if (2 == parsedSize)
 		{
-			return GBHttp09;
+			return HttpVersion::Http09;
 		}
 		else if (3 == parsedSize)
 		{
@@ -29,7 +29,7 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// Invalid request-line.
-				return false;
+				return HttpVersion::None;
 			}
 
 			std::string_view versionString(m_parsed[2]);
@@ -37,24 +37,20 @@ namespace GenericBoson
 
 			if ("0.9" == versionNumber)
 			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(m_acceptedSocket);
+				return HttpVersion::Http09;;
 			}
 			else if ("1.0" == versionNumber)
 			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(m_acceptedSocket);
+				return HttpVersion::Http10;
 			}
 			else if ("1.1" == versionNumber)
 			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(m_acceptedSocket);
+				return HttpVersion::Http11;
 			}
 		}
-		else
-		{
-			// #ToDo
-			// Invalid request-line.
-			return false;
-		}
 
-		return true;
+		// #ToDo
+		// Invalid request-line.
+		return HttpVersion::None;
 	}
 }

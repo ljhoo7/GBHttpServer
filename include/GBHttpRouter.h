@@ -7,6 +7,7 @@
 #include "GBResponse.h"
 #include "GBPathSegment.h"
 #include "GBHttpVersionTypes.h"
+#include "GBHttpRequestLineReader.h"
 
 namespace GenericBoson
 {

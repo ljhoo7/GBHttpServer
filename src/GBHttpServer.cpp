@@ -2,6 +2,7 @@
 
 #include "../include/GBHttpServer.h"
 #include "../include/GBHttpRequestLineReader.h"
+#include "../include/GBHttpRouter.h"
 
 namespace GenericBoson
 {
@@ -70,15 +71,36 @@ namespace GenericBoson
 			// 통신 표시
 			GBCout << m_buffer << '\n';
 #endif
-			GenericBoson::GBHttpRequestLineReader requestLineReader(acceptedSocket);
-			HttpVersion ret = requestLineReader.Read(m_buffer);
-			if (HttpVersion::None == ret)
+			GenericBoson::GBHttpRequestLineReader requestLineReader;
+			HttpVersion version = requestLineReader.Read(m_buffer);
+
+			switch (version)
+			{
+			case HttpVersion::Http09:
+			{
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(acceptedSocket, requestLineReader);
+			}
+			break;
+			case HttpVersion::Http10:
+			{
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(acceptedSocket, requestLineReader);
+			}
+			break;
+			case HttpVersion::Http11:
+			{
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(acceptedSocket, requestLineReader);
+			}
+			break;
+			case HttpVersion::None:
 			{
 				std::cout << "An abnormal line exists in HTTP message.\n";
 				return false;
 			}
+			break;
+			default:
+				assert(false);
+			}
 
-			//m_pRouter = std::make_unique<>(acceptedSocket);
 			//m_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
 			//{
 			//	std::cout << "GET : path = " << path.data() << std::endl;
