@@ -71,24 +71,25 @@ namespace GenericBoson
 			// 통신 표시
 			GBCout << m_buffer << '\n';
 #endif
+			std::string targetPath;
 			GenericBoson::GBHttpRequestLineReader requestLineReader;
-			HttpVersion version = requestLineReader.Read(m_buffer);
+			HttpVersion version = requestLineReader.Read(m_buffer, targetPath);
 
 			switch (version)
 			{
 			case HttpVersion::Http09:
 			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(acceptedSocket, requestLineReader);
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(acceptedSocket);
 			}
 			break;
 			case HttpVersion::Http10:
 			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(acceptedSocket, requestLineReader);
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(acceptedSocket);
 			}
 			break;
 			case HttpVersion::Http11:
 			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(acceptedSocket, requestLineReader);
+				m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(acceptedSocket);
 			}
 			break;
 			case HttpVersion::None:
@@ -114,14 +115,13 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			//// method
-			//bool routingResult = m_pRouter->Route(bufString);
+			bool routingResult = m_pRouter->Route(m_methodTree);
 
-			//if (false == routingResult)
-			//{
-			//	std::cout << "Routing failed." << '\n';
-			//	return false;
-			//}
+			if (false == routingResult)
+			{
+				std::cout << "Routing failed." << '\n';
+				return false;
+			}
 
 			// 소켓 닫기
 			closesocket(acceptedSocket);

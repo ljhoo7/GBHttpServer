@@ -17,7 +17,7 @@ namespace GenericBoson
 	public:
 		GBHttpRouterBase(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket) {}
 		virtual ~GBHttpRouterBase() = default;
-		bool Route(const GBStringView subStr)
+		bool Route(const std::map<std::string, PathSegment>& subStr)
 		{
 			return true;
 		}
@@ -32,7 +32,6 @@ namespace GenericBoson
 	template<>
 	class GBHttpRouter<GBHttp09> : public GBHttpRouterBase
 	{
-		std::map<std::string, PathSegment<GBHttp09>> m_methodTree;
 	public:
 		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;
@@ -41,7 +40,6 @@ namespace GenericBoson
 	template<>
 	class GBHttpRouter<GBHttp10> : public GBHttpRouterBase
 	{
-		std::map<std::string, PathSegment<GBHttp10>> m_methodTree;
 	public:
 		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;
@@ -50,7 +48,6 @@ namespace GenericBoson
 	template<>
 	class GBHttpRouter<GBHttp11> : public GBHttpRouterBase
 	{
-		std::map<std::string, PathSegment<GBHttp11>> m_methodTree;
 	public:
 		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
 		virtual ~GBHttpRouter() = default;

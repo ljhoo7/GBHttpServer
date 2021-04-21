@@ -8,6 +8,7 @@
 
 namespace GenericBoson
 {
+	template<typename HTTPVERSION>
 	class GBHttpServer
 	{
 		WSADATA m_wsaData;
@@ -16,6 +17,7 @@ namespace GenericBoson
 
 		char m_buffer[1024];
 
+		std::map<std::string, PathSegment> m_methodTree;
 		std::unique_ptr<GBHttpRouterBase> m_pRouter = nullptr;
 
 		int m_addrSize = sizeof(sockaddr_in);

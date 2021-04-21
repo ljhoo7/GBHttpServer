@@ -5,7 +5,7 @@
 
 namespace GenericBoson
 {
-	HttpVersion GBHttpRequestLineReader::Read(const std::string_view target)
+	HttpVersion GBHttpRequestLineReader::Read(const std::string_view target, std::string_view targetPath)
 	{
 		bool parseResult = Parse(target);
 
@@ -20,6 +20,7 @@ namespace GenericBoson
 
 		if (2 == parsedSize)
 		{
+			targetPath = m_parsed[1];
 			return HttpVersion::Http09;
 		}
 		else if (3 == parsedSize)
@@ -32,6 +33,7 @@ namespace GenericBoson
 				return HttpVersion::None;
 			}
 
+			targetPath = m_parsed[1];
 			std::string_view versionString(m_parsed[2]);
 			std::string_view versionNumber = versionString.substr(httpStr.size());
 
