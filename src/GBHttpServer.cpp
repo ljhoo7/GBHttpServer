@@ -115,7 +115,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			bool routingResult = m_pRouter->Route(m_methodTree);
+			bool routingResult = m_pRouter->Route(m_methodTree, targetPath);
 
 			if (false == routingResult)
 			{
@@ -128,5 +128,16 @@ namespace GenericBoson
 		}
 
 		return true;
+	}
+
+	bool GBHttpServer::GET(const std::string_view targetPath, const std::function<void(int)>& func)
+	{
+		std::vector<std::string> pathSegmentArray;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+
+		if (false == parseResult)
+		{
+			return false;
+		}
 	}
 }

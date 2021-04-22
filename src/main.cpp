@@ -10,12 +10,11 @@ int main()
 {
 	GBHttpServer srv;
 
-	//srv.Add<GET>([](int arg) {});
-	//srv.AddHEAD([]() {}, "/home/test2");
-	//srv.AddPOST([]() {}, "/home");
-
+	////srv.Add<GET>([](int arg) {});
+	////srv.AddHEAD([]() {}, "/home/test2");
+	////srv.AddPOST([]() {}, "/home");
 
 	srv.Start();
-
+	
 	return 0;
 }

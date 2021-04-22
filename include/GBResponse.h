@@ -6,5 +6,5 @@
 
 namespace GenericBoson
 {
-	bool SendResponse(const SOCKET& acceptedSocket, const GBStringView path);
+	bool SendResponse(const SOCKET& acceptedSocket, const std::string_view path);
 }

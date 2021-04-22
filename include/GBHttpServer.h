@@ -8,7 +8,6 @@
 
 namespace GenericBoson
 {
-	template<typename HTTPVERSION>
 	class GBHttpServer
 	{
 		WSADATA m_wsaData;
@@ -26,13 +25,7 @@ namespace GenericBoson
 		GBHttpServer(uint16_t portNum);
 		virtual ~GBHttpServer();
 
-		void GET(const std::string_view targetPath, const std::function<void(int)>& func)
-		{
-			for (int k = 0; k < targetPath.size(); ++k)
-			{
-				
-			}
-		}
+		bool GET(const std::string_view targetPath, const std::function<void(int)>& func);
 
 		bool Start();
 	};
