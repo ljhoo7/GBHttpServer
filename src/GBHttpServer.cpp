@@ -1,8 +1,6 @@
 #include "../include/stdafx.h"
 
 #include "../include/GBHttpServer.h"
-#include "../include/GBHttpRequestLineReader.h"
-#include "../include/GBHttpRouter.h"
 
 namespace GenericBoson
 {
@@ -115,7 +113,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			bool routingResult = m_pRouter->Route(m_methodTree, targetPath);
+			bool routingResult = m_pRouter->Route(m_rootPath, targetPath);
 
 			if (false == routingResult)
 			{
@@ -137,7 +135,32 @@ namespace GenericBoson
 
 		if (false == parseResult)
 		{
+			// #ToDo
+			// targetPaht does not start with '/'.
 			return false;
 		}
+
+		PathSegment* pTargetPath = &m_rootPath;
+		for (auto& iPathSegment : pathSegmentArray)
+		{
+			if (false == pTargetPath->m_subTreeMap.contains(iPathSegment))
+			{
+				pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
+			}
+
+			pTargetPath = (pTargetPath->m_subTreeMap[iPathSegment]).get();
+		}
+
+		if (nullptr != pTargetPath->m_pGetMethod)
+		{
+			// #ToDo
+			// The action method Already Exists at the path.
+			return false;
+		}
+
+		pTargetPath->m_pGetMethod = std::make_unique<GBMethodGET>();
+		pTargetPath->m_pGetMethod->m_method = func;
+
+		return true;
 	}
 }
