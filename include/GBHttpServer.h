@@ -5,6 +5,9 @@
 #include "GBHttpRouter.h"
 #include "GBMethod.h"
 #include "GBGETMethod.h"
+#include "GBPathSegment.h"
+#include "GBHttpRequestLineReader.h"
+#include "GBHttpRouter.h"
 
 namespace GenericBoson
 {
@@ -16,7 +19,8 @@ namespace GenericBoson
 
 		char m_buffer[1024];
 
-		std::map<std::string, PathSegment> m_methodTree;
+		// Equivalent to '/'
+		PathSegment m_rootPath;
 		std::unique_ptr<GBHttpRouterBase> m_pRouter = nullptr;
 
 		int m_addrSize = sizeof(sockaddr_in);

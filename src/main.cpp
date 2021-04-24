@@ -14,6 +14,11 @@ int main()
 	////srv.AddHEAD([]() {}, "/home/test2");
 	////srv.AddPOST([]() {}, "/home");
 
+	srv.GET("/test/test2", [](int param)
+		{
+			std::cout << "here !" << std::endl;
+		});
+
 	srv.Start();
 	
 	return 0;

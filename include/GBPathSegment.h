@@ -12,18 +12,22 @@
 
 namespace GenericBoson
 {
-	class PathSegment
+	class PathSegment;
+
+	typedef std::map<std::string, std::unique_ptr<PathSegment>> GBHttpPathTreeNode;
+
+	struct PathSegment
 	{
-		GET* m_pGetMethod = nullptr;
-		HEAD* m_pHeadMethod = nullptr;
-		POST* m_pPostMethod = nullptr;
+		std::unique_ptr<GBMethodGET> m_pGetMethod = nullptr;
+		std::unique_ptr<GBMethodHEAD> m_pHeadMethod = nullptr;
+		std::unique_ptr<GBMethodPOST> m_pPostMethod = nullptr;
 
 		// #ToDo
 		// PUT*
 		// DELETE*
 		// OPTIONS*
 		// TRACE*
-	public:
-		std::map<std::string, std::shared_ptr<PathSegment>> m_subTreeMap;
+
+		GBHttpPathTreeNode m_subTreeMap;
 	};
 }

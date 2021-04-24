@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	class HEAD : public GBMethod
+	struct GBMethodHEAD : public GBMethod
 	{
 
 	};

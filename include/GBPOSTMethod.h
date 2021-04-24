@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	class POST : public GBMethod
+	struct GBMethodPOST : public GBMethod
 	{
 
 	};
