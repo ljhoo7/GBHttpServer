@@ -13,8 +13,11 @@ namespace GenericBoson
 		std::function<void(int)> m_method;
 
 		GBMethod() = default;
+		virtual ~GBMethod() = default;
 
 		GBMethod(std::function<void(int)>& method)
 			: m_method(method) {}
+
+		virtual std::string GetName() = 0;
 	};
 }

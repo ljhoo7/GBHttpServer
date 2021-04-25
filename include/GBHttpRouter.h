@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 
 #include "../lib/GBString/include/GBString.h"
 #include "GBResponse.h"
@@ -18,9 +19,11 @@ namespace GenericBoson
 	{
 		const SOCKET& m_acceptedSocket;
 	public:
+		std::map<std::string, std::shared_ptr<GBMethod>> m_supportMethodMap;
+
 		GBHttpRouterBase(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket) {}
 		virtual ~GBHttpRouterBase() = default;
-		bool Route(const PathSegment& rootPath, const std::string_view targetPath);
+		bool Route(const PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName);
 	};
 
 	template<typename HTTPVERSION>
@@ -33,7 +36,13 @@ namespace GenericBoson
 	class GBHttpRouter<GBHttp09> : public GBHttpRouterBase
 	{
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
+		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) 
+		{
+			auto pGet = std::make_shared<GBMethodGET>();
+
+			m_supportMethodMap.emplace(pGet->GetName(), pGet);
+		}
+
 		virtual ~GBHttpRouter() = default;
 	};
 
@@ -41,7 +50,16 @@ namespace GenericBoson
 	class GBHttpRouter<GBHttp10> : public GBHttpRouterBase
 	{
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
+		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket)
+		{
+			auto pGet = std::make_shared<GBMethodGET>();
+			auto pHead = std::make_shared<GBMethodHEAD>();
+			auto pPost = std::make_shared<GBMethodPOST>();
+
+			m_supportMethodMap.emplace(pGet->GetName(), pGet);
+			m_supportMethodMap.emplace(pHead->GetName(), pHead);
+			m_supportMethodMap.emplace(pPost->GetName(), pPost);
+		}
 		virtual ~GBHttpRouter() = default;
 	};
 
@@ -49,7 +67,16 @@ namespace GenericBoson
 	class GBHttpRouter<GBHttp11> : public GBHttpRouterBase
 	{
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) {}
+		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket)
+		{
+			auto pGet = std::make_shared<GBMethodGET>();
+			auto pHead = std::make_shared<GBMethodHEAD>();
+			auto pPost = std::make_shared<GBMethodPOST>();
+
+			m_supportMethodMap.emplace(pGet->GetName(), pGet);
+			m_supportMethodMap.emplace(pHead->GetName(), pHead);
+			m_supportMethodMap.emplace(pPost->GetName(), pPost);
+		}
 		virtual ~GBHttpRouter() = default;
 	};
 }

@@ -69,9 +69,9 @@ namespace GenericBoson
 			// 통신 표시
 			GBCout << m_buffer << '\n';
 #endif
-			std::string targetPath;
+			std::string targetPath, methodName;
 			GenericBoson::GBHttpRequestLineReader requestLineReader;
-			HttpVersion version = requestLineReader.Read(m_buffer, targetPath);
+			HttpVersion version = requestLineReader.Read(m_buffer, targetPath, methodName);
 
 			switch (version)
 			{
@@ -113,7 +113,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			bool routingResult = m_pRouter->Route(m_rootPath, targetPath);
+			bool routingResult = m_pRouter->Route(m_rootPath, targetPath, methodName);
 
 			if (false == routingResult)
 			{

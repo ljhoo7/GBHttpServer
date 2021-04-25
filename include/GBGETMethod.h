@@ -6,6 +6,11 @@ namespace GenericBoson
 {
 	struct GBMethodGET : public GBMethod
 	{
+		~GBMethodGET() = default;
 
+		virtual std::string GetName()
+		{
+			return "GET";
+		}
 	};
 }
