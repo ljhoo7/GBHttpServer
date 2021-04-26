@@ -5,7 +5,7 @@
 
 namespace GenericBoson
 {
-	HttpVersion GBHttpRequestLineReader::Read(const std::string_view target, std::string_view targetPath, std::string_view methodName)
+	HttpVersion GBHttpRequestLineReader::Read(const std::string_view target, std::string& targetPath, std::string& methodName)
 	{
 		bool parseResult = Parse(target);
 

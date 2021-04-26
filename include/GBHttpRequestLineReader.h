@@ -12,6 +12,6 @@ namespace GenericBoson
 	public:
 		virtual ~GBHttpRequestLineReader() = default;
 
-		HttpVersion Read(const std::string_view, std::string_view targetPath, std::string_view methodName);
+		HttpVersion Read(const std::string_view, std::string& targetPath, std::string& methodName);
 	};
 }
