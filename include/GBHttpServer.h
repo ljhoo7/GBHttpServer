@@ -24,12 +24,19 @@ namespace GenericBoson
 		std::unique_ptr<GBHttpRouterBase> m_pRouter = nullptr;
 
 		int m_addrSize = sizeof(sockaddr_in);
+
+		//
+		// \param pathTree
+		// \param pTargetPath
+		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment* pTargetPath);
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum);
 		virtual ~GBHttpServer();
 
 		bool GET(const std::string_view targetPath, const std::function<void(int)>& func);
+		bool HEAD(const std::string_view targetPath, const std::function<void(int)>& func);
+		bool POST(const std::string_view targetPath, const std::function<void(int)>& func);
 
 		bool Start();
 	};

@@ -4,6 +4,28 @@
 
 namespace GenericBoson
 {
+	bool GBHttpServer::TraversePathTree(const std::vector<std::string>& pathTree, PathSegment* pTargetPath)
+	{
+		for (auto& iPathSegment : pathTree)
+		{
+			if (false == pTargetPath->m_subTreeMap.contains(iPathSegment))
+			{
+				pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
+			}
+
+			pTargetPath = (pTargetPath->m_subTreeMap[iPathSegment]).get();
+		}
+
+		if (nullptr != pTargetPath->m_pGetMethod)
+		{
+			// #ToDo
+			// The action method Already Exists at the path.
+			return false;
+		}
+
+		return true;
+	}
+
 	GBHttpServer::GBHttpServer(uint16_t port)
 	{
 		// winsock2 ÃÊ±âÈ­
@@ -141,17 +163,9 @@ namespace GenericBoson
 		}
 
 		PathSegment* pTargetPath = &m_rootPath;
-		for (auto& iPathSegment : pathSegmentArray)
-		{
-			if (false == pTargetPath->m_subTreeMap.contains(iPathSegment))
-			{
-				pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
-			}
+		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
 
-			pTargetPath = (pTargetPath->m_subTreeMap[iPathSegment]).get();
-		}
-
-		if (nullptr != pTargetPath->m_pGetMethod)
+		if (false == traverseResult)
 		{
 			// #ToDo
 			// The action method Already Exists at the path.
@@ -160,6 +174,62 @@ namespace GenericBoson
 
 		pTargetPath->m_pGetMethod = std::make_unique<GBMethodGET>();
 		pTargetPath->m_pGetMethod->m_method = func;
+
+		return true;
+	}
+
+	bool GBHttpServer::HEAD(const std::string_view targetPath, const std::function<void(int)>& func)
+	{
+		std::vector<std::string> pathSegmentArray;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+
+		if (false == parseResult)
+		{
+			// #ToDo
+			// targetPaht does not start with '/'.
+			return false;
+		}
+
+		PathSegment* pTargetPath = &m_rootPath;
+		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
+
+		if (false == traverseResult)
+		{
+			// #ToDo
+			// The action method Already Exists at the path.
+			return false;
+		}
+
+		pTargetPath->m_pHeadMethod = std::make_unique<GBMethodHEAD>();
+		pTargetPath->m_pHeadMethod->m_method = func;
+
+		return true;
+	}
+
+	bool GBHttpServer::POST(const std::string_view targetPath, const std::function<void(int)>& func)
+	{
+		std::vector<std::string> pathSegmentArray;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+
+		if (false == parseResult)
+		{
+			// #ToDo
+			// targetPaht does not start with '/'.
+			return false;
+		}
+
+		PathSegment* pTargetPath = &m_rootPath;
+		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
+
+		if (false == traverseResult)
+		{
+			// #ToDo
+			// The action method Already Exists at the path.
+			return false;
+		}
+
+		pTargetPath->m_pPostMethod = std::make_unique<GBMethodPOST>();
+		pTargetPath->m_pPostMethod->m_method = func;
 
 		return true;
 	}
