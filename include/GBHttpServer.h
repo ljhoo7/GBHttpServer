@@ -28,7 +28,7 @@ namespace GenericBoson
 		//
 		// \param pathTree
 		// \param pTargetPath
-		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment* pTargetPath);
+		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath);
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum);

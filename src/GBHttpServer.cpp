@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	bool GBHttpServer::TraversePathTree(const std::vector<std::string>& pathTree, PathSegment* pTargetPath)
+	bool GBHttpServer::TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath)
 	{
 		for (auto& iPathSegment : pathTree)
 		{
