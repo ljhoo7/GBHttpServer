@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <functional>
 
 #include "GBHttpRouter.h"
@@ -14,10 +15,14 @@ namespace GenericBoson
 	class GBHttpServer
 	{
 		WSADATA m_wsaData;
-		SOCKET m_listeningSocket;
 		sockaddr_in m_addr, m_client;
 
+		HANDLE m_IOCP;
+		SOCKET m_listeningSocket;
+
 		char m_buffer[1024];
+
+		uint16_t m_port = 0;
 
 		// Equivalent to '/'
 		PathSegment m_rootPath;
@@ -29,9 +34,11 @@ namespace GenericBoson
 		// \param pathTree
 		// \param pTargetPath
 		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath);
+
+		std::pair<bool, std::string> SetListeningSocket();
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
-		GBHttpServer(uint16_t portNum);
+		GBHttpServer(uint16_t portNum) : m_port(portNum) {};
 		virtual ~GBHttpServer();
 
 		bool GET(const std::string_view targetPath, const std::function<void(int)>& func);

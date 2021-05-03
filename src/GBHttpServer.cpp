@@ -26,30 +26,37 @@ namespace GenericBoson
 		return true;
 	}
 
-	GBHttpServer::GBHttpServer(uint16_t port)
+	std::pair<bool, std::string> GBHttpServer::SetListeningSocket()
 	{
 		// winsock2 초기화
-		if (WSAStartup(MAKEWORD(2, 0), &m_wsaData))
+		if (WSAStartup(MAKEWORD(2, 2), &m_wsaData))
 		{
 			std::cout << "winsock startup failed\n";
 			return;
 		}
 
 		// 소켓 만들기
-		 m_listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
+		m_listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
 		if (m_listeningSocket == INVALID_SOCKET)
 		{
 			std::cout << "socket : " << WSAGetLastError() << '\n';
 			return;
 		}
 
+		m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
+
+		if (NULL == m_IOCP)
+		{
+			return {false, ""};
+		}
+
 		// 소켓 설정
 		m_addr.sin_family = AF_INET;
-		m_addr.sin_port = htons(port);
+		m_addr.sin_port = htons(m_port);
 		m_addr.sin_addr.S_un.S_addr = INADDR_ANY;
 
 		// 소켓 바인드
-		if (bind(m_listeningSocket, (struct sockaddr *)&m_addr, sizeof(m_addr)) != 0)
+		if (bind(m_listeningSocket, (struct sockaddr*)&m_addr, sizeof(m_addr)) != 0)
 		{
 			std::cout << "bind : " << WSAGetLastError() << '\n';
 			return;
@@ -72,6 +79,10 @@ namespace GenericBoson
 
 	bool GBHttpServer::Start()
 	{
+		bool result;
+		std::string errorMsg;
+		std::tie(result, errorMsg) = SetListeningSocket();
+
 		// 서버 시작
 		while (1)
 		{
