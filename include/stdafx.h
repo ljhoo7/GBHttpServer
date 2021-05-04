@@ -1,6 +1,8 @@
 #pragma once
 
-#include <windows.h>
+#include <WinSock2.h>
+#include <ws2tcpip.h>
+#include <mswsock.h>
 #include <stdio.h>
 #include <conio.h>
 #include <tchar.h>

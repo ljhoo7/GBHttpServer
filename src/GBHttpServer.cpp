@@ -28,27 +28,28 @@ namespace GenericBoson
 
 	std::pair<bool, std::string> GBHttpServer::SetListeningSocket()
 	{
-		// winsock2 초기화
-		if (WSAStartup(MAKEWORD(2, 2), &m_wsaData))
+		// WinSock 2.2 초기화
+		if (NO_ERROR != WSAStartup(MAKEWORD(2, 2), &m_wsaData))
 		{
-			std::cout << "winsock startup failed\n";
-			return;
+			return { false, "WSAStartup failed\n" };
+		}
+
+		// IOCP 커널 오브젝트 만들기.
+		m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
+		if (NULL == m_IOCP)
+		{
+			return { false, "" };
 		}
 
 		// 소켓 만들기
-		m_listeningSocket = socket(AF_INET, SOCK_STREAM, 0);
-		if (m_listeningSocket == INVALID_SOCKET)
+		m_listeningSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
+		if (INVALID_SOCKET == m_listeningSocket)
 		{
 			std::cout << "socket : " << WSAGetLastError() << '\n';
 			return;
 		}
 
-		m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
-
-		if (NULL == m_IOCP)
-		{
-			return {false, ""};
-		}
+		
 
 		// 소켓 설정
 		m_addr.sin_family = AF_INET;
