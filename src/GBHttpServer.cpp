@@ -26,6 +26,19 @@ namespace GenericBoson
 		return true;
 	}
 
+	std::string GBHttpServer::GetWSALastErrorString()
+	{
+		char* s = NULL;
+		FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, WSAGetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPSTR)&s, 0, NULL);
+		std::string errorString(s);
+		LocalFree(s);
+
+		return errorString;
+	}
+
 	std::pair<bool, std::string> GBHttpServer::SetListeningSocket()
 	{
 		// WinSock 2.2 초기화
@@ -49,7 +62,13 @@ namespace GenericBoson
 			return;
 		}
 
-		
+		// Associate the listening socket with the IOCP.
+		HANDLE ret1 = CreateIoCompletionPort((HANDLE)m_listeningSocket, m_IOCP, (u_long)0, 0);
+
+		if (NULL == ret1)
+		{
+			return { false, WSAGetLastError() };
+		}
 
 		// 소켓 설정
 		m_addr.sin_family = AF_INET;

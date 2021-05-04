@@ -36,6 +36,7 @@ namespace GenericBoson
 		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath);
 
 		std::pair<bool, std::string> SetListeningSocket();
+		std::string GetWSALastErrorString();
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum) : m_port(portNum) {};
