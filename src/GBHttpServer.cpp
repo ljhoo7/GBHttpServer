@@ -41,7 +41,8 @@ namespace GenericBoson
 
 	std::pair<bool, std::string> GBHttpServer::SetListeningSocket()
 	{
-		// WinSock 2.2 초기화
+#pragma region [1] Prepare and start listening port and IOCP
+		// [1] - 1. WinSock 2.2 초기화
 		if (NO_ERROR != WSAStartup(MAKEWORD(2, 2), &m_wsaData))
 		{
 			return { false, "WSAStartup failed\n" };
@@ -51,15 +52,14 @@ namespace GenericBoson
 		m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
 		if (NULL == m_IOCP)
 		{
-			return { false, "" };
+			return { false, GetWSALastErrorString() };
 		}
 
 		// 소켓 만들기
 		m_listeningSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 		if (INVALID_SOCKET == m_listeningSocket)
 		{
-			std::cout << "socket : " << WSAGetLastError() << '\n';
-			return;
+			return { false, GetWSALastErrorString() };
 		}
 
 		// Associate the listening socket with the IOCP.
@@ -67,7 +67,7 @@ namespace GenericBoson
 
 		if (NULL == ret1)
 		{
-			return { false, WSAGetLastError() };
+			return { false, GetWSALastErrorString() };
 		}
 
 		// 소켓 설정
@@ -76,18 +76,35 @@ namespace GenericBoson
 		m_addr.sin_addr.S_un.S_addr = INADDR_ANY;
 
 		// 소켓 바인드
-		if (bind(m_listeningSocket, (struct sockaddr*)&m_addr, sizeof(m_addr)) != 0)
+		int ret2 = bind(m_listeningSocket, (struct sockaddr*)&m_addr, sizeof(m_addr));
+		if (SOCKET_ERROR == ret2)
 		{
-			std::cout << "bind : " << WSAGetLastError() << '\n';
-			return;
+			return { false, GetWSALastErrorString() };
 		}
 
-		// TCP 클라이언트로부터의 접속 요구를 기다리면서 대기한다
-		if (listen(m_listeningSocket, 5) != 0)
+		// 리스닝 포트 가동
+		ret2 = listen(m_listeningSocket, SOMAXCONN);
+		if (SOCKET_ERROR == ret2)
 		{
-			std::cout << "listen : " << WSAGetLastError() << '\n';
-			return;
+			return { false, GetWSALastErrorString() };
 		}
+#pragma endregion Prepare and start listening port and IOCP
+
+#pragma region Prepare AcceptEx and associate those
+		LPFN_ACCEPTEX lpfnAcceptEx = NULL;
+		GUID GuidAcceptEx = WSAID_ACCEPTEX;
+		DWORD returnedBytes;
+
+		// AcceptEx 함수 가져오기
+		ret2 = WSAIoctl(m_listeningSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
+			&GuidAcceptEx, sizeof(GuidAcceptEx),
+			&lpfnAcceptEx, sizeof(lpfnAcceptEx),
+			&returnedBytes, NULL, NULL);
+		if (SOCKET_ERROR == ret2)
+		{
+			return { false, GetWSALastErrorString() };
+		}
+#pragma endregion Prepare AcceptEx and associate those
 	}
 
 	GBHttpServer::~GBHttpServer()
