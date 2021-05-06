@@ -48,21 +48,21 @@ namespace GenericBoson
 			return { false, "WSAStartup failed\n" };
 		}
 
-		// IOCP 커널 오브젝트 만들기.
+		// [1] - 2.  IOCP 커널 오브젝트 만들기.
 		m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
 		if (NULL == m_IOCP)
 		{
 			return { false, GetWSALastErrorString() };
 		}
 
-		// 소켓 만들기
+		// [1] - 3.  소켓 만들기
 		m_listeningSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 		if (INVALID_SOCKET == m_listeningSocket)
 		{
 			return { false, GetWSALastErrorString() };
 		}
 
-		// Associate the listening socket with the IOCP.
+		// [1] - 4.  Associate the listening socket with the IOCP.
 		HANDLE ret1 = CreateIoCompletionPort((HANDLE)m_listeningSocket, m_IOCP, (u_long)0, 0);
 
 		if (NULL == ret1)
@@ -70,41 +70,40 @@ namespace GenericBoson
 			return { false, GetWSALastErrorString() };
 		}
 
-		// 소켓 설정
+		// [1] - 5.  소켓 설정
 		m_addr.sin_family = AF_INET;
 		m_addr.sin_port = htons(m_port);
 		m_addr.sin_addr.S_un.S_addr = INADDR_ANY;
 
-		// 소켓 바인드
+		// [1] - 6.  소켓 바인드
 		int ret2 = bind(m_listeningSocket, (struct sockaddr*)&m_addr, sizeof(m_addr));
 		if (SOCKET_ERROR == ret2)
 		{
 			return { false, GetWSALastErrorString() };
 		}
 
-		// 리스닝 포트 가동
+		// [1] - 7.  리스닝 포트 가동
 		ret2 = listen(m_listeningSocket, SOMAXCONN);
 		if (SOCKET_ERROR == ret2)
 		{
 			return { false, GetWSALastErrorString() };
 		}
-#pragma endregion Prepare and start listening port and IOCP
+#pragma endregion [1] Prepare and start listening port and IOCP
 
-#pragma region Prepare AcceptEx and associate those
-		LPFN_ACCEPTEX lpfnAcceptEx = NULL;
+#pragma region [2] Prepare AcceptEx and associate accept I/O requests to IOCP
 		GUID GuidAcceptEx = WSAID_ACCEPTEX;
 		DWORD returnedBytes;
 
-		// AcceptEx 함수 가져오기
+		// [2] - 1. AcceptEx 함수 가져오기
 		ret2 = WSAIoctl(m_listeningSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
 			&GuidAcceptEx, sizeof(GuidAcceptEx),
-			&lpfnAcceptEx, sizeof(lpfnAcceptEx),
+			&m_lpfnAcceptEx, sizeof(m_lpfnAcceptEx),
 			&returnedBytes, NULL, NULL);
 		if (SOCKET_ERROR == ret2)
 		{
 			return { false, GetWSALastErrorString() };
 		}
-#pragma endregion Prepare AcceptEx and associate those
+#pragma endregion [2] Prepare AcceptEx and associate accept I/O requests to IOCP
 	}
 
 	GBHttpServer::~GBHttpServer()
@@ -137,7 +136,7 @@ namespace GenericBoson
 
 #if defined(_DEBUG)
 			// 통신 표시
-			GBCout << m_buffer << '\n';
+			std::cout << m_buffer << '\n';
 #endif
 			std::string targetPath, methodName;
 			GenericBoson::GBHttpRequestLineReader requestLineReader;
