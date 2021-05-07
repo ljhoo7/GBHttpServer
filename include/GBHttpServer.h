@@ -11,7 +11,7 @@
 #include "GBHttpRouter.h"
 
 const int BUFFER_SIZE = 4096;
-const int PRESET_SESSION_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
+const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
 namespace GenericBoson
 {

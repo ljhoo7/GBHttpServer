@@ -119,9 +119,18 @@ namespace GenericBoson
 		std::string errorMsg;
 		std::tie(result, errorMsg) = SetListeningSocket();
 
-		// 서버 시작
-		while (1)
+		// AcceptEx 이슈
+		for(int k = 0; k < ISSUED_ACCEPTEX_COUNT; ++k)
 		{
+			// AcceptEx 소켓만들기
+			m_sessions[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
+			if (INVALID_SOCKET == m_sessions[k].m_socket)
+			{
+				return std::make_pair(WSAGetLastError(), __LINE__);
+			}
+
+			m_extendedOverlappedArray[k].m_type = IO_TYPE::ACCEPT;
+
 			SOCKET acceptedSocket = accept(m_listeningSocket, (sockaddr*)&m_client, &m_addrSize);
 			if (acceptedSocket == INVALID_SOCKET)
 			{
