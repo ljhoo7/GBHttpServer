@@ -79,6 +79,6 @@ namespace GenericBoson
 		bool HEAD(const std::string_view targetPath, const std::function<void(int)>& func);
 		bool POST(const std::string_view targetPath, const std::function<void(int)>& func);
 
-		bool Start();
+		std::pair<bool, std::string> Start();
 	};
 }

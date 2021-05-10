@@ -113,7 +113,7 @@ namespace GenericBoson
 		WSACleanup();
 	}
 
-	bool GBHttpServer::Start()
+	std::pair<bool, std::string> GBHttpServer::Start()
 	{
 		bool result;
 		std::string errorMsg;
@@ -126,16 +126,15 @@ namespace GenericBoson
 			m_sessions[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 			if (INVALID_SOCKET == m_sessions[k].m_socket)
 			{
-				return std::make_pair(WSAGetLastError(), __LINE__);
+				return { false, GetWSALastErrorString() };
 			}
 
-			m_extendedOverlappedArray[k].m_type = IO_TYPE::ACCEPT;
+			m_sessions[k].m_type = IO_TYPE::ACCEPT;
 
 			SOCKET acceptedSocket = accept(m_listeningSocket, (sockaddr*)&m_client, &m_addrSize);
 			if (acceptedSocket == INVALID_SOCKET)
 			{
-				std::cout << "accept : " << WSAGetLastError() << '\n';
-				return false;
+				return { false, GetWSALastErrorString() };
 			}
 
 			// 立加
@@ -170,8 +169,7 @@ namespace GenericBoson
 			break;
 			case HttpVersion::None:
 			{
-				std::cout << "An abnormal line exists in HTTP message.\n";
-				return false;
+				return { false, "An abnormal line exists in HTTP message.\n" };
 			}
 			break;
 			default:
@@ -195,15 +193,14 @@ namespace GenericBoson
 
 			if (false == routingResult)
 			{
-				std::cout << "Routing failed." << '\n';
-				return false;
+				return { false, "Routing failed." };
 			}
 
 			// 家南 摧扁
 			closesocket(acceptedSocket);
 		}
 
-		return true;
+		return { true, {} };
 	}
 
 	bool GBHttpServer::GET(const std::string_view targetPath, const std::function<void(int)>& func)
