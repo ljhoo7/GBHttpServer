@@ -70,6 +70,9 @@ namespace GenericBoson
 
 		std::pair<bool, std::string> SetListeningSocket();
 		std::string GetWSALastErrorString();
+
+		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
+		char m_listenBuffer[BUFFER_SIZE];
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum) : m_port(portNum) {};

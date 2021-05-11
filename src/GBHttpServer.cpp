@@ -131,10 +131,21 @@ namespace GenericBoson
 
 			m_sessions[k].m_type = IO_TYPE::ACCEPT;
 
-			SOCKET acceptedSocket = accept(m_listeningSocket, (sockaddr*)&m_client, &m_addrSize);
-			if (acceptedSocket == INVALID_SOCKET)
+			// Posting an accept operation.
+			BOOL result = m_lpfnAcceptEx(m_listeningSocket, m_sessions[k].m_socket, m_listenBuffer, 0,
+				sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
+				&returnedBytes, &m_sessions[k]);
+			int lastSocketError = WSAGetLastError();
+			if (FALSE == result && ERROR_IO_PENDING != lastSocketError)
 			{
-				return { false, GetWSALastErrorString() };
+				return std::make_pair(lastSocketError, __LINE__);
+			}
+
+			// Associate this accept socket withd IOCP.
+			HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, m_IOCP, (u_long)0, 0);
+			if (NULL == associateAcceptSocketResult)
+			{
+				return std::make_pair(WSAGetLastError(), __LINE__);
 			}
 
 			// Á¢¼Ó
