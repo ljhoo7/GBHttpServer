@@ -39,6 +39,19 @@ namespace GenericBoson
 		return errorString;
 	}
 
+	std::string GBHttpServer::GetWSALastErrorString(int lastError)
+	{
+		char* s = NULL;
+		FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, lastError,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPSTR)&s, 0, NULL);
+		std::string errorString(s);
+		LocalFree(s);
+
+		return errorString;
+	}
+
 	std::pair<bool, std::string> GBHttpServer::SetListeningSocket()
 	{
 #pragma region [1] Prepare and start listening port and IOCP
@@ -113,6 +126,11 @@ namespace GenericBoson
 		WSACleanup();
 	}
 
+	void GBHttpServer::ThreadFunction()
+	{
+
+	}
+
 	std::pair<bool, std::string> GBHttpServer::Start()
 	{
 		bool result;
@@ -132,20 +150,21 @@ namespace GenericBoson
 			m_sessions[k].m_type = IO_TYPE::ACCEPT;
 
 			// Posting an accept operation.
+			DWORD returnedBytes;
 			BOOL result = m_lpfnAcceptEx(m_listeningSocket, m_sessions[k].m_socket, m_listenBuffer, 0,
 				sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16,
 				&returnedBytes, &m_sessions[k]);
 			int lastSocketError = WSAGetLastError();
 			if (FALSE == result && ERROR_IO_PENDING != lastSocketError)
 			{
-				return std::make_pair(lastSocketError, __LINE__);
+				return { false, GetWSALastErrorString(lastSocketError) };
 			}
 
 			// Associate this accept socket withd IOCP.
 			HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, m_IOCP, (u_long)0, 0);
 			if (NULL == associateAcceptSocketResult)
 			{
-				return std::make_pair(WSAGetLastError(), __LINE__);
+				return { false, GetWSALastErrorString() };
 			}
 
 			// Á¢¼Ó
