@@ -61,6 +61,8 @@ namespace GenericBoson
 		PathSegment m_rootPath;
 		std::unique_ptr<GBHttpRouterBase> m_pRouter = nullptr;
 
+		volatile bool m_keepLooping = true;
+
 		int m_addrSize = sizeof(sockaddr_in);
 
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
@@ -76,6 +78,8 @@ namespace GenericBoson
 		std::string GetWSALastErrorString(int lastError);
 
 		void ThreadFunction();
+
+		int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum) : m_port(portNum) {};

@@ -124,11 +124,110 @@ namespace GenericBoson
 		// winsock2 종료 처리
 		closesocket(m_listeningSocket);
 		WSACleanup();
+
+		m_keepLooping = false;
+	}
+
+	int GBHttpServer::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
+	{
+		pEol->m_type = IO_TYPE::RECEIVE;
+		DWORD flag = 0, receivedBytes = 0;
+		WSABUF wsaBuffer;
+		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
+		wsaBuffer.buf = &pEol->m_receiveBuffer.m_buffer[pEol->m_receiveBuffer.m_readOffset];
+		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
+
+		return recvResult;
 	}
 
 	void GBHttpServer::ThreadFunction()
 	{
+		DWORD receivedBytes;
+		u_long completionKey;
+		ExpandedOverlapped* pEol = nullptr;
 
+		while (true == m_keepLooping)
+		{
+			BOOL result = GetQueuedCompletionStatus(m_IOCP, &receivedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
+
+			switch (pEol->m_type)
+			{
+			case IO_TYPE::ACCEPT:
+			{
+				int issueRecvResult = IssueRecv(pEol, 1024);
+			}
+			break;
+			case IO_TYPE::RECEIVE:
+			{
+				// 접속
+				int recved = recvfrom(acceptedSocket, m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
+
+				std::string_view bufString(m_buffer);
+
+#if defined(_DEBUG)
+				// 통신 표시
+				std::cout << m_buffer << '\n';
+#endif
+				std::string targetPath, methodName;
+				GenericBoson::GBHttpRequestLineReader requestLineReader;
+				HttpVersion version = requestLineReader.Read(m_buffer, targetPath, methodName);
+
+				switch (version)
+				{
+				case HttpVersion::Http09:
+				{
+					m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(acceptedSocket);
+				}
+				break;
+				case HttpVersion::Http10:
+				{
+					m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(acceptedSocket);
+				}
+				break;
+				case HttpVersion::Http11:
+				{
+					m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(acceptedSocket);
+				}
+				break;
+				case HttpVersion::None:
+				{
+					return { false, "An abnormal line exists in HTTP message.\n" };
+				}
+				break;
+				default:
+					assert(false);
+				}
+
+				//m_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
+				//{
+				//	std::cout << "GET : path = " << path.data() << std::endl;
+				//});
+				//m_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
+				//{
+				//	std::cout << "PUT : path = " << path.data() << std::endl;
+				//});
+				//m_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
+				//{
+				//	std::cout << "POST : path = " << path.data() << std::endl;
+				//});
+
+				bool routingResult = m_pRouter->Route(m_rootPath, targetPath, methodName);
+
+				if (false == routingResult)
+				{
+					return { false, "Routing failed." };
+				}
+
+				// 소켓 닫기
+				closesocket(acceptedSocket);
+			}
+			break;
+			case IO_TYPE::SEND:
+			{
+			}
+			break;
+			}
+		}
 	}
 
 	std::pair<bool, std::string> GBHttpServer::Start()
@@ -166,68 +265,6 @@ namespace GenericBoson
 			{
 				return { false, GetWSALastErrorString() };
 			}
-
-			// 접속
-			int recved = recvfrom(acceptedSocket, m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
-
-			std::string_view bufString(m_buffer);
-
-#if defined(_DEBUG)
-			// 통신 표시
-			std::cout << m_buffer << '\n';
-#endif
-			std::string targetPath, methodName;
-			GenericBoson::GBHttpRequestLineReader requestLineReader;
-			HttpVersion version = requestLineReader.Read(m_buffer, targetPath, methodName);
-
-			switch (version)
-			{
-			case HttpVersion::Http09:
-			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(acceptedSocket);
-			}
-			break;
-			case HttpVersion::Http10:
-			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(acceptedSocket);
-			}
-			break;
-			case HttpVersion::Http11:
-			{
-				m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(acceptedSocket);
-			}
-			break;
-			case HttpVersion::None:
-			{
-				return { false, "An abnormal line exists in HTTP message.\n" };
-			}
-			break;
-			default:
-				assert(false);
-			}
-
-			//m_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
-			//{
-			//	std::cout << "GET : path = " << path.data() << std::endl;
-			//});
-			//m_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
-			//{
-			//	std::cout << "PUT : path = " << path.data() << std::endl;
-			//});
-			//m_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
-			//{
-			//	std::cout << "POST : path = " << path.data() << std::endl;
-			//});
-
-			bool routingResult = m_pRouter->Route(m_rootPath, targetPath, methodName);
-
-			if (false == routingResult)
-			{
-				return { false, "Routing failed." };
-			}
-
-			// 소켓 닫기
-			closesocket(acceptedSocket);
 		}
 
 		return { true, {} };
