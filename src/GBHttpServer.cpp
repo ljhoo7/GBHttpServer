@@ -159,18 +159,18 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				// 접속
-				int recved = recvfrom(acceptedSocket, m_buffer, 1024, 0, (sockaddr*)&m_client, &m_addrSize);
+				std::string_view bufferStringView(pEol->m_receiveBuffer.m_buffer);
 
-				std::string_view bufString(m_buffer);
+				size_t foundLocation = bufferStringView.find_first_of("", 0);
+
+				std::string targetPath, methodName;
+				GenericBoson::GBHttpRequestLineReader requestLineReader;
+				HttpVersion version = requestLineReader.Read(m_buffer, targetPath, methodName);
 
 #if defined(_DEBUG)
 				// 통신 표시
 				std::cout << m_buffer << '\n';
 #endif
-				std::string targetPath, methodName;
-				GenericBoson::GBHttpRequestLineReader requestLineReader;
-				HttpVersion version = requestLineReader.Read(m_buffer, targetPath, methodName);
 
 				switch (version)
 				{
