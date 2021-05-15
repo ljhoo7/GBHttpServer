@@ -159,13 +159,9 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				std::string_view bufferStringView(pEol->m_receiveBuffer.m_buffer);
-
-				size_t foundLocation = bufferStringView.find_first_of("", 0);
-
 				std::string targetPath, methodName;
 				GenericBoson::GBHttpRequestLineReader requestLineReader;
-				HttpVersion version = requestLineReader.Read(m_buffer, targetPath, methodName);
+				HttpVersion version = requestLineReader.Read(pEol->m_receiveBuffer.m_buffer, targetPath, methodName);
 
 #if defined(_DEBUG)
 				// 통신 표시
@@ -176,22 +172,23 @@ namespace GenericBoson
 				{
 				case HttpVersion::Http09:
 				{
-					m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>(acceptedSocket);
+					m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
 				}
 				break;
 				case HttpVersion::Http10:
 				{
-					m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>(acceptedSocket);
+					m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
 				}
 				break;
 				case HttpVersion::Http11:
 				{
-					m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>(acceptedSocket);
+					m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
 				}
 				break;
 				case HttpVersion::None:
 				{
-					return { false, "An abnormal line exists in HTTP message.\n" };
+					// #ToDo 로깅으로 바꾸자
+					//return { false, "An abnormal line exists in HTTP message.\n" };
 				}
 				break;
 				default:
@@ -215,11 +212,12 @@ namespace GenericBoson
 
 				if (false == routingResult)
 				{
-					return { false, "Routing failed." };
+					// #ToDo 로깅으로 바꾸자
+					//return { false, "Routing failed." };
 				}
 
 				// 소켓 닫기
-				closesocket(acceptedSocket);
+				closesocket(pEol->m_socket);
 			}
 			break;
 			case IO_TYPE::SEND:
