@@ -216,12 +216,13 @@ namespace GenericBoson
 					//return { false, "Routing failed." };
 				}
 
-				// 家南 摧扁
-				closesocket(pEol->m_socket);
+				// IssueSend();
 			}
 			break;
 			case IO_TYPE::SEND:
 			{
+				// 家南 摧扁
+				closesocket(pEol->m_socket);
 			}
 			break;
 			}
