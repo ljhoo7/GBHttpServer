@@ -235,6 +235,8 @@ namespace GenericBoson
 		std::string errorMsg;
 		std::tie(result, errorMsg) = SetListeningSocket();
 
+		m_sessions.resize(ISSUED_ACCEPTEX_COUNT);
+
 		// AcceptEx ¿ÃΩ¥
 		for(int k = 0; k < ISSUED_ACCEPTEX_COUNT; ++k)
 		{

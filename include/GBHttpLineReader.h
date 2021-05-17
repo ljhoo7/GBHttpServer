@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../lib/GBString/include/GBString.h"
-
 namespace GenericBoson
 {
 	class GBHttpLineReader

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-#include "../lib/GBString/include/GBString.h"
 
 namespace GenericBoson
 {

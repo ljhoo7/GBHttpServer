@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 
-#include "../lib/GBString/include/GBString.h"
 #include "GBResponse.h"
 #include "GBPathSegment.h"
 #include "GBHttpVersionTypes.h"
@@ -17,11 +16,10 @@ namespace GenericBoson
 {
 	class GBHttpRouterBase
 	{
-		const SOCKET& m_acceptedSocket;
 	public:
 		std::map<std::string, std::shared_ptr<GBMethod>> m_supportMethodMap;
 
-		GBHttpRouterBase(const SOCKET& acceptedSocket) : m_acceptedSocket(acceptedSocket) {}
+		GBHttpRouterBase() = default;
 		virtual ~GBHttpRouterBase() = default;
 		bool Route(PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName);
 	};
@@ -36,7 +34,7 @@ namespace GenericBoson
 	class GBHttpRouter<GBHttp09> : public GBHttpRouterBase
 	{
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket) 
+		GBHttpRouter()
 		{
 			auto pGet = std::make_shared<GBMethodGET>();
 
@@ -50,7 +48,7 @@ namespace GenericBoson
 	class GBHttpRouter<GBHttp10> : public GBHttpRouterBase
 	{
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket)
+		GBHttpRouter()
 		{
 			auto pGet = std::make_shared<GBMethodGET>();
 			auto pHead = std::make_shared<GBMethodHEAD>();
@@ -67,7 +65,7 @@ namespace GenericBoson
 	class GBHttpRouter<GBHttp11> : public GBHttpRouterBase
 	{
 	public:
-		GBHttpRouter(const SOCKET& acceptedSocket) : GBHttpRouterBase(acceptedSocket)
+		GBHttpRouter()
 		{
 			auto pGet = std::make_shared<GBMethodGET>();
 			auto pHead = std::make_shared<GBMethodHEAD>();
