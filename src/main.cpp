@@ -30,6 +30,11 @@ int main()
 		});
 
 	srv.Start();
+
+	while (true)
+	{
+		Sleep(100);
+	}
 	
 	return 0;
 }

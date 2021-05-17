@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <functional>
+#include <thread>
 
 #include "GBHttpRouter.h"
 #include "GBMethod.h"
@@ -43,6 +44,8 @@ namespace GenericBoson
 			GBBuffer m_writeBuffer;
 		};
 
+		int m_threadPoolSize = 0;
+		std::vector<std::thread> m_threadPool;
 		std::vector<ExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;
@@ -54,7 +57,6 @@ namespace GenericBoson
 		// AcceptEx 함수 포인터
 		LPFN_ACCEPTEX m_lpfnAcceptEx = NULL;
 
-		char m_buffer[1024];
 		uint16_t m_port = 0;
 
 		// Equivalent to '/'

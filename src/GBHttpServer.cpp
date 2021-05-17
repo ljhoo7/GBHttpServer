@@ -68,6 +68,15 @@ namespace GenericBoson
 			return { false, GetWSALastErrorString() };
 		}
 
+		m_threadPoolSize = 2 * std::thread::hardware_concurrency();
+		for (int k = 0; k < m_threadPoolSize; ++k)
+		{
+			m_threadPool.emplace_back([this]() 
+				{
+					this->ThreadFunction();
+				});
+		}
+
 		// [1] - 3.  소켓 만들기
 		m_listeningSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 		if (INVALID_SOCKET == m_listeningSocket)
@@ -117,6 +126,8 @@ namespace GenericBoson
 			return { false, GetWSALastErrorString() };
 		}
 #pragma endregion [2] Prepare AcceptEx and associate accept I/O requests to IOCP
+
+		return { true, {} };
 	}
 
 	GBHttpServer::~GBHttpServer()
@@ -165,7 +176,7 @@ namespace GenericBoson
 
 #if defined(_DEBUG)
 				// 통신 표시
-				std::cout << m_buffer << '\n';
+				std::cout << pEol->m_receiveBuffer.m_buffer << '\n';
 #endif
 
 				switch (version)
