@@ -62,8 +62,8 @@ namespace GenericBoson
 		}
 
 		// [1] - 2.  IOCP 커널 오브젝트 만들기.
-		m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
-		if (NULL == m_IOCP)
+		g_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
+		if (NULL == g_IOCP)
 		{
 			return { false, GetWSALastErrorString() };
 		}
@@ -71,10 +71,7 @@ namespace GenericBoson
 		m_threadPoolSize = 2 * std::thread::hardware_concurrency();
 		for (int k = 0; k < m_threadPoolSize; ++k)
 		{
-			m_threadPool.emplace_back([this]() 
-				{
-					this->ThreadFunction();
-				});
+			m_threadPool.emplace_back(ThreadFunction);
 		}
 
 		// [1] - 3.  소켓 만들기
@@ -85,7 +82,7 @@ namespace GenericBoson
 		}
 
 		// [1] - 4.  Associate the listening socket with the IOCP.
-		HANDLE ret1 = CreateIoCompletionPort((HANDLE)m_listeningSocket, m_IOCP, (u_long)0, 0);
+		HANDLE ret1 = CreateIoCompletionPort((HANDLE)m_listeningSocket, g_IOCP, (u_long)0, 0);
 
 		if (NULL == ret1)
 		{
@@ -136,7 +133,7 @@ namespace GenericBoson
 		closesocket(m_listeningSocket);
 		WSACleanup();
 
-		m_keepLooping = false;
+		g_keepLooping = false;
 	}
 
 	int GBHttpServer::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
@@ -157,9 +154,9 @@ namespace GenericBoson
 		u_long completionKey;
 		ExpandedOverlapped* pEol = nullptr;
 
-		while (true == m_keepLooping)
+		while (true == g_keepLooping)
 		{
-			BOOL result = GetQueuedCompletionStatus(m_IOCP, &receivedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
+			BOOL result = GetQueuedCompletionStatus(g_IOCP, &receivedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
 
 			switch (pEol->m_type)
 			{
@@ -183,17 +180,17 @@ namespace GenericBoson
 				{
 				case HttpVersion::Http09:
 				{
-					m_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
+					g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
 				}
 				break;
 				case HttpVersion::Http10:
 				{
-					m_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
+					g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
 				}
 				break;
 				case HttpVersion::Http11:
 				{
-					m_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
+					g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
 				}
 				break;
 				case HttpVersion::None:
@@ -206,20 +203,20 @@ namespace GenericBoson
 					assert(false);
 				}
 
-				//m_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
+				//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
 				//{
 				//	std::cout << "GET : path = " << path.data() << std::endl;
 				//});
-				//m_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
+				//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
 				//{
 				//	std::cout << "PUT : path = " << path.data() << std::endl;
 				//});
-				//m_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
+				//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
 				//{
 				//	std::cout << "POST : path = " << path.data() << std::endl;
 				//});
 
-				bool routingResult = m_pRouter->Route(m_rootPath, targetPath, methodName);
+				bool routingResult = g_pRouter->Route(g_rootPath, targetPath, methodName);
 
 				if (false == routingResult)
 				{
@@ -272,7 +269,7 @@ namespace GenericBoson
 			}
 
 			// Associate this accept socket withd IOCP.
-			HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, m_IOCP, (u_long)0, 0);
+			HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, g_IOCP, (u_long)0, 0);
 			if (NULL == associateAcceptSocketResult)
 			{
 				return { false, GetWSALastErrorString() };
@@ -294,7 +291,7 @@ namespace GenericBoson
 			return false;
 		}
 
-		PathSegment* pTargetPath = &m_rootPath;
+		PathSegment* pTargetPath = &g_rootPath;
 		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
 
 		if (false == traverseResult)
@@ -322,7 +319,7 @@ namespace GenericBoson
 			return false;
 		}
 
-		PathSegment* pTargetPath = &m_rootPath;
+		PathSegment* pTargetPath = &g_rootPath;
 		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
 
 		if (false == traverseResult)
@@ -350,7 +347,7 @@ namespace GenericBoson
 			return false;
 		}
 
-		PathSegment* pTargetPath = &m_rootPath;
+		PathSegment* pTargetPath = &g_rootPath;
 		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
 
 		if (false == traverseResult)
@@ -365,4 +362,10 @@ namespace GenericBoson
 
 		return true;
 	}
+
+	PathSegment GBHttpServer::g_rootPath;
+	std::unique_ptr<GBHttpRouterBase> GBHttpServer::g_pRouter;
+
+	HANDLE GBHttpServer::g_IOCP = INVALID_HANDLE_VALUE;
+	volatile bool GBHttpServer::g_keepLooping = true;
 }

@@ -3,6 +3,7 @@
 #include <tuple>
 #include <functional>
 #include <thread>
+#include <mutex>
 
 #include "GBHttpRouter.h"
 #include "GBMethod.h"
@@ -51,7 +52,6 @@ namespace GenericBoson
 		WSADATA m_wsaData;
 		sockaddr_in m_addr, m_client;
 
-		HANDLE m_IOCP;
 		SOCKET m_listeningSocket;
 
 		// AcceptEx 함수 포인터
@@ -59,16 +59,10 @@ namespace GenericBoson
 
 		uint16_t m_port = 0;
 
-		// Equivalent to '/'
-		PathSegment m_rootPath;
-		std::unique_ptr<GBHttpRouterBase> m_pRouter = nullptr;
-
-		volatile bool m_keepLooping = true;
-
 		int m_addrSize = sizeof(sockaddr_in);
 
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
-		char m_listenBuffer[BUFFER_SIZE];
+		char m_listenBuffer[BUFFER_SIZE] = { 0, };
 
 		//
 		// \param pathTree
@@ -79,9 +73,17 @@ namespace GenericBoson
 		std::string GetWSALastErrorString();
 		std::string GetWSALastErrorString(int lastError);
 
-		void ThreadFunction();
+		static int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
 
-		int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
+		static std::mutex g_mainCriticalsection;
+
+		// Equivalent to '/'
+		static PathSegment g_rootPath;
+		static std::unique_ptr<GBHttpRouterBase> g_pRouter;
+
+		static HANDLE g_IOCP;
+		static volatile bool g_keepLooping;
+		static void ThreadFunction();
 	public:
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum) : m_port(portNum) {};
