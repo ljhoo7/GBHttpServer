@@ -175,53 +175,56 @@ namespace GenericBoson
 				// 통신 표시
 				std::cout << pEol->m_receiveBuffer.m_buffer << '\n';
 #endif
+				{
+					std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-				switch (version)
-				{
-				case HttpVersion::Http09:
-				{
-					g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
-				}
-				break;
-				case HttpVersion::Http10:
-				{
-					g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
-				}
-				break;
-				case HttpVersion::Http11:
-				{
-					g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
-				}
-				break;
-				case HttpVersion::None:
-				{
-					// #ToDo 로깅으로 바꾸자
-					//return { false, "An abnormal line exists in HTTP message.\n" };
-				}
-				break;
-				default:
-					assert(false);
-				}
+					switch (version)
+					{
+					case HttpVersion::Http09:
+					{
+						g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
+					}
+					break;
+					case HttpVersion::Http10:
+					{
+						g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
+					}
+					break;
+					case HttpVersion::Http11:
+					{
+						g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
+					}
+					break;
+					case HttpVersion::None:
+					{
+						// #ToDo 로깅으로 바꾸자
+						//return { false, "An abnormal line exists in HTTP message.\n" };
+					}
+					break;
+					default:
+						assert(false);
+					}
 
-				//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
-				//{
-				//	std::cout << "GET : path = " << path.data() << std::endl;
-				//});
-				//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
-				//{
-				//	std::cout << "PUT : path = " << path.data() << std::endl;
-				//});
-				//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
-				//{
-				//	std::cout << "POST : path = " << path.data() << std::endl;
-				//});
+					//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
+					//{
+					//	std::cout << "GET : path = " << path.data() << std::endl;
+					//});
+					//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
+					//{
+					//	std::cout << "PUT : path = " << path.data() << std::endl;
+					//});
+					//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
+					//{
+					//	std::cout << "POST : path = " << path.data() << std::endl;
+					//});
 
-				bool routingResult = g_pRouter->Route(g_rootPath, targetPath, methodName);
+					bool routingResult = g_pRouter->Route(g_rootPath, targetPath, methodName);
 
-				if (false == routingResult)
-				{
-					// #ToDo 로깅으로 바꾸자
-					//return { false, "Routing failed." };
+					if (false == routingResult)
+					{
+						// #ToDo 로깅으로 바꾸자
+						//return { false, "Routing failed." };
+					}
 				}
 
 				// IssueSend();
@@ -281,6 +284,8 @@ namespace GenericBoson
 
 	bool GBHttpServer::GET(const std::string_view targetPath, const std::function<void(int)>& func)
 	{
+		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
+
 		std::vector<std::string> pathSegmentArray;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
 
@@ -309,6 +314,8 @@ namespace GenericBoson
 
 	bool GBHttpServer::HEAD(const std::string_view targetPath, const std::function<void(int)>& func)
 	{
+		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
+
 		std::vector<std::string> pathSegmentArray;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
 
@@ -337,6 +344,8 @@ namespace GenericBoson
 
 	bool GBHttpServer::POST(const std::string_view targetPath, const std::function<void(int)>& func)
 	{
+		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
+
 		std::vector<std::string> pathSegmentArray;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
 
@@ -362,6 +371,8 @@ namespace GenericBoson
 
 		return true;
 	}
+
+	std::mutex GBHttpServer::g_mainCriticalsection;
 
 	PathSegment GBHttpServer::g_rootPath;
 	std::unique_ptr<GBHttpRouterBase> GBHttpServer::g_pRouter;
