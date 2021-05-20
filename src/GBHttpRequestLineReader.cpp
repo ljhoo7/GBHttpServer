@@ -11,9 +11,8 @@ namespace GenericBoson
 
 		if (false == parseResult)
 		{
-			// #ToDo
-			// Invalid line exists.
-			return HttpVersion::None;
+			// Parse 함수에서 아직 CRLF를 못 만난 상태. 즉, gathering을 더해야 된다.
+			return HttpVersion::StillLeftToReceive;
 		}
 
 		size_t parsedSize = m_parsed.size();

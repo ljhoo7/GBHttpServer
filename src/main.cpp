@@ -14,21 +14,6 @@ int main()
 			std::cout << "here !" << std::endl;
 		});
 
-	srv.GET("/test/test2", [](int param)
-		{
-			std::cout << "here !" << std::endl;
-		});
-
-	srv.GET("/test/test2", [](int param)
-		{
-			std::cout << "here !" << std::endl;
-		});
-
-	srv.GET("/test/test2", [](int param)
-		{
-			std::cout << "here !" << std::endl;
-		});
-
 	srv.Start();
 
 	while (true)

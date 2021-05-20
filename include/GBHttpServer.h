@@ -26,13 +26,6 @@ namespace GenericBoson
 			SEND,
 		};
 
-		struct GBBuffer
-		{
-			char m_buffer[BUFFER_SIZE] = { 0, };
-			int m_writeOffset = 0;
-			int m_readOffset = 0;
-		};
-
 		struct ExpandedOverlapped : public WSAOVERLAPPED
 		{
 			SOCKET m_socket = INVALID_SOCKET;
@@ -41,8 +34,8 @@ namespace GenericBoson
 
 			// #ToDo
 			// This must be exchanged with a circular lock-free queue.
-			GBBuffer m_receiveBuffer;
-			GBBuffer m_writeBuffer;
+			char m_buffer[BUFFER_SIZE] = { 0, };
+			int m_offset = 0;
 		};
 
 		int m_threadPoolSize = 0;
@@ -74,6 +67,7 @@ namespace GenericBoson
 		std::string GetWSALastErrorString(int lastError);
 
 		static int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
+		static int IssueSend(ExpandedOverlapped* pEol);
 
 		static std::mutex g_mainCriticalsection;
 

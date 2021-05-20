@@ -142,10 +142,15 @@ namespace GenericBoson
 		DWORD flag = 0, receivedBytes = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-		wsaBuffer.buf = &pEol->m_receiveBuffer.m_buffer[pEol->m_receiveBuffer.m_readOffset];
+		wsaBuffer.buf = &pEol->m_buffer[pEol->m_offset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
 
 		return recvResult;
+	}
+
+	int GBHttpServer::IssueSend(ExpandedOverlapped* pEol)
+	{
+		return -1;
 	}
 
 	void GBHttpServer::ThreadFunction()
@@ -162,18 +167,25 @@ namespace GenericBoson
 			{
 			case IO_TYPE::ACCEPT:
 			{
-				int issueRecvResult = IssueRecv(pEol, 1024);
+				int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+				int lastError = WSAGetLastError();
+
+				if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+				{
+					// #ToDo
+					// Issue receiving failed.
+				}
 			}
 			break;
 			case IO_TYPE::RECEIVE:
 			{
 				std::string targetPath, methodName;
 				GenericBoson::GBHttpRequestLineReader requestLineReader;
-				HttpVersion version = requestLineReader.Read(pEol->m_receiveBuffer.m_buffer, targetPath, methodName);
+				HttpVersion version = requestLineReader.Read(pEol->m_buffer, targetPath, methodName);
 
 #if defined(_DEBUG)
 				// 통신 표시
-				std::cout << pEol->m_receiveBuffer.m_buffer << '\n';
+				std::cout << pEol->m_buffer << '\n';
 #endif
 				{
 					std::lock_guard<std::mutex> lock(g_mainCriticalsection);
@@ -193,6 +205,20 @@ namespace GenericBoson
 					case HttpVersion::Http11:
 					{
 						g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
+					}
+					break;
+					case HttpVersion::StillLeftToReceive:
+					{
+						pEol->m_offset += receivedBytes;
+
+						int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+						int lastError = WSAGetLastError();
+
+						if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+						{
+							// #ToDo
+							// Issue receiving failed.
+						}
 					}
 					break;
 					case HttpVersion::None:
@@ -227,7 +253,8 @@ namespace GenericBoson
 					}
 				}
 
-				// IssueSend();
+				pEol->m_offset = 0;
+				int issueSendResult = IssueSend(pEol);
 			}
 			break;
 			case IO_TYPE::SEND:
