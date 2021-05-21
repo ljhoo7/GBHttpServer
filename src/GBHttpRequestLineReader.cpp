@@ -5,14 +5,14 @@
 
 namespace GenericBoson
 {
-	HttpVersion GBHttpRequestLineReader::Read(const std::string_view target, std::string& targetPath, std::string& methodName)
+	std::pair<bool, HttpVersion> GBHttpRequestLineReader::Read(const std::string_view target, std::string& targetPath, std::string& methodName)
 	{
 		bool parseResult = Parse(target);
 
 		if (false == parseResult)
 		{
 			// Parse 함수에서 아직 CRLF를 못 만난 상태. 즉, gathering을 더해야 된다.
-			return HttpVersion::StillLeftToReceive;
+			return { false, HttpVersion::None };
 		}
 
 		size_t parsedSize = m_parsed.size();
@@ -21,7 +21,7 @@ namespace GenericBoson
 		{
 			methodName = m_parsed[0];
 			targetPath = m_parsed[1];
-			return HttpVersion::Http09;
+			return { true, HttpVersion::Http09 };
 		}
 		else if (3 == parsedSize)
 		{
@@ -30,7 +30,7 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// Invalid request-line.
-				return HttpVersion::None;
+				return { true, HttpVersion::None };
 			}
 
 			methodName = m_parsed[0];
@@ -40,20 +40,20 @@ namespace GenericBoson
 
 			if ("0.9" == versionNumber)
 			{
-				return HttpVersion::Http09;;
+				return { true, HttpVersion::Http09 };
 			}
 			else if ("1.0" == versionNumber)
 			{
-				return HttpVersion::Http10;
+				return { true, HttpVersion::Http10 };
 			}
 			else if ("1.1" == versionNumber)
 			{
-				return HttpVersion::Http11;
+				return { true, HttpVersion::Http11 };
 			}
 		}
 
 		// #ToDo
 		// Invalid request-line.
-		return HttpVersion::None;
+		return { true, HttpVersion::None };
 	}
 }

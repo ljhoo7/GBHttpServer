@@ -10,7 +10,6 @@ namespace GenericBoson
 	enum class HttpVersion
 	{
 		None,
-		StillLeftToReceive,
 		Http09,
 		Http10,
 		Http11,

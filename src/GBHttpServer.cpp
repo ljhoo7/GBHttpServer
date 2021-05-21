@@ -181,7 +181,27 @@ namespace GenericBoson
 			{
 				std::string targetPath, methodName;
 				GenericBoson::GBHttpRequestLineReader requestLineReader;
-				HttpVersion version = requestLineReader.Read(pEol->m_buffer, targetPath, methodName);
+
+				bool isGatheringCompleted = false;
+				HttpVersion version;
+					
+				std::tie(isGatheringCompleted, version) = requestLineReader.Read(pEol->m_buffer, targetPath, methodName);
+
+				if (false == isGatheringCompleted)
+				{
+					pEol->m_offset += receivedBytes;
+
+					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+					int lastError = WSAGetLastError();
+
+					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+					{
+						// #ToDo
+						// Issue receiving failed.
+					}
+
+					continue;
+				}
 
 #if defined(_DEBUG)
 				// 통신 표시
@@ -205,20 +225,6 @@ namespace GenericBoson
 					case HttpVersion::Http11:
 					{
 						g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
-					}
-					break;
-					case HttpVersion::StillLeftToReceive:
-					{
-						pEol->m_offset += receivedBytes;
-
-						int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
-						int lastError = WSAGetLastError();
-
-						if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
-						{
-							// #ToDo
-							// Issue receiving failed.
-						}
 					}
 					break;
 					case HttpVersion::None:
