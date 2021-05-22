@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.18.1)
 
-project(GBHttpServer)
+project(GBHttpServerFramework)
 
 file(GLOB GBHttpServerFramework_SRC src/*.cpp)
 
@@ -12,10 +12,20 @@ file(GLOB GBHttpServerFramework_HEADER include/*.h)
 source_group("Router" FILES ${ROUTER_FILES})
 source_group("Method" FILES ${METHOD_FILES})
 
-add_executable(GBHttpServerFramework ${GBHttpServerFramework_SRC} ${GBHttpServerFramework_HEADER})
+add_library(GBHttpServerFramework STATIC ${GBHttpServerFramework_SRC} ${GBHttpServerFramework_HEADER})
 
 set_property(TARGET GBHttpServerFramework PROPERTY CXX_STANDARD 20)
 
 target_compile_definitions(GBHttpServerFramework PRIVATE _UNICODE UNICODE)
 
-target_link_libraries(GBHttpServerFramework PRIVATE ws2_32.lib)
+file(GLOB SAMPLE_SRC sample/*.cpp sample/*.h)
+
+add_executable(Sample ${SAMPLE_SRC})
+
+target_link_libraries(Sample PRIVATE GBHttpServerFramework ws2_32.lib)
+
+file(GLOB TEST_SRC test/*.cpp test/*.h)
+
+add_executable(Test ${TEST_SRC})
+
+target_link_libraries(Test PRIVATE GBHttpServerFramework ws2_32.lib)
