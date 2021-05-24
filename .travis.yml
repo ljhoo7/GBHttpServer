@@ -2,3 +2,4 @@ language: cpp
 os: windows
 script:
     - cmake . -A x64
+    - cmake --build .
