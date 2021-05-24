@@ -1,1 +1,4 @@
 language: cpp
+os: windows
+script:
+    - cmake . -A x64
