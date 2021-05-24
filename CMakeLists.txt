@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.18.1)
+cmake_minimum_required (VERSION 3.17.0)
 
 project(GBHttpServerFramework)
 
@@ -24,8 +24,12 @@ add_executable(Sample ${SAMPLE_SRC})
 
 target_link_libraries(Sample PRIVATE GBHttpServerFramework ws2_32.lib)
 
+set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
+
 file(GLOB TEST_SRC test/*.cpp test/*.h)
 
 add_executable(Test ${TEST_SRC})
+
+set_property(TARGET Test PROPERTY CXX_STANDARD 20)
 
 target_link_libraries(Test PRIVATE GBHttpServerFramework ws2_32.lib)
