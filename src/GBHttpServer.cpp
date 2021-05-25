@@ -8,7 +8,9 @@ namespace GenericBoson
 	{
 		for (auto& iPathSegment : pathTree)
 		{
-			if (false == pTargetPath->m_subTreeMap.contains(iPathSegment))
+			// 원래 true == pTargetPath->m_subTreeMap.contains(iPathSegment) 였는데,
+			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
+			if (pTargetPath->m_subTreeMap.end() == pTargetPath->m_subTreeMap.find(iPathSegment))
 			{
 				pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
 			}

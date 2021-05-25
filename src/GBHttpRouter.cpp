@@ -15,7 +15,9 @@ namespace GenericBoson
 			return false;
 		}
 
-		if (false == m_supportMethodMap.contains(methodName.data()))
+		// 원래 true == m_supportMethodMap.contains(methodName.data()) 였는데,
+		// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
+		if (m_supportMethodMap.end() == m_supportMethodMap.find(methodName.data()))
 		{
 			// #ToDo
 			// Invalid request : The method name is not matched with the version.
@@ -25,7 +27,9 @@ namespace GenericBoson
 		PathSegment* pNode = &rootPath;
 		for (auto& iPathSegment : pathSegmentArray)
 		{
-			if (false == pNode->m_subTreeMap.contains(iPathSegment))
+			// 원래 true == pNode->m_subTreeMap.contains(iPathSegment) 였는데,
+			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
+			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(iPathSegment))
 			{
 				// #ToDo ActionMethod not found.
 				return false;

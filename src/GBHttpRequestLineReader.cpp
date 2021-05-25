@@ -26,7 +26,9 @@ namespace GenericBoson
 		else if (3 == parsedSize)
 		{
 			std::string_view httpStr("HTTP/");
-			if (false == m_parsed[2].starts_with(httpStr))
+			// 아래 if는 원래 true == m_parsed[2].starts_with(httpStr) 이었지만,
+			// travis windows가 VS2017까지만 지원해서 아래처럼 바꿈.
+			if (httpStr.size() < 5 || httpStr == m_parsed[2].substr(0, httpStr.size()))
 			{
 				// #ToDo
 				// Invalid request-line.
