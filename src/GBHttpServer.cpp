@@ -155,6 +155,43 @@ namespace GenericBoson
 		return -1;
 	}
 
+	bool GBHttpServer::Parse(const std::string_view target)
+	{
+		std::string token;
+
+		// All Http message ( except for Entity-Body ) must be ended by CRLF.
+		bool CRReadJustBefore = false;
+		for (auto iChar : target)
+		{
+			switch (iChar)
+			{
+			case '\r':
+				CRReadJustBefore = true;
+				break;
+			case '\n':
+				if (true == CRReadJustBefore)
+				{
+					m_parsed.push_back(token);
+					token.clear();
+					return true;
+				}
+				CRReadJustBefore = false;
+				break;
+			case ' ':
+				CRReadJustBefore = false;
+				m_parsed.push_back(token);
+				token.clear();
+				break;
+			default:
+				CRReadJustBefore = false;
+				token.push_back(iChar);
+				break;
+			}
+		}
+
+		return false;
+	}
+
 	void GBHttpServer::ThreadFunction()
 	{
 		DWORD receivedBytes;
@@ -184,10 +221,18 @@ namespace GenericBoson
 				std::string targetPath, methodName;
 				GenericBoson::GBHttpRequestLineReader requestLineReader;
 
+				bool parseResult = Parse(pEol->m_buffer);
+
+				if (false == parseResult)
+				{
+					// Parse 함수에서 아직 CRLF를 못 만난 상태. 즉, gathering을 더해야 된다.
+					return { false, HttpVersion::None };
+				}
+
 				bool isGatheringCompleted = false;
 				HttpVersion version;
 					
-				std::tie(isGatheringCompleted, version) = requestLineReader.Read(pEol->m_buffer, targetPath, methodName);
+				std::tie(isGatheringCompleted, version) = requestLineReader.Read(targetPath, methodName);
 
 				if (false == isGatheringCompleted)
 				{

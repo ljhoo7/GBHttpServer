@@ -7,14 +7,6 @@ namespace GenericBoson
 {
 	std::pair<bool, HttpVersion> GBHttpRequestLineReader::Read(const std::string_view target, std::string& targetPath, std::string& methodName)
 	{
-		bool parseResult = Parse(target);
-
-		if (false == parseResult)
-		{
-			// Parse 함수에서 아직 CRLF를 못 만난 상태. 즉, gathering을 더해야 된다.
-			return { false, HttpVersion::None };
-		}
-
 		size_t parsedSize = m_parsed.size();
 
 		if (2 == parsedSize)

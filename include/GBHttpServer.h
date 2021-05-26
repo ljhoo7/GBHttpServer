@@ -57,10 +57,22 @@ namespace GenericBoson
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
 		char m_listenBuffer[BUFFER_SIZE] = { 0, };
 
+		/*
+		Tokens parsed by Parse function.
+		*/
+		std::vector<std::string> m_parsed;
+
 		//
 		// \param pathTree
 		// \param pTargetPath
 		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath);
+
+		/*
+		Parse the HTTP message with gathering.
+
+		\return Was It succeeded?
+		*/
+		static bool Parse(const std::string_view);
 
 		std::pair<bool, std::string> SetListeningSocket();
 		std::string GetWSALastErrorString();
