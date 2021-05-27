@@ -5,7 +5,7 @@
 
 namespace GenericBoson
 {
-	std::pair<bool, HttpVersion> GBHttpRequestLineReader::Read(const std::string_view target, std::string& targetPath, std::string& methodName)
+	HttpVersion GBHttpRequestLineReader::Read(std::string& targetPath, std::string& methodName)
 	{
 		size_t parsedSize = m_parsed.size();
 
@@ -13,7 +13,7 @@ namespace GenericBoson
 		{
 			methodName = m_parsed[0];
 			targetPath = m_parsed[1];
-			return { true, HttpVersion::Http09 };
+			return HttpVersion::Http09;
 		}
 		else if (3 == parsedSize)
 		{
@@ -24,7 +24,7 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// Invalid request-line.
-				return { true, HttpVersion::None };
+				return HttpVersion::None;
 			}
 
 			methodName = m_parsed[0];
@@ -34,20 +34,20 @@ namespace GenericBoson
 
 			if ("0.9" == versionNumber)
 			{
-				return { true, HttpVersion::Http09 };
+				return HttpVersion::Http09;
 			}
 			else if ("1.0" == versionNumber)
 			{
-				return { true, HttpVersion::Http10 };
+				return HttpVersion::Http10;
 			}
 			else if ("1.1" == versionNumber)
 			{
-				return { true, HttpVersion::Http11 };
+				return HttpVersion::Http11;
 			}
 		}
 
 		// #ToDo
 		// Invalid request-line.
-		return { true, HttpVersion::None };
+		return HttpVersion::None;
 	}
 }

@@ -11,36 +11,17 @@
 #include "GBPathSegment.h"
 #include "GBHttpRequestLineReader.h"
 #include "GBHttpRouter.h"
-
-const int BUFFER_SIZE = 4096;
-const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
+#include "GBExpandedOverlapped.h"
 
 namespace GenericBoson
 {
+	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
+
 	class GBHttpServer
 	{
-		enum class IO_TYPE : int64_t
-		{
-			ACCEPT = 1,
-			RECEIVE,
-			SEND,
-		};
-
-		struct ExpandedOverlapped : public WSAOVERLAPPED
-		{
-			SOCKET m_socket = INVALID_SOCKET;
-			IO_TYPE m_type = IO_TYPE::ACCEPT;
-			uint32_t m_leftBytesToReceive = 0;
-
-			// #ToDo
-			// This must be exchanged with a circular lock-free queue.
-			char m_buffer[BUFFER_SIZE] = { 0, };
-			int m_offset = 0;
-		};
-
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;
-		std::vector<ExpandedOverlapped> m_sessions;
+		std::vector<GBExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;
 		sockaddr_in m_addr, m_client;
@@ -55,31 +36,19 @@ namespace GenericBoson
 		int m_addrSize = sizeof(sockaddr_in);
 
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
-		char m_listenBuffer[BUFFER_SIZE] = { 0, };
-
-		/*
-		Tokens parsed by Parse function.
-		*/
-		std::vector<std::string> m_parsed;
+		char m_listenBuffer[1024] = { 0, };
 
 		//
 		// \param pathTree
 		// \param pTargetPath
 		bool TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath);
 
-		/*
-		Parse the HTTP message with gathering.
-
-		\return Was It succeeded?
-		*/
-		static bool Parse(const std::string_view);
-
 		std::pair<bool, std::string> SetListeningSocket();
 		std::string GetWSALastErrorString();
 		std::string GetWSALastErrorString(int lastError);
 
-		static int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
-		static int IssueSend(ExpandedOverlapped* pEol);
+		static int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
+		static int IssueSend(GBExpandedOverlapped* pEol);
 
 		static std::mutex g_mainCriticalsection;
 
