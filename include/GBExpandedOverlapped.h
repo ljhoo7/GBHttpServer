@@ -23,9 +23,9 @@ namespace GenericBoson
 		int m_offset = 0;
 
 		/*
-		Tokens parsed by Parse function.
+		lines parsed by Parse function.
 		*/
-		std::vector<std::string> m_parsed;
+		std::vector<std::string> m_lines;
 		
 		/*
 		Parse the HTTP message with gathering.

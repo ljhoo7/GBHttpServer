@@ -5,7 +5,7 @@ namespace GenericBoson
 {
 	bool GBExpandedOverlapped::Parse()
 	{
-		std::string token;
+		std::string line;
 
 		// All Http message ( except for Entity-Body ) must be ended by CRLF.
 		bool CRReadJustBefore = false;
@@ -19,24 +19,19 @@ namespace GenericBoson
 			case '\n':
 				if (true == CRReadJustBefore)
 				{
-					m_parsed.push_back(token);
-					token.clear();
-					return true;
+					m_lines.push_back(line);
+					line.clear();
+					break;
 				}
 				CRReadJustBefore = false;
 				break;
-			case ' ':
-				CRReadJustBefore = false;
-				m_parsed.push_back(token);
-				token.clear();
-				break;
 			default:
 				CRReadJustBefore = false;
-				token.push_back(iChar);
+				line.push_back(iChar);
 				break;
 			}
 		}
 
-		return false;
+		return CRReadJustBefore;
 	}
 }
