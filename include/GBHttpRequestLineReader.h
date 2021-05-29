@@ -9,6 +9,7 @@ namespace GenericBoson
 	*/
 	class GBHttpRequestLineReader : public GBHttpLineReader
 	{
+		std::vector<std::string> m_tokens;
 	public:
 		virtual ~GBHttpRequestLineReader() = default;
 
