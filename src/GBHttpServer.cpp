@@ -182,7 +182,6 @@ namespace GenericBoson
 			case IO_TYPE::RECEIVE:
 			{
 				std::string targetPath, methodName;
-				GenericBoson::GBHttpRequestLineReader requestLineReader;
 
 				bool parseResult = pEol->Parse();
 
@@ -202,7 +201,12 @@ namespace GenericBoson
 					continue;
 				}
 
-				HttpVersion version = requestLineReader.Read(targetPath, methodName);
+				// ExtendedOverlapped.Parse에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
+				GenericBoson::GBHttpRequestLineReader requestLineReader(pEol->m_lines[0]);
+				bool succeeded = false;
+				HttpVersion version = HttpVersion::None;
+				std::string methodName;
+				std::tie(succeeded, version, methodName) = requestLineReader.ParseAndRead(targetPath);
 				
 #if defined(_DEBUG)
 				// 통신 표시

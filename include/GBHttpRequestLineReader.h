@@ -4,19 +4,29 @@
 
 namespace GenericBoson
 {
+	struct RequestLineInformation
+	{
+		std::string m_methodName;
+		std::string m_targetPath;
+		HttpVersion m_version = HttpVersion::None;
+	};
+
 	/*
 	Read the first line of request.
 	*/
 	class GBHttpRequestLineReader : public GBHttpLineReader
 	{
+		const std::string_view m_requestLineCandidate;
 		std::vector<std::string> m_tokens;
-	public:
-		virtual ~GBHttpRequestLineReader() = default;
 
 		// Gathering a request line.
-		// \param targetPath
-		// \param methodName
-		// \return The HTTP version of this request line.
-		HttpVersion Read(std::string& targetPath, std::string& methodName);
+		// \return bool - succeeded? RequestLineInformation - The information of this request line.
+		std::pair<bool, RequestLineInformation> Read(const std::string& targetPath);
+	public:
+		GBHttpRequestLineReader(const std::string_view requestLineCandidate);
+		virtual ~GBHttpRequestLineReader() = default;
+
+		// \return bool - succeeded? RequestLineInformation - The information of this request line.
+		std::pair<bool, RequestLineInformation> ParseAndRead();
 	};
 }
