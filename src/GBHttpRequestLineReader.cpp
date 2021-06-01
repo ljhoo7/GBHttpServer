@@ -10,19 +10,44 @@ namespace GenericBoson
 
 	std::pair<bool, RequestLineInformation> GBHttpRequestLineReader::ParseAndRead()
 	{
+		bool succeeded = false;
+		std::string parseResult;
+		RequestLineInformation info;
 
+		std::tie(succeeded, parseResult) = Parse();
+
+		if (false == succeeded)
+		{
+			return { false, info };
+		}
+
+		std::tie(succeeded, info) = Read();
+
+		if (false == succeeded)
+		{
+			return { false, info };
+		}
+
+		return { true, info };
 	}
 
-	std::pair<bool, RequestLineInformation> GBHttpRequestLineReader::Read(const std::string& targetPath)
+	std::pair<bool, std::string> GBHttpRequestLineReader::Parse()
 	{
-		std::string methodName;
+		return { true, {} };
+	}
+
+	std::pair<bool, RequestLineInformation> GBHttpRequestLineReader::Read()
+	{
+		RequestLineInformation info;
+
 		size_t parsedSize = m_tokens.size();
 
 		if (2 == parsedSize)
 		{
-			methodName = m_tokens[0];
-			targetPath = m_tokens[1];
-			return { HttpVersion::Http09, methodName };
+			info.m_methodName = m_tokens[0];
+			info.m_targetPath = m_tokens[1];
+			info.m_version = HttpVersion::Http09;
+			return { true, info };
 		}
 		else if (3 == parsedSize)
 		{
@@ -33,30 +58,33 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// Invalid request-line.
-				return { HttpVersion::None, {} };
+				return { false, info };
 			}
 
-			methodName = m_tokens[0];
-			targetPath = m_tokens[1];
+			info.m_methodName = m_tokens[0];
+			info.m_targetPath = m_tokens[1];
 			std::string_view versionString(m_tokens[2]);
 			std::string_view versionNumber = versionString.substr(httpStr.size());
 
 			if ("0.9" == versionNumber)
 			{
-				return { HttpVersion::Http09, methodName };
+				info.m_version = HttpVersion::Http09;
+				return { true , info };
 			}
 			else if ("1.0" == versionNumber)
 			{
-				return { HttpVersion::Http10, methodName };
+				info.m_version = HttpVersion::Http10;
+				return { true , info };
 			}
 			else if ("1.1" == versionNumber)
 			{
-				return { HttpVersion::Http11, methodName };
+				info.m_version = HttpVersion::Http11;
+				return { true , info };
 			}
 		}
 
 		// #ToDo
 		// Invalid request-line.
-		return { HttpVersion::None, {} };
+		return { false, info };
 	}
 }

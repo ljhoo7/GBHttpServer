@@ -21,7 +21,9 @@ namespace GenericBoson
 
 		// Gathering a request line.
 		// \return bool - succeeded? RequestLineInformation - The information of this request line.
-		std::pair<bool, RequestLineInformation> Read(const std::string& targetPath);
+		std::pair<bool, RequestLineInformation> Read();
+
+		std::pair<bool, std::string> Parse();
 	public:
 		GBHttpRequestLineReader(const std::string_view requestLineCandidate);
 		virtual ~GBHttpRequestLineReader() = default;
