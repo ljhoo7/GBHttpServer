@@ -181,12 +181,11 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool parseResult = pEol->GatherAndParseLines();
+				bool parseResult = pEol->GatherAndParseLines(receivedBytes);
+				pEol->m_offset += receivedBytes;
 
 				if (false == parseResult)
 				{
-					pEol->m_offset += receivedBytes;
-
 					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
 					int lastError = WSAGetLastError();
 
