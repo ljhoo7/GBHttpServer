@@ -181,7 +181,7 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool parseResult = pEol->Parse();
+				bool parseResult = pEol->GatherAndParseLines();
 
 				if (false == parseResult)
 				{
@@ -199,7 +199,7 @@ namespace GenericBoson
 					continue;
 				}
 
-				// ExtendedOverlapped.Parse에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
+				// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
 				GenericBoson::GBHttpRequestLineReader requestLineReader(pEol->m_lines[0]);
 				
 				bool succeeded = false;

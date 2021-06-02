@@ -17,13 +17,13 @@ namespace GenericBoson
 	class GBHttpRequestLineReader : public GBHttpLineReader
 	{
 		const std::string_view m_requestLineCandidate;
-		std::vector<std::string> m_tokens;
+		std::vector<std::string_view> m_tokens;
 
 		// Gathering a request line.
 		// \return bool - succeeded? RequestLineInformation - The information of this request line.
 		std::pair<bool, RequestLineInformation> Read();
 
-		std::pair<bool, std::string> Parse();
+		void ParseToken();
 	public:
 		GBHttpRequestLineReader(const std::string_view requestLineCandidate);
 		virtual ~GBHttpRequestLineReader() = default;

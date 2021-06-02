@@ -23,15 +23,15 @@ namespace GenericBoson
 		int m_offset = 0;
 
 		/*
-		lines parsed by Parse function.
+		lines parsed by GatherAndParseLines function.
 		*/
 		std::vector<std::string> m_lines;
 		
 		/*
-		Parse the HTTP message with gathering.
+		GatherAndParseLines the HTTP message with gathering.
 
 		\return Was It succeeded?
 		*/
-		bool Parse();
+		bool GatherAndParseLines();
 	};
 }

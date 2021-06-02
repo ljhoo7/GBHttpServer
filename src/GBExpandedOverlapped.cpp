@@ -3,7 +3,7 @@
 
 namespace GenericBoson
 {
-	bool GBExpandedOverlapped::Parse()
+	bool GBExpandedOverlapped::GatherAndParseLines()
 	{
 		std::string line;
 

@@ -14,12 +14,7 @@ namespace GenericBoson
 		std::string parseResult;
 		RequestLineInformation info;
 
-		std::tie(succeeded, parseResult) = Parse();
-
-		if (false == succeeded)
-		{
-			return { false, info };
-		}
+		ParseToken();
 
 		std::tie(succeeded, info) = Read();
 
@@ -31,9 +26,19 @@ namespace GenericBoson
 		return { true, info };
 	}
 
-	std::pair<bool, std::string> GBHttpRequestLineReader::Parse()
+	void GBHttpRequestLineReader::ParseToken()
 	{
-		return { true, {} };
+		size_t findResult = 0, prevIndex = 0;
+		while (std::string::npos != findResult)
+		{
+			findResult = m_requestLineCandidate.find_first_of(' ', prevIndex);
+
+			std::string_view token = m_requestLineCandidate.substr(prevIndex, findResult - prevIndex);
+
+			m_tokens.push_back(token);
+
+			prevIndex = findResult + 1;
+		}
 	}
 
 	std::pair<bool, RequestLineInformation> GBHttpRequestLineReader::Read()
