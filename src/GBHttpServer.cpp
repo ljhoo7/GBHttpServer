@@ -186,7 +186,7 @@ namespace GenericBoson
 
 				if (false == parseResult)
 				{
-					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
 					int lastError = WSAGetLastError();
 
 					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
