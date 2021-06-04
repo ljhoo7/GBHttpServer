@@ -26,10 +26,4 @@ target_link_libraries(Sample PRIVATE GBHttpServerFramework ws2_32.lib)
 
 set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
 
-file(GLOB TEST_SRC test/*.cpp test/*.h)
-
-add_executable(Test ${TEST_SRC})
-
-set_property(TARGET Test PROPERTY CXX_STANDARD 20)
-
-target_link_libraries(Test PRIVATE GBHttpServerFramework ws2_32.lib)
+include_external_msproject(Test Test/Test.csproj PLATFORM "Any CPU")
