@@ -6,5 +6,6 @@ namespace Test
 {
     abstract class TestCaseBase
     {
+        public abstract void Start();
     }
 }
