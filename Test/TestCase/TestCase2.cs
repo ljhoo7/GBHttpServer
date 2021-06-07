@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Test
 {
-    class TestCase1 : TestCaseBase
+    class TestCase2 : TestCaseBase
     {
         public override async Task StartAsync()
         {
-            var response = await g_httpClient.GetAsync("http://localhost:8000/test/test2").ConfigureAwait(false);
+            Console.WriteLine("TestCase 2");
         }
     }
 }
