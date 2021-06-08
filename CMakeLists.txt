@@ -31,3 +31,8 @@ target_link_libraries(Sample PRIVATE GBHttpServerFramework ws2_32.lib)
 set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
 
 include_external_msproject(Test Test/Test.csproj PLATFORM "Any CPU")
+
+add_dependencies(Test GBHttpServerFramework Sample)
+
+set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT Test)
+

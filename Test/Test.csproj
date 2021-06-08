@@ -13,4 +13,8 @@
     <OutputPath>./../bin</OutputPath>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="./../bin/GBHttpServerFramework.exe&#xD;&#xA;dotnet run ./../bin/$(TargetPath)" />
+  </Target>
+
 </Project>
