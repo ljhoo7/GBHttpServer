@@ -19,7 +19,7 @@ namespace GenericBoson
 		const std::string_view m_requestLineCandidate;
 		std::vector<std::string_view> m_tokens;
 
-		// Gathering a request line.
+		// Read parsed tokens.
 		// \return bool - succeeded? RequestLineInformation - The information of this request line.
 		std::pair<bool, RequestLineInformation> Read();
 
