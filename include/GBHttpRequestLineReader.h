@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GBHttpLineReader.h"
-
 namespace GenericBoson
 {
 	struct RequestLineInformation
@@ -14,7 +12,7 @@ namespace GenericBoson
 	/*
 	Read the first line of request.
 	*/
-	class GBHttpRequestLineReader : public GBHttpLineReader
+	class GBHttpRequestLineReader
 	{
 		const std::string_view m_requestLineCandidate;
 		std::vector<std::string_view> m_tokens;
