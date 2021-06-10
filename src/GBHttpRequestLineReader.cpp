@@ -5,14 +5,14 @@
 
 namespace GenericBoson
 {
-	GBHttpRequestLineReader::GBHttpRequestLineReader(const std::string_view requestLineCandidate)
-	: m_requestLineCandidate(requestLineCandidate){}
+	GBHttpRequestLineReader::GBHttpRequestLineReader(const std::vector<std::string>& lines)
+	: m_requestLineCandidate(lines[0]){}
 
-	std::pair<bool, RequestLineInformation> GBHttpRequestLineReader::ParseAndRead()
+	std::pair<bool, GBRequestLineInformation> GBHttpRequestLineReader::ParseAndRead()
 	{
 		bool succeeded = false;
 		std::string parseResult;
-		RequestLineInformation info;
+		GBRequestLineInformation info;
 
 		ParseToken();
 
@@ -41,9 +41,9 @@ namespace GenericBoson
 		}
 	}
 
-	std::pair<bool, RequestLineInformation> GBHttpRequestLineReader::Read()
+	std::pair<bool, GBRequestLineInformation> GBHttpRequestLineReader::Read()
 	{
-		RequestLineInformation info;
+		GBRequestLineInformation info;
 
 		size_t parsedSize = m_tokens.size();
 

@@ -2,7 +2,7 @@
 
 namespace GenericBoson
 {
-	struct RequestLineInformation
+	struct GBRequestLineInformation
 	{
 		std::string m_methodName;
 		std::string m_targetPath;
@@ -18,15 +18,15 @@ namespace GenericBoson
 		std::vector<std::string_view> m_tokens;
 
 		// Read parsed tokens.
-		// \return bool - succeeded? RequestLineInformation - The information of this request line.
-		std::pair<bool, RequestLineInformation> Read();
+		// \return bool - succeeded? GBRequestLineInformation - The information of this request line.
+		std::pair<bool, GBRequestLineInformation> Read();
 
 		void ParseToken();
 	public:
-		GBHttpRequestLineReader(const std::string_view requestLineCandidate);
+		GBHttpRequestLineReader(const std::vector<std::string>& lines);
 		virtual ~GBHttpRequestLineReader() = default;
 
-		// \return bool - succeeded? RequestLineInformation - The information of this request line.
-		std::pair<bool, RequestLineInformation> ParseAndRead();
+		// \return bool - succeeded? GBRequestLineInformation - The information of this request line.
+		std::pair<bool, GBRequestLineInformation> ParseAndRead();
 	};
 }

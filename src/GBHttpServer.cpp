@@ -184,7 +184,20 @@ namespace GenericBoson
 				bool parseResult = pEol->GatherAndParseLines(receivedBytes);
 				pEol->m_offset += receivedBytes;
 
+				bool gatheringNotFinished = false;
+				bool gatheringFinishedButNothing = false;
+				
 				if (false == parseResult)
+				{
+					gatheringNotFinished = true;
+				}
+				else if (0 == pEol->m_offset)
+				{
+					gatheringFinishedButNothing = true;
+				}
+
+				// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
+				if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
 				{
 					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
 					int lastError = WSAGetLastError();
@@ -198,12 +211,23 @@ namespace GenericBoson
 					continue;
 				}
 
+				assert(0 < pEol->m_lines.size());
+
 				// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
-				GenericBoson::GBHttpRequestLineReader requestLineReader(pEol->m_lines[0]);
+				GBHttpRequestLineReader requestLineReader(pEol->m_lines);
 				
 				bool succeeded = false;
-				RequestLineInformation info;
-				std::tie(succeeded, info) = requestLineReader.ParseAndRead();
+				GBRequestLineInformation requestLineInfo;
+				std::tie(succeeded, requestLineInfo) = requestLineReader.ParseAndRead();
+
+				GBHeaderInformation headerInfo;
+				if(1 < pEol->m_lines.size())
+				{
+					// 헤더읽기
+					GBHttpHeaderReader headerReader(pEol->m_lines);
+
+					std::tie(succeeded, headerInfo) = headerReader.ParseAndRead();
+				}
 				
 #if defined(_DEBUG)
 				// 통신 표시
@@ -212,7 +236,7 @@ namespace GenericBoson
 				{
 					std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-					switch (info.m_version)
+					switch (requestLineInfo.m_version)
 					{
 					case HttpVersion::Http09:
 					{
@@ -252,7 +276,7 @@ namespace GenericBoson
 					//	std::cout << "POST : path = " << path.data() << std::endl;
 					//});
 
-					bool routingResult = g_pRouter->Route(g_rootPath, info.m_targetPath, info.m_methodName);
+					bool routingResult = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
 
 					if (false == routingResult)
 					{

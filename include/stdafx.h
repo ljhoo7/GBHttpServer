@@ -15,3 +15,4 @@
 #include <map>
 #include <functional>
 #include <tchar.h>
+#include <cassert>
