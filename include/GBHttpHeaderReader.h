@@ -10,6 +10,7 @@ namespace GenericBoson
 	class GBHttpHeaderReader
 	{
 		const std::vector<std::string>& m_cLines;
+
 	public:
 		GBHttpHeaderReader(const std::vector<std::string>& lines)
 			: m_cLines(lines) {}
