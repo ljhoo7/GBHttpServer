@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	struct GBRequestLineInformation
+	struct GBRequestLineInformation : public GBHttpInformation
 	{
 		std::string m_methodName;
 		std::string m_targetPath;

@@ -8,7 +8,7 @@ namespace GenericBoson
 	{
 		bool succeeded = false;
 		std::string parseResult;
-		GBRequestLineInformation info;
+		GBHttpInformation info;
 
 		ParseToken();
 

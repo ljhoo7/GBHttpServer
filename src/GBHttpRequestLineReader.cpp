@@ -6,7 +6,7 @@
 namespace GenericBoson
 {
 	GBHttpRequestLineReader::GBHttpRequestLineReader(const std::vector<std::string>& lines)
-	: m_requestLineCandidate(lines[0]){}
+	: m_requestLineCandidate(lines[0]), GBHttpReader(lines){}
 
 	std::pair<bool, GBRequestLineInformation> GBHttpRequestLineReader::ParseAndRead()
 	{
@@ -29,7 +29,7 @@ namespace GenericBoson
 		}
 	}
 
-	std::pair<bool, GBRequestLineInformation> GBHttpRequestLineReader::Read()
+	std::pair<bool, GBHttpInformation> GBHttpRequestLineReader::Read()
 	{
 		GBRequestLineInformation info;
 
