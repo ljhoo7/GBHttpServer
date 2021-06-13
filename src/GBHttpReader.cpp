@@ -6,6 +6,19 @@ namespace GenericBoson
 {
 	std::pair<bool, GBHttpInformation> GBHttpReader::ParseAndRead()
 	{
-		return std::pair<bool, GBHttpInformation>();
+		bool succeeded = false;
+		std::string parseResult;
+		GBRequestLineInformation info;
+
+		ParseToken();
+
+		std::tie(succeeded, info) = Read();
+
+		if (false == succeeded)
+		{
+			return { false, info };
+		}
+
+		return { true, info };
 	}
 }
