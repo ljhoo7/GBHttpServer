@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	struct GBHeaderInformation : public GBHttpInformation
+	struct GBHttpHeaderInformation : public GBHttpInformation
 	{
 		std::map<std::string, std::string> m_headerMap;
 	};
@@ -14,13 +14,12 @@ namespace GenericBoson
 		const std::vector<std::string>& m_cLines;
 
 		// Inherited via GBHttpReader
-		virtual std::pair<bool, GBHttpInformation> Read() override;
+		virtual bool Read(GBHttpInformation* pOutInfo) override;
+
 		virtual void ParseToken() override;
 
 	public:
 		GBHttpHeaderReader(const std::vector<std::string>& lines)
 			: m_cLines(lines), GBHttpReader(lines) {}
-
-		std::pair<bool, GBHeaderInformation> ParseAndRead();
 	};
 }

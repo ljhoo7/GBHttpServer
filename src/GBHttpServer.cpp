@@ -216,17 +216,17 @@ namespace GenericBoson
 				// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
 				GBHttpRequestLineReader requestLineReader(pEol->m_lines);
 				
-				bool succeeded = false;
 				GBRequestLineInformation requestLineInfo;
-				std::tie(succeeded, requestLineInfo) = requestLineReader.ParseAndRead();
+				bool succeeded = requestLineReader.ParseAndRead(&requestLineInfo);
 
-				GBHeaderInformation headerInfo;
+				GBHttpHeaderInformation headerInfo;
 				if(1 < pEol->m_lines.size())
 				{
 					// 헤더읽기
+					GBHttpHeaderInformation info;
 					GBHttpHeaderReader headerReader(pEol->m_lines);
 
-					std::tie(succeeded, headerInfo) = headerReader.ParseAndRead();
+					succeeded = headerReader.ParseAndRead(&info);
 				}
 				
 #if defined(_DEBUG)

@@ -8,12 +8,6 @@ namespace GenericBoson
 	GBHttpRequestLineReader::GBHttpRequestLineReader(const std::vector<std::string>& lines)
 	: m_requestLineCandidate(lines[0]), GBHttpReader(lines){}
 
-	std::pair<bool, GBRequestLineInformation> GBHttpRequestLineReader::ParseAndRead()
-	{
-		GBRequestLineInformation tmp;
-		return { true, tmp };
-	}
-
 	void GBHttpRequestLineReader::ParseToken()
 	{
 		size_t findResult = 0, prevIndex = 0;
@@ -29,18 +23,18 @@ namespace GenericBoson
 		}
 	}
 
-	std::pair<bool, GBHttpInformation> GBHttpRequestLineReader::Read()
+	bool GBHttpRequestLineReader::Read(GBHttpInformation* pOutInfo)
 	{
-		GBRequestLineInformation info;
+		auto pOutRequestLineInfo = static_cast<GBRequestLineInformation*>(pOutInfo);
 
 		size_t parsedSize = m_tokens.size();
 
 		if (2 == parsedSize)
 		{
-			info.m_methodName = m_tokens[0];
-			info.m_targetPath = m_tokens[1];
-			info.m_version = HttpVersion::Http09;
-			return { true, info };
+			pOutRequestLineInfo->m_methodName = m_tokens[0];
+			pOutRequestLineInfo->m_targetPath = m_tokens[1];
+			pOutRequestLineInfo->m_version = HttpVersion::Http09;
+			return true;
 		}
 		else if (3 == parsedSize)
 		{
@@ -51,33 +45,33 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// Invalid request-line.
-				return { false, info };
+				return false;
 			}
 
-			info.m_methodName = m_tokens[0];
-			info.m_targetPath = m_tokens[1];
+			pOutRequestLineInfo->m_methodName = m_tokens[0];
+			pOutRequestLineInfo->m_targetPath = m_tokens[1];
 			std::string_view versionString(m_tokens[2]);
 			std::string_view versionNumber = versionString.substr(httpStr.size());
 
 			if ("0.9" == versionNumber)
 			{
-				info.m_version = HttpVersion::Http09;
-				return { true , info };
+				pOutRequestLineInfo->m_version = HttpVersion::Http09;
+				return true;
 			}
 			else if ("1.0" == versionNumber)
 			{
-				info.m_version = HttpVersion::Http10;
-				return { true , info };
+				pOutRequestLineInfo->m_version = HttpVersion::Http10;
+				return true;
 			}
 			else if ("1.1" == versionNumber)
 			{
-				info.m_version = HttpVersion::Http11;
-				return { true , info };
+				pOutRequestLineInfo->m_version = HttpVersion::Http11;
+				return true;
 			}
 		}
 
 		// #ToDo
 		// Invalid request-line.
-		return { false, info };
+		return false;
 	}
 }

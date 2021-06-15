@@ -21,14 +21,11 @@ namespace GenericBoson
 
 		// Read parsed tokens.
 		// \return bool - succeeded? GBRequestLineInformation - The information of this request line.
-		std::pair<bool, GBHttpInformation> Read() override;
+		bool Read(GBHttpInformation* pOutInfo) override;
 
 		void ParseToken() override;
 	public:
 		GBHttpRequestLineReader(const std::vector<std::string>& lines);
 		virtual ~GBHttpRequestLineReader() = default;
-
-		// \return bool - succeeded? GBRequestLineInformation - The information of this request line.
-		std::pair<bool, GBRequestLineInformation> ParseAndRead();
 	};
 }

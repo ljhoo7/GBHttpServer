@@ -4,14 +4,10 @@
 
 namespace GenericBoson
 {
-	std::pair<bool, GBHeaderInformation> GBHttpHeaderReader::ParseAndRead()
+	bool GBHttpHeaderReader::Read(GBHttpInformation* pOutInfo)
 	{
-		return std::pair<bool, GBHeaderInformation>();
-	}
 
-	std::pair<bool, GBHttpInformation> GBHttpHeaderReader::Read()
-	{
-		return std::pair<bool, GBHttpInformation>();
+		return true;
 	}
 
 	void GBHttpHeaderReader::ParseToken()
