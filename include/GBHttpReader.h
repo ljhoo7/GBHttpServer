@@ -1,10 +1,12 @@
 #pragma once
 
+#include <queue>
+
 namespace GenericBoson
 {
 	struct GBHttpInformation
 	{
-
+		virtual ~GBHttpInformation() = default;
 	};
 
 	class GBHttpReader
@@ -17,11 +19,11 @@ namespace GenericBoson
 
 	public:
 
-		GBHttpReader(const std::vector<std::string>& lines) {};
+		GBHttpReader(std::queue<std::string>& lines) {};
 		virtual ~GBHttpReader() = default;
 
 		// \GBRequestLineInformation - The information of this request line.
 		// \return bool - succeeded? 
-		bool ParseAndRead(GBHttpInformation* pOutInfo);
+		virtual bool ParseAndRead(GBHttpInformation* pOutInfo) final;
 	};
 }

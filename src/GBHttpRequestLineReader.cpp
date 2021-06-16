@@ -5,8 +5,11 @@
 
 namespace GenericBoson
 {
-	GBHttpRequestLineReader::GBHttpRequestLineReader(const std::vector<std::string>& lines)
-	: m_requestLineCandidate(lines[0]), GBHttpReader(lines){}
+	GBHttpRequestLineReader::GBHttpRequestLineReader(std::queue<std::string>& lines)
+	: m_requestLineCandidate(lines.front()), GBHttpReader(lines)
+	{
+		lines.pop();
+	}
 
 	void GBHttpRequestLineReader::ParseToken()
 	{

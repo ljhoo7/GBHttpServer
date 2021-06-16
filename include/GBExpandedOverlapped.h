@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 namespace GenericBoson
 {
 	const int BUFFER_SIZE = 4096;
@@ -33,7 +35,7 @@ namespace GenericBoson
 		/*
 		lines parsed by GatherAndParseLines function.
 		*/
-		std::vector<std::string> m_lines;
+		std::queue<std::string> m_lines;
 		
 		/*
 		GatherAndParseLines the HTTP message with gathering.

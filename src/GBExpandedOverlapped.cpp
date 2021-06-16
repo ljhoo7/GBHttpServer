@@ -19,7 +19,7 @@ namespace GenericBoson
 			case '\n':
 				if (PARSE_LINE_STATE::CR_READ == state)
 				{
-					m_lines.push_back(line);
+					m_lines.push(line);
 					line.clear();
 
 					state = PARSE_LINE_STATE::CRLF_READ;
