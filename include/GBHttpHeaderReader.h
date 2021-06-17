@@ -19,6 +19,8 @@ namespace GenericBoson
 		virtual void ParseToken() override;
 
 	public:
+		std::map<std::string, std::string> m_headerMap;
+
 		GBHttpHeaderReader(std::queue<std::string>& lines)
 			: m_lines(lines), GBHttpReader(lines) {}
 	};
