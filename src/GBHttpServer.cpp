@@ -155,6 +155,118 @@ namespace GenericBoson
 		return -1;
 	}
 
+	bool GBHttpServer::OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes)
+	{
+		bool parseResult = pEol->GatherAndParseLines(receivedBytes);
+		pEol->m_offset += receivedBytes;
+
+		bool gatheringNotFinished = false;
+		bool gatheringFinishedButNothing = false;
+
+		if (false == parseResult)
+		{
+			gatheringNotFinished = true;
+		}
+		else if (0 == pEol->m_offset)
+		{
+			gatheringFinishedButNothing = true;
+		}
+
+		// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
+		if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
+		{
+			int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
+			int lastError = WSAGetLastError();
+
+			if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+			{
+				// #ToDo
+				// Issue receiving failed.
+			}
+
+			return false;
+		}
+
+		assert(0 < pEol->m_lines.size());
+
+		// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
+		GBHttpRequestLineReader requestLineReader(pEol->m_lines);
+
+		GBRequestLineInformation requestLineInfo;
+		bool succeeded = requestLineReader.ParseAndRead(&requestLineInfo);
+
+		GBHttpHeaderInformation headerInfo;
+		if (1 < pEol->m_lines.size())
+		{
+			// 헤더읽기
+			GBHttpHeaderInformation info;
+			GBHttpHeaderReader headerReader(pEol->m_lines);
+
+			succeeded = headerReader.ParseAndRead(&info);
+		}
+
+#if defined(_DEBUG)
+		// 통신 표시
+		std::cout << pEol->m_buffer << '\n';
+#endif
+		{
+			std::lock_guard<std::mutex> lock(g_mainCriticalsection);
+
+			switch (requestLineInfo.m_version)
+			{
+			case HttpVersion::Http09:
+			{
+				g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
+			}
+			break;
+			case HttpVersion::Http10:
+			{
+				g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
+			}
+			break;
+			case HttpVersion::Http11:
+			{
+				g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
+			}
+			break;
+			case HttpVersion::None:
+			{
+				// #ToDo 로깅으로 바꾸자
+				//return { false, "An abnormal line exists in HTTP message.\n" };
+			}
+			break;
+			default:
+				assert(false);
+			}
+
+			//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
+			//{
+			//	std::cout << "GET : path = " << path.data() << std::endl;
+			//});
+			//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
+			//{
+			//	std::cout << "PUT : path = " << path.data() << std::endl;
+			//});
+			//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
+			//{
+			//	std::cout << "POST : path = " << path.data() << std::endl;
+			//});
+
+			bool routingResult = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
+
+			if (false == routingResult)
+			{
+				// #ToDo 로깅으로 바꾸자
+				//return { false, "Routing failed." };
+			}
+		}
+
+		pEol->m_offset = 0;
+		int issueSendResult = IssueSend(pEol);
+
+		return true;
+	}
+
 	void GBHttpServer::ThreadFunction()
 	{
 		DWORD receivedBytes;
@@ -181,114 +293,13 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool parseResult = pEol->GatherAndParseLines(receivedBytes);
-				pEol->m_offset += receivedBytes;
-
-				bool gatheringNotFinished = false;
-				bool gatheringFinishedButNothing = false;
-				
-				if (false == parseResult)
+				bool ret = OnReceived(pEol, receivedBytes);
+				if (false == ret)
 				{
-					gatheringNotFinished = true;
-				}
-				else if (0 == pEol->m_offset)
-				{
-					gatheringFinishedButNothing = true;
-				}
-
-				// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
-				if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
-				{
-					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
-					int lastError = WSAGetLastError();
-
-					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
-					{
-						// #ToDo
-						// Issue receiving failed.
-					}
-
 					continue;
 				}
-
-				assert(0 < pEol->m_lines.size());
-
-				// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
-				GBHttpRequestLineReader requestLineReader(pEol->m_lines);
-				
-				GBRequestLineInformation requestLineInfo;
-				bool succeeded = requestLineReader.ParseAndRead(&requestLineInfo);
-
-				GBHttpHeaderInformation headerInfo;
-				if(1 < pEol->m_lines.size())
-				{
-					// 헤더읽기
-					GBHttpHeaderInformation info;
-					GBHttpHeaderReader headerReader(pEol->m_lines);
-
-					succeeded = headerReader.ParseAndRead(&info);
-				}
-				
-#if defined(_DEBUG)
-				// 통신 표시
-				std::cout << pEol->m_buffer << '\n';
-#endif
-				{
-					std::lock_guard<std::mutex> lock(g_mainCriticalsection);
-
-					switch (requestLineInfo.m_version)
-					{
-					case HttpVersion::Http09:
-					{
-						g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
-					}
-					break;
-					case HttpVersion::Http10:
-					{
-						g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
-					}
-					break;
-					case HttpVersion::Http11:
-					{
-						g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
-					}
-					break;
-					case HttpVersion::None:
-					{
-						// #ToDo 로깅으로 바꾸자
-						//return { false, "An abnormal line exists in HTTP message.\n" };
-					}
-					break;
-					default:
-						assert(false);
-					}
-
-					//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
-					//{
-					//	std::cout << "GET : path = " << path.data() << std::endl;
-					//});
-					//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
-					//{
-					//	std::cout << "PUT : path = " << path.data() << std::endl;
-					//});
-					//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
-					//{
-					//	std::cout << "POST : path = " << path.data() << std::endl;
-					//});
-
-					bool routingResult = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
-
-					if (false == routingResult)
-					{
-						// #ToDo 로깅으로 바꾸자
-						//return { false, "Routing failed." };
-					}
-				}
-
-				pEol->m_offset = 0;
-				int issueSendResult = IssueSend(pEol);
 			}
-			break;
+				break;
 			case IO_TYPE::SEND:
 			{
 				// 소켓 닫기

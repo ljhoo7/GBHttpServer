@@ -48,6 +48,9 @@ namespace GenericBoson
 		std::string GetWSALastErrorString();
 		std::string GetWSALastErrorString(int lastError);
 
+		// \return true - all completed, false - not yet gathering completed.
+		static bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes);
+
 		static int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
 		static int IssueSend(GBExpandedOverlapped* pEol);
 
