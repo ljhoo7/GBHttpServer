@@ -50,6 +50,7 @@ namespace GenericBoson
 
 		// \return true - all completed, false - not yet gathering completed.
 		static bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes);
+		static bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes);
 
 		static int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
 		static int IssueSend(GBExpandedOverlapped* pEol);

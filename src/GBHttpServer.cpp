@@ -155,6 +155,11 @@ namespace GenericBoson
 		return -1;
 	}
 
+	bool GBHttpServer::OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes)
+	{
+
+	}
+
 	bool GBHttpServer::OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes)
 	{
 		bool parseResult = pEol->GatherAndParseLines(receivedBytes);
@@ -302,6 +307,8 @@ namespace GenericBoson
 				break;
 			case IO_TYPE::SEND:
 			{
+				bool ret = OnSent(pEol, receivedBytes);
+
 				// ¼ÒÄÏ ´Ý±â
 				closesocket(pEol->m_socket);
 			}
