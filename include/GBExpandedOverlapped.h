@@ -25,7 +25,7 @@ namespace GenericBoson
 	{
 		SOCKET m_socket = INVALID_SOCKET;
 		IO_TYPE m_type = IO_TYPE::ACCEPT;
-		uint32_t m_leftBytesToReceive = 0;
+		uint32_t m_leftBytesToTransfer = 0;
 
 		// #ToDo
 		// This must be exchanged with a circular lock-free queue.

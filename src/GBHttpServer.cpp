@@ -152,12 +152,17 @@ namespace GenericBoson
 
 	int GBHttpServer::IssueSend(GBExpandedOverlapped* pEol)
 	{
+		WSABUF bufToSend;
+		DWORD sentBytes;
+		bufToSend.buf = pEol->m_buffer;
+		bufToSend.len = pEol->m_leftBytesToTransfer;
+		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
 		return -1;
 	}
 
 	bool GBHttpServer::OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes)
 	{
-
+		return true;
 	}
 
 	bool GBHttpServer::OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes)
@@ -274,13 +279,13 @@ namespace GenericBoson
 
 	void GBHttpServer::ThreadFunction()
 	{
-		DWORD receivedBytes;
+		DWORD transferredBytes;
 		u_long completionKey;
 		GBExpandedOverlapped* pEol = nullptr;
 
 		while (true == g_keepLooping)
 		{
-			BOOL result = GetQueuedCompletionStatus(g_IOCP, &receivedBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
+			BOOL result = GetQueuedCompletionStatus(g_IOCP, &transferredBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
 
 			switch (pEol->m_type)
 			{
@@ -298,7 +303,7 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool ret = OnReceived(pEol, receivedBytes);
+				bool ret = OnReceived(pEol, transferredBytes);
 				if (false == ret)
 				{
 					continue;
@@ -307,7 +312,7 @@ namespace GenericBoson
 				break;
 			case IO_TYPE::SEND:
 			{
-				bool ret = OnSent(pEol, receivedBytes);
+				bool ret = OnSent(pEol, transferredBytes);
 
 				// ¼ÒÄÏ ´Ý±â
 				closesocket(pEol->m_socket);
