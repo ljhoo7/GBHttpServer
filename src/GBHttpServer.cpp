@@ -141,11 +141,11 @@ namespace GenericBoson
 	int GBHttpServer::IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive)
 	{
 		pEol->m_type = IO_TYPE::RECEIVE;
-		DWORD flag = 0, receivedBytes = 0;
+		DWORD flag = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
 		wsaBuffer.buf = &pEol->m_buffer[pEol->m_offset];
-		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, &receivedBytes, pEol, nullptr);
+		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, nullptr, pEol, nullptr);
 
 		return recvResult;
 	}
@@ -153,10 +153,9 @@ namespace GenericBoson
 	int GBHttpServer::IssueSend(GBExpandedOverlapped* pEol)
 	{
 		WSABUF bufToSend;
-		DWORD sentBytes;
 		bufToSend.buf = pEol->m_buffer;
 		bufToSend.len = pEol->m_leftBytesToTransfer;
-		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
+		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, nullptr, 0, pEol, nullptr);
 		return -1;
 	}
 
