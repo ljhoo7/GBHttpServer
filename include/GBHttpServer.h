@@ -13,6 +13,7 @@
 #include "GBHttpRouter.h"
 #include "GBExpandedOverlapped.h"
 #include "GBHttpHeaderReader.h"
+#include "GBHttpStatusLineWriter.h"
 
 namespace GenericBoson
 {
