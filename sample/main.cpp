@@ -9,9 +9,11 @@ int main()
 {
 	GBHttpServer srv;
 
-	srv.GET("/test/test2", [](int param)
+	srv.GET("/test/test2", [](int param)->GBHttpResponse
 		{
 			std::cout << "here !" << std::endl;
+
+			return GBHttpResponse();
 		});
 
 	srv.Start();

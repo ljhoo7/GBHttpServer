@@ -70,9 +70,9 @@ namespace GenericBoson
 		GBHttpServer(uint16_t portNum) : m_port(portNum) {};
 		virtual ~GBHttpServer();
 
-		bool GET(const std::string_view targetPath, const std::function<void(int)>& func);
-		bool HEAD(const std::string_view targetPath, const std::function<void(int)>& func);
-		bool POST(const std::string_view targetPath, const std::function<void(int)>& func);
+		bool GET(const std::string_view targetPath, const GB_ACTION_METHOD& func);
+		bool HEAD(const std::string_view targetPath, const GB_ACTION_METHOD& func);
+		bool POST(const std::string_view targetPath, const GB_ACTION_METHOD& func);
 
 		std::pair<bool, std::string> Start();
 	};

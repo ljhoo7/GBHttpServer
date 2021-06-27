@@ -11,4 +11,10 @@ namespace GenericBoson
 	{
 
 	};
+
+	enum class HTTP_STATUS_CODE : int
+	{
+		OK = 200,
+		NOT_FOUND = 404,
+	};
 }

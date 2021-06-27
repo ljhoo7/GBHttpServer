@@ -271,7 +271,7 @@ namespace GenericBoson
 		}
 
 		pEol->m_offset = 0;
-		GBHttpStatusLineWriter statusLineWriter;
+		GBHttpStatusLineWriter statusLineWriter(pEol);
 		int issueSendResult = IssueSend(pEol);
 
 		return true;
@@ -364,7 +364,7 @@ namespace GenericBoson
 		return { true, {} };
 	}
 
-	bool GBHttpServer::GET(const std::string_view targetPath, const std::function<void(int)>& func)
+	bool GBHttpServer::GET(const std::string_view targetPath, const GB_ACTION_METHOD& func)
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
@@ -394,7 +394,7 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBHttpServer::HEAD(const std::string_view targetPath, const std::function<void(int)>& func)
+	bool GBHttpServer::HEAD(const std::string_view targetPath, const GB_ACTION_METHOD& func)
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
@@ -424,7 +424,7 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBHttpServer::POST(const std::string_view targetPath, const std::function<void(int)>& func)
+	bool GBHttpServer::POST(const std::string_view targetPath, const GB_ACTION_METHOD& func)
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 

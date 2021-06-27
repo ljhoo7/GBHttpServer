@@ -1,6 +1,6 @@
 #include "../include/stdafx.h"
 
-#include "../include/GBResponse.h"
+#include "../include/GBHttpResponse.h"
 
 namespace GenericBoson
 {
@@ -74,5 +74,10 @@ namespace GenericBoson
 		};
 
 		return true;
+	}
+
+	GBHttpResponse::GBHttpResponse(const GenericBoson::HTTP_STATUS_CODE statusCode)
+		: m_cStatusCode(statusCode)
+	{
 	}
 }

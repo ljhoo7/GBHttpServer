@@ -4,13 +4,12 @@
 #include <vector>
 #include <memory>
 
-#include "GBResponse.h"
+#include "GBHttpResponse.h"
 #include "GBPathSegment.h"
 #include "GBHttpVersionTypes.h"
 #include "GBHttpRequestLineReader.h"
 #include "GBHttpUtil.h"
 #include "GBMethod.h"
-#include "GBResponse.h"
 
 namespace GenericBoson
 {

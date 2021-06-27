@@ -1,20 +1,23 @@
 #pragma once
 
+#include "GBHttpResponse.h"
 #include <functional>
 
 namespace GenericBoson
 {
+	typedef std::function<GBHttpResponse(int)> GB_ACTION_METHOD;
+
 	/*
 	http에서 GET, PUT, POST 같은 것을 뜻합니다.
 	*/
 	struct GBMethod
 	{
-		std::function<void(int)> m_method;
+		GB_ACTION_METHOD m_method;
 
 		GBMethod() = default;
 		virtual ~GBMethod() = default;
 
-		GBMethod(std::function<void(int)>& method)
+		GBMethod(GB_ACTION_METHOD& method)
 			: m_method(method) {}
 
 		virtual std::string GetName() = 0;
