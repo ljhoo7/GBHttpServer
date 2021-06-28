@@ -261,9 +261,11 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			bool routingResult = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
+			bool succeeded;
+			GBHttpResponse response;
+			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
 
-			if (false == routingResult)
+			if (false == succeeded)
 			{
 				// #ToDo 로깅으로 바꾸자
 				//return { false, "Routing failed." };

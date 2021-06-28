@@ -3,7 +3,7 @@
 
 namespace GenericBoson
 {
-	bool GBHttpRouterBase::Route(PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName)
+	std::pair<bool, GBHttpResponse> GBHttpRouterBase::Route(PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName)
 	{
 		std::vector<std::string> pathSegmentArray;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
@@ -12,7 +12,7 @@ namespace GenericBoson
 		{
 			// #ToDo
 			// The path in request line does not start with '/'.
-			return false;
+			return { false, {} };
 		}
 
 		// 원래 true == m_supportMethodMap.contains(methodName.data()) 였는데,
@@ -21,7 +21,7 @@ namespace GenericBoson
 		{
 			// #ToDo
 			// Invalid request : The method name is not matched with the version.
-			return false;
+			return { false, {} };
 		}
 
 		PathSegment* pNode = &rootPath;
@@ -32,7 +32,7 @@ namespace GenericBoson
 			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(iPathSegment))
 			{
 				// #ToDo ActionMethod not found.
-				return false;
+				return { false, {} };
 			}
 
 			pNode = pNode->m_subTreeMap[iPathSegment].get();
@@ -44,12 +44,12 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// The method not exist.
-				return false;
+				return { false, {} };
 			}
 
-			pNode->m_pGetMethod->m_method(0);
+			auto response = pNode->m_pGetMethod->m_method(0);
 
-			return true;
+			return { true, response };
 		}
 		else if ("HEAD" == methodName)
 		{
@@ -57,12 +57,12 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// The method not exist.
-				return false;
+				return { false, {} };
 			}
 
-			pNode->m_pHeadMethod->m_method(0);
+			auto response = pNode->m_pHeadMethod->m_method(0);
 
-			return true;
+			return { true, response };
 		}
 		else if ("POST" == methodName)
 		{
@@ -70,16 +70,16 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// The method not exist.
-				return false;
+				return { false, {} };
 			}
 
-			pNode->m_pPostMethod->m_method(0);
+			auto response = pNode->m_pPostMethod->m_method(0);
 
-			return true;
+			return { true, response };
 		}
 
 		// #ToDo
 		// Internal logic error
-		return false;
+		return { false, {} };
 	}
 }

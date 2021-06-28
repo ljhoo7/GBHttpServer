@@ -13,5 +13,7 @@ namespace GenericBoson
 	public:
 		GBHttpResponse() = default;
 		GBHttpResponse(const HTTP_STATUS_CODE statusCode);
+
+		GBHttpResponse operator=(GBHttpResponse& rvalue);
 	};
 }

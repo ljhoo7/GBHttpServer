@@ -80,4 +80,8 @@ namespace GenericBoson
 		: m_cStatusCode(statusCode)
 	{
 	}
+	GBHttpResponse GBHttpResponse::operator=(GBHttpResponse& rvalue)
+	{
+		return rvalue;
+	}
 }

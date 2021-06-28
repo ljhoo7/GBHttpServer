@@ -20,7 +20,7 @@ namespace GenericBoson
 
 		GBHttpRouterBase() = default;
 		virtual ~GBHttpRouterBase() = default;
-		bool Route(PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName);
+		std::pair<bool, GBHttpResponse> Route(PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName);
 	};
 
 	template<typename HTTPVERSION>
