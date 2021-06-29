@@ -7,11 +7,11 @@ namespace GenericBoson
 	class GBHttp10 : public GBHttpVersion {};
 	class GBHttp11 : public GBHttpVersion {};
 
-	enum class HttpVersion
+	enum class HttpVersion : int
 	{
-		None,
-		Http09,
-		Http10,
-		Http11,
+		None = 0,
+		Http09 = 9,
+		Http10 = 10,
+		Http11 = 11,
 	};
 }

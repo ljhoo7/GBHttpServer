@@ -9,6 +9,12 @@ namespace GenericBoson
 	{
 		std::stringstream sstream;
 
-		//sstream << version << ' ' << response << ' ' << reason << '\r\n';
+		float versionFloat = ((int)version) / 10.0f;
+
+		sstream.precision(2);
+
+		sstream << "HTTP/" << versionFloat << ' ' << (int)response.GetStatusCode() << ' ' << reason << '\r' << '\n';
+
+		m_lines.push_back(sstream.str());
 	}
 }

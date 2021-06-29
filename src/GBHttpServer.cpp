@@ -145,7 +145,7 @@ namespace GenericBoson
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
 		wsaBuffer.buf = &pEol->m_buffer[pEol->m_offset];
-		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, &flag, nullptr, pEol, nullptr);
+		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
 	}
@@ -218,6 +218,8 @@ namespace GenericBoson
 		// 통신 표시
 		std::cout << pEol->m_buffer << '\n';
 #endif
+
+		GBHttpResponse response;
 		{
 			std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
@@ -261,8 +263,6 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			bool succeeded;
-			GBHttpResponse response;
 			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
 
 			if (false == succeeded)
@@ -273,7 +273,7 @@ namespace GenericBoson
 		}
 
 		pEol->m_offset = 0;
-		GBHttpStatusLineWriter statusLineWriter(pEol);
+		GBHttpStatusLineWriter statusLineWriter(requestLineInfo.m_version, response, "none");
 		int issueSendResult = IssueSend(pEol);
 
 		return true;

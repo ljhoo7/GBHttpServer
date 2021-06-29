@@ -84,4 +84,8 @@ namespace GenericBoson
 	{
 		return rvalue;
 	}
+	HTTP_STATUS_CODE GBHttpResponse::GetStatusCode() const
+	{
+		return m_cStatusCode;
+	}
 }

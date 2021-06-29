@@ -18,7 +18,7 @@ namespace GenericBoson
 		{
 			findResult = m_requestLineCandidate.find_first_of(' ', prevIndex);
 
-			std::string_view token = m_requestLineCandidate.substr(prevIndex, findResult - prevIndex);
+			std::string_view token = std::string_view(m_requestLineCandidate).substr(prevIndex, findResult - prevIndex);
 
 			m_tokens.push_back(token);
 

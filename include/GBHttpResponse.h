@@ -15,5 +15,7 @@ namespace GenericBoson
 		GBHttpResponse(const HTTP_STATUS_CODE statusCode);
 
 		GBHttpResponse operator=(GBHttpResponse& rvalue);
+
+		HTTP_STATUS_CODE GetStatusCode() const;
 	};
 }
