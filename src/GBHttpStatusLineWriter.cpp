@@ -13,7 +13,9 @@ namespace GenericBoson
 
 		sstream.precision(2);
 
-		sstream << "HTTP/" << versionFloat << ' ' << (int)response.GetStatusCode() << ' ' << reason << '\r' << '\n';
+		int statusCodeInteger = (int)response.GetStatusCode();
+
+		sstream << "HTTP/" << versionFloat << ' ' << statusCodeInteger << ' ' << Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger) << '\r' << '\n';
 
 		m_lines.push_back(sstream.str());
 	}
