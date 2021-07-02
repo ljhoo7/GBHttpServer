@@ -273,7 +273,7 @@ namespace GenericBoson
 		}
 
 		pEol->m_offset = 0;
-		GBHttpStatusLineWriter statusLineWriter(requestLineInfo.m_version, response, "none");
+		GBHttpResponseWriter responseWriter(requestLineInfo.m_version, response, "none");
 		int issueSendResult = IssueSend(pEol);
 
 		return true;
