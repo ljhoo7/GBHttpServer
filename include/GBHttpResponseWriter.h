@@ -8,10 +8,10 @@
 
 namespace GenericBoson
 {
-	class GBHttpStatusLineWriter
+	class GBHttpResponseWriter
 	{
 		std::vector<std::string> m_lines;
 	public:
-		GBHttpStatusLineWriter(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
+		GBHttpResponseWriter(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
 	};
 }
