@@ -12,6 +12,8 @@ namespace GenericBoson
 	{
 		std::vector<std::string> m_lines;
 	public:
-		GBHttpResponseWriter(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
+		GBHttpResponseWriter() = default;
+		
+		bool WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
 	};
 }

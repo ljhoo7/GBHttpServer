@@ -5,7 +5,7 @@
 namespace GenericBoson
 {
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
-	GBHttpResponseWriter::GBHttpResponseWriter(const HttpVersion version, const GBHttpResponse & response, const std::string& reason)
+	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse & response, const std::string& reason)
 	{
 		std::stringstream sstream;
 
