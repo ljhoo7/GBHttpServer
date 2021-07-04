@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GBHttpReader.h"
+#include "GBHttpVersionTypes.h"
 
 namespace GenericBoson
 {

@@ -18,5 +18,7 @@ namespace GenericBoson
 		sstream << "HTTP/" << versionFloat << ' ' << statusCodeInteger << ' ' << Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger) << '\r' << '\n';
 
 		m_lines.push_back(sstream.str());
+
+		return true;
 	}
 }

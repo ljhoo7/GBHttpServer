@@ -196,23 +196,9 @@ namespace GenericBoson
 			return false;
 		}
 
-		assert(0 < pEol->m_lines.size());
+		GBHttpRequestReader requestReader;
+		bool succeeded = requestReader.Read(pEol->m_lines);
 
-		// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
-		GBHttpRequestLineReader requestLineReader(pEol->m_lines);
-
-		GBRequestLineInformation requestLineInfo;
-		bool succeeded = requestLineReader.ParseAndRead(&requestLineInfo);
-
-		GBHttpHeaderInformation headerInfo;
-		if (1 < pEol->m_lines.size())
-		{
-			// 헤더읽기
-			GBHttpHeaderInformation info;
-			GBHttpHeaderReader headerReader(pEol->m_lines);
-
-			succeeded = headerReader.ParseAndRead(&info);
-		}
 
 #if defined(_DEBUG)
 		// 통신 표시
@@ -223,7 +209,7 @@ namespace GenericBoson
 		{
 			std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-			switch (requestLineInfo.m_version)
+			switch (requestReader.m_requestLineInfo.m_version)
 			{
 			case HttpVersion::Http09:
 			{
@@ -263,7 +249,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestLineInfo.m_targetPath, requestLineInfo.m_methodName);
+			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestReader.m_requestLineInfo.m_targetPath, requestReader.m_requestLineInfo.m_methodName);
 
 			if (false == succeeded)
 			{
@@ -274,7 +260,7 @@ namespace GenericBoson
 
 		pEol->m_offset = 0;
 		GBHttpResponseWriter responseWriter;
-		responseWriter.WriteStatusLine(requestLineInfo.m_version, response, "none");
+		responseWriter.WriteStatusLine(requestReader.m_requestLineInfo.m_version, response, "none");
 		int issueSendResult = IssueSend(pEol);
 
 		return true;

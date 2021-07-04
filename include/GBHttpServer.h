@@ -9,11 +9,10 @@
 #include "GBMethod.h"
 #include "GBGETMethod.h"
 #include "GBPathSegment.h"
-#include "GBHttpRequestLineReader.h"
 #include "GBHttpRouter.h"
 #include "GBExpandedOverlapped.h"
-#include "GBHttpHeaderReader.h"
 #include "GBHttpResponseWriter.h"
+#include "GBHttpRequestReader.h"
 
 namespace GenericBoson
 {
