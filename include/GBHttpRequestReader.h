@@ -8,10 +8,18 @@ namespace GenericBoson
 	class GBHttpRequestReader
 	{
 	public:
-		GBHttpRequestReader() = default;
+		GBHttpRequestReader()
+		{
+			m_pRequestLineInformation = std::make_shared<GBHttpRequestLineInformation>();
+			m_readerToInformationQueue.emplace(std::make_unique<GBHttpRequestLineReader>(), m_pRequestLineInformation);
+			m_pHeaderInformation = std::make_shared<GBHttpHeaderInformation>();
+			m_readerToInformationQueue.emplace(std::make_unique<GBHttpHeaderReader>(), m_pHeaderInformation);
+		}
 
-		GBRequestLineInformation m_requestLineInfo;
-		GBHttpHeaderInformation m_headerInfo;
+		std::shared_ptr<GBHttpRequestLineInformation> m_pRequestLineInformation = nullptr;
+		std::shared_ptr<GBHttpHeaderInformation> m_pHeaderInformation = nullptr;
+
+		std::queue<std::pair<std::unique_ptr<GBHttpReader>, std::shared_ptr<GBHttpInformation>>> m_readerToInformationQueue;
 
 		bool Read(std::queue<std::string>& lines);
 	};

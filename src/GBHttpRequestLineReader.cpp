@@ -28,7 +28,7 @@ namespace GenericBoson
 
 	bool GBHttpRequestLineReader::Read(GBHttpInformation* pOutInfo)
 	{
-		auto pOutRequestLineInfo = static_cast<GBRequestLineInformation*>(pOutInfo);
+		auto pOutRequestLineInfo = static_cast<GBHttpRequestLineInformation*>(pOutInfo);
 
 		size_t parsedSize = m_tokens.size();
 

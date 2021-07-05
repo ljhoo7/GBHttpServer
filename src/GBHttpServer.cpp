@@ -209,7 +209,7 @@ namespace GenericBoson
 		{
 			std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-			switch (requestReader.m_requestLineInfo.m_version)
+			switch (requestReader.m_pRequestLineInformation->m_version)
 			{
 			case HttpVersion::Http09:
 			{
@@ -249,7 +249,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestReader.m_requestLineInfo.m_targetPath, requestReader.m_requestLineInfo.m_methodName);
+			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestReader.m_pRequestLineInformation->m_targetPath, requestReader.m_pRequestLineInformation->m_methodName);
 
 			if (false == succeeded)
 			{
@@ -260,7 +260,7 @@ namespace GenericBoson
 
 		pEol->m_offset = 0;
 		GBHttpResponseWriter responseWriter;
-		responseWriter.WriteStatusLine(requestReader.m_requestLineInfo.m_version, response, "none");
+		responseWriter.WriteStatusLine(requestReader.m_pRequestLineInformation->m_version, response, "none");
 		int issueSendResult = IssueSend(pEol);
 
 		return true;

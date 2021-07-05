@@ -5,7 +5,7 @@
 
 namespace GenericBoson
 {
-	struct GBRequestLineInformation final : public GBHttpInformation
+	struct GBHttpRequestLineInformation final : public GBHttpInformation
 	{
 		std::string m_methodName;
 		std::string m_targetPath;
@@ -21,7 +21,7 @@ namespace GenericBoson
 		std::vector<std::string_view> m_tokens;
 
 		// Read parsed tokens.
-		// \return bool - succeeded? GBRequestLineInformation - The information of this request line.
+		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
 		bool Read(GBHttpInformation* pOutInfo) override;
 
 		void ParseToken() override;

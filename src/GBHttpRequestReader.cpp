@@ -8,18 +8,14 @@ namespace GenericBoson
 	{
 		assert(0 < lines.size());
 
-		// ExtendedOverlapped.GatherAndParseLines에서 빠져나왔다는 것은 최소 1줄은 읽었다는 것이다.
-		GBHttpRequestLineReader requestLineReader(lines);
-
-		bool succeeded = requestLineReader.ParseAndRead(&m_requestLineInfo);
-
-		GBHttpHeaderInformation headerInfo;
-		if (1 < lines.size())
+		bool succeeded = true;
+		while (0 < m_readerToInformationQueue.size())
 		{
-			// 헤더읽기
-			GBHttpHeaderReader headerReader(lines);
+			auto& iPair = m_readerToInformationQueue.front();
 
-			succeeded = headerReader.ParseAndRead(&m_headerInfo);
+			succeeded &= iPair.first->ParseAndRead(iPair.second.get());
+
+			m_readerToInformationQueue.pop();
 		}
 
 		return succeeded;

@@ -12,7 +12,7 @@ namespace GenericBoson
 	class GBHttpReader
 	{
 		// Read parsed tokens.
-		// \return bool - succeeded? GBRequestLineInformation - The information of this request line.
+		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
 		virtual bool Read(GBHttpInformation* pOutInfo) = 0;
 
 		virtual void ParseToken() = 0;
@@ -22,7 +22,7 @@ namespace GenericBoson
 		GBHttpReader(std::queue<std::string>& lines) {};
 		virtual ~GBHttpReader() = default;
 
-		// \GBRequestLineInformation - The information of this request line.
+		// \GBHttpRequestLineInformation - The information of this request line.
 		// \return bool - succeeded? 
 		virtual bool ParseAndRead(GBHttpInformation* pOutInfo) final;
 	};
