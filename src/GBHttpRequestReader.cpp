@@ -4,10 +4,8 @@
 
 namespace GenericBoson
 {
-	bool GBHttpRequestReader::Read(std::queue<std::string>& lines)
+	bool GBHttpRequestReader::Read()
 	{
-		assert(0 < lines.size());
-
 		bool succeeded = true;
 		while (0 < m_readerToInformationQueue.size())
 		{

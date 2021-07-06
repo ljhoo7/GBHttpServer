@@ -196,8 +196,8 @@ namespace GenericBoson
 			return false;
 		}
 
-		GBHttpRequestReader requestReader;
-		bool succeeded = requestReader.Read(pEol->m_lines);
+		GBHttpRequestReader requestReader(pEol->m_lines);
+		bool succeeded = requestReader.Read();
 
 
 #if defined(_DEBUG)

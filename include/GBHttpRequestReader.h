@@ -8,12 +8,12 @@ namespace GenericBoson
 	class GBHttpRequestReader
 	{
 	public:
-		GBHttpRequestReader()
+		GBHttpRequestReader(std::queue<std::string>& lines)
 		{
 			m_pRequestLineInformation = std::make_shared<GBHttpRequestLineInformation>();
-			m_readerToInformationQueue.emplace(std::make_unique<GBHttpRequestLineReader>(), m_pRequestLineInformation);
+			m_readerToInformationQueue.emplace(std::make_unique<GBHttpRequestLineReader>(lines), m_pRequestLineInformation);
 			m_pHeaderInformation = std::make_shared<GBHttpHeaderInformation>();
-			m_readerToInformationQueue.emplace(std::make_unique<GBHttpHeaderReader>(), m_pHeaderInformation);
+			m_readerToInformationQueue.emplace(std::make_unique<GBHttpHeaderReader>(lines), m_pHeaderInformation);
 		}
 
 		std::shared_ptr<GBHttpRequestLineInformation> m_pRequestLineInformation = nullptr;
@@ -21,6 +21,6 @@ namespace GenericBoson
 
 		std::queue<std::pair<std::unique_ptr<GBHttpReader>, std::shared_ptr<GBHttpInformation>>> m_readerToInformationQueue;
 
-		bool Read(std::queue<std::string>& lines);
+		bool Read();
 	};
 }
