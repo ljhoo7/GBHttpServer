@@ -15,5 +15,7 @@ namespace GenericBoson
 		GBHttpResponseWriter() = default;
 		
 		bool WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
+
+		bool WriteHeader(const std::map<std::string, std::string>& map);
 	};
 }

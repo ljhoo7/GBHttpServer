@@ -21,4 +21,13 @@ namespace GenericBoson
 
 		return true;
 	}
+	bool GBHttpResponseWriter::WriteHeader(const std::map<std::string, std::string>& map)
+	{
+		for (auto& iHeader : map)
+		{
+
+		}
+
+		return false;
+	}
 }

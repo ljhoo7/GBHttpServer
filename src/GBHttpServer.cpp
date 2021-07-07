@@ -261,6 +261,9 @@ namespace GenericBoson
 		pEol->m_offset = 0;
 		GBHttpResponseWriter responseWriter;
 		responseWriter.WriteStatusLine(requestReader.m_pRequestLineInformation->m_version, response, "none");
+
+		std::map<std::string, std::string> headerMap;
+		responseWriter.WriteHeader(headerMap);
 		int issueSendResult = IssueSend(pEol);
 
 		return true;
