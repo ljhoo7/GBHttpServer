@@ -24,7 +24,7 @@ namespace GenericBoson
 		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
 		bool Read(GBHttpInformation* pOutInfo) override;
 
-		void ParseToken() override;
+		HTTP_STATUS_CODE ParseToken() override;
 	public:
 		GBHttpRequestLineReader(std::queue<std::string>& lines);
 		virtual ~GBHttpRequestLineReader() = default;

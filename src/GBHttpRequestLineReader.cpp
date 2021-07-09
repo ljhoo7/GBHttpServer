@@ -11,7 +11,7 @@ namespace GenericBoson
 		lines.pop();
 	}
 
-	void GBHttpRequestLineReader::ParseToken()
+	HTTP_STATUS_CODE GBHttpRequestLineReader::ParseToken()
 	{
 		size_t findResult = 0, prevIndex = 0;
 		while (std::string::npos != findResult)
@@ -24,6 +24,8 @@ namespace GenericBoson
 
 			prevIndex = findResult + 1;
 		}
+
+		return HTTP_STATUS_CODE::OK;
 	}
 
 	bool GBHttpRequestLineReader::Read(GBHttpInformation* pOutInfo)

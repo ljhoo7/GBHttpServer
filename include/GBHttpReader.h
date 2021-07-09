@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+#include "Constant.h"
 
 namespace GenericBoson
 {
@@ -15,7 +16,7 @@ namespace GenericBoson
 		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
 		virtual bool Read(GBHttpInformation* pOutInfo) = 0;
 
-		virtual void ParseToken() = 0;
+		virtual HTTP_STATUS_CODE ParseToken() = 0;
 
 	public:
 

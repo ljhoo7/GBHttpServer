@@ -16,7 +16,7 @@ namespace GenericBoson
 		// Inherited via GBHttpReader
 		virtual bool Read(GBHttpInformation* pOutInfo) override;
 
-		virtual void ParseToken() override;
+		virtual HTTP_STATUS_CODE ParseToken() override;
 
 	public:
 		std::map<std::string, std::string> m_headerMap;
