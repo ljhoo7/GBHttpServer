@@ -14,7 +14,7 @@ namespace GenericBoson
 		std::queue<std::string>& m_lines;
 
 		// Inherited via GBHttpReader
-		virtual bool Read(GBHttpInformation* pOutInfo) override;
+		virtual HTTP_STATUS_CODE Read(GBHttpInformation* pOutInfo) override;
 
 		virtual HTTP_STATUS_CODE ParseToken() override;
 

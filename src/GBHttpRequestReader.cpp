@@ -4,18 +4,22 @@
 
 namespace GenericBoson
 {
-	bool GBHttpRequestReader::Read()
+	HTTP_STATUS_CODE GBHttpRequestReader::Read()
 	{
-		bool succeeded = true;
 		while (0 < m_readerToInformationQueue.size())
 		{
 			auto& iPair = m_readerToInformationQueue.front();
 
-			succeeded &= iPair.first->ParseAndRead(iPair.second.get());
+			HTTP_STATUS_CODE readResult = iPair.first->ParseAndRead(iPair.second.get());
+
+			if (HTTP_STATUS_CODE::OK != readResult)
+			{
+
+			}
 
 			m_readerToInformationQueue.pop();
 		}
 
-		return succeeded;
+		return HTTP_STATUS_CODE::OK;
 	}
 }

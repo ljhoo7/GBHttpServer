@@ -197,7 +197,7 @@ namespace GenericBoson
 		}
 
 		GBHttpRequestReader requestReader(pEol->m_lines);
-		bool succeeded = requestReader.Read();
+		HTTP_STATUS_CODE readResult = requestReader.Read();
 
 
 #if defined(_DEBUG)

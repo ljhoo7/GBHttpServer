@@ -4,10 +4,10 @@
 
 namespace GenericBoson
 {
-	bool GBHttpHeaderReader::Read(GBHttpInformation* pOutInfo)
+	HTTP_STATUS_CODE GBHttpHeaderReader::Read(GBHttpInformation* pOutInfo)
 	{
 
-		return true;
+		return HTTP_STATUS_CODE::OK;
 	}
 
 	HTTP_STATUS_CODE GBHttpHeaderReader::ParseToken()

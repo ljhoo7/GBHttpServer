@@ -21,6 +21,6 @@ namespace GenericBoson
 
 		std::queue<std::pair<std::unique_ptr<GBHttpReader>, std::shared_ptr<GBHttpInformation>>> m_readerToInformationQueue;
 
-		bool Read();
+		HTTP_STATUS_CODE Read();
 	};
 }

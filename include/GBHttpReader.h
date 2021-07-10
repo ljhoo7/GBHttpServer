@@ -14,7 +14,7 @@ namespace GenericBoson
 	{
 		// Read parsed tokens.
 		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
-		virtual bool Read(GBHttpInformation* pOutInfo) = 0;
+		virtual HTTP_STATUS_CODE Read(GBHttpInformation* pOutInfo) = 0;
 
 		virtual HTTP_STATUS_CODE ParseToken() = 0;
 
@@ -25,6 +25,6 @@ namespace GenericBoson
 
 		// \GBHttpRequestLineInformation - The information of this request line.
 		// \return bool - succeeded? 
-		virtual bool ParseAndRead(GBHttpInformation* pOutInfo) final;
+		virtual HTTP_STATUS_CODE ParseAndRead(GBHttpInformation* pOutInfo) final;
 	};
 }

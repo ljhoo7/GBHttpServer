@@ -22,7 +22,7 @@ namespace GenericBoson
 
 		// Read parsed tokens.
 		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
-		bool Read(GBHttpInformation* pOutInfo) override;
+		HTTP_STATUS_CODE Read(GBHttpInformation* pOutInfo) override;
 
 		HTTP_STATUS_CODE ParseToken() override;
 	public:

@@ -28,7 +28,7 @@ namespace GenericBoson
 		return HTTP_STATUS_CODE::OK;
 	}
 
-	bool GBHttpRequestLineReader::Read(GBHttpInformation* pOutInfo)
+	HTTP_STATUS_CODE GBHttpRequestLineReader::Read(GBHttpInformation* pOutInfo)
 	{
 		auto pOutRequestLineInfo = static_cast<GBHttpRequestLineInformation*>(pOutInfo);
 
@@ -39,7 +39,7 @@ namespace GenericBoson
 			pOutRequestLineInfo->m_methodName = m_tokens[0];
 			pOutRequestLineInfo->m_targetPath = m_tokens[1];
 			pOutRequestLineInfo->m_version = HttpVersion::Http09;
-			return true;
+			return HTTP_STATUS_CODE::OK;
 		}
 		else if (3 == parsedSize)
 		{
@@ -50,7 +50,7 @@ namespace GenericBoson
 			{
 				// #ToDo
 				// Invalid request-line.
-				return false;
+				return HTTP_STATUS_CODE::OK;
 			}
 
 			pOutRequestLineInfo->m_methodName = m_tokens[0];
@@ -61,22 +61,22 @@ namespace GenericBoson
 			if ("0.9" == versionNumber)
 			{
 				pOutRequestLineInfo->m_version = HttpVersion::Http09;
-				return true;
+				return HTTP_STATUS_CODE::OK;
 			}
 			else if ("1.0" == versionNumber)
 			{
 				pOutRequestLineInfo->m_version = HttpVersion::Http10;
-				return true;
+				return HTTP_STATUS_CODE::OK;
 			}
 			else if ("1.1" == versionNumber)
 			{
 				pOutRequestLineInfo->m_version = HttpVersion::Http11;
-				return true;
+				return HTTP_STATUS_CODE::OK;
 			}
 		}
 
 		// #ToDo
 		// Invalid request-line.
-		return false;
+		return HTTP_STATUS_CODE::BAD_REQUEST;
 	}
 }

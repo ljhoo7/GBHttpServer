@@ -4,9 +4,14 @@
 
 namespace GenericBoson
 {
-	bool GBHttpReader::ParseAndRead(GBHttpInformation* pOutInfo)
+	HTTP_STATUS_CODE GBHttpReader::ParseAndRead(GBHttpInformation* pOutInfo)
 	{
-		ParseToken();
+		HTTP_STATUS_CODE parseResult = ParseToken();
+
+		if (HTTP_STATUS_CODE::OK != parseResult)
+		{
+			return parseResult;
+		}
 
 		return Read(pOutInfo);
 	}
