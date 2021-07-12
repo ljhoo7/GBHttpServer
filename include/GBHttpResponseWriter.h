@@ -17,5 +17,7 @@ namespace GenericBoson
 		bool WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
 
 		bool WriteHeader(const std::map<std::string, std::string>& map);
+
+		bool LoadToBuffer(const GBExpandedOverlapped* pEol);
 	};
 }

@@ -35,7 +35,7 @@ namespace GenericBoson
 		/*
 		lines parsed by GatherAndParseLines function.
 		*/
-		std::queue<std::string> m_lines;
+		std::queue<std::string_view> m_lines;
 		
 		/*
 		GatherAndParseLines the HTTP message with gathering.

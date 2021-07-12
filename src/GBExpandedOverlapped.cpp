@@ -5,11 +5,10 @@ namespace GenericBoson
 {
 	bool GBExpandedOverlapped::GatherAndParseLines(DWORD receivedBytes)
 	{
-		std::string line;
-
+		int stringOffset = 0;
 		// All Http message ( except for Entity-Body ) must be ended by CRLF.
 		PARSE_LINE_STATE state = PARSE_LINE_STATE::OTHER_READ;
-		for (int k = m_offset; k < m_offset + receivedBytes; ++k)
+		for (int k = m_offset, char* pLineStart = &m_buffer[k]; k < m_offset + receivedBytes; ++k)
 		{
 			switch (m_buffer[k])
 			{
@@ -19,8 +18,9 @@ namespace GenericBoson
 			case '\n':
 				if (PARSE_LINE_STATE::CR_READ == state)
 				{
-					m_lines.push(line);
-					line.clear();
+					m_lines.emplace(pLineStart, stringOffset);
+					stringOffset = 0;
+					pLineStart = &m_buffer[k];
 
 					state = PARSE_LINE_STATE::CRLF_READ;
 					break;
@@ -29,7 +29,7 @@ namespace GenericBoson
 				state = PARSE_LINE_STATE::LF_READ;
 				break;
 			default:
-				line.push_back(m_buffer[k]);
+				stringOffset++;
 
 				state = PARSE_LINE_STATE::OTHER_READ;
 				break;

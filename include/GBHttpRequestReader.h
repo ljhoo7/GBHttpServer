@@ -8,7 +8,7 @@ namespace GenericBoson
 	class GBHttpRequestReader
 	{
 	public:
-		GBHttpRequestReader(std::queue<std::string>& lines)
+		GBHttpRequestReader(std::queue<std::string_view>& lines)
 		{
 			m_pRequestLineInformation = std::make_shared<GBHttpRequestLineInformation>();
 			m_readerToInformationQueue.emplace(std::make_unique<GBHttpRequestLineReader>(lines), m_pRequestLineInformation);

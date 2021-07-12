@@ -166,6 +166,8 @@ namespace GenericBoson
 
 	bool GBHttpServer::OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes)
 	{
+		bool succeeded = false;
+
 		bool parseResult = pEol->GatherAndParseLines(receivedBytes);
 		pEol->m_offset += receivedBytes;
 
@@ -264,6 +266,8 @@ namespace GenericBoson
 
 		std::map<std::string, std::string> headerMap;
 		responseWriter.WriteHeader(headerMap);
+
+		responseWriter.LoadToBuffer(pEol);
 		int issueSendResult = IssueSend(pEol);
 
 		return true;
