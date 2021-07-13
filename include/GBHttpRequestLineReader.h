@@ -17,7 +17,7 @@ namespace GenericBoson
 	*/
 	class GBHttpRequestLineReader : public GBHttpReader
 	{
-		const std::string m_requestLineCandidate;
+		const std::string_view m_requestLineCandidate;
 		std::vector<std::string_view> m_tokens;
 
 		// Read parsed tokens.
@@ -26,7 +26,7 @@ namespace GenericBoson
 
 		HTTP_STATUS_CODE ParseToken() override;
 	public:
-		GBHttpRequestLineReader(std::queue<std::string>& lines);
+		GBHttpRequestLineReader(std::queue<std::string_view>& lines);
 		virtual ~GBHttpRequestLineReader() = default;
 	};
 }

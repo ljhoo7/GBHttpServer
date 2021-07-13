@@ -20,7 +20,7 @@ namespace GenericBoson
 
 	public:
 
-		GBHttpReader(std::queue<std::string>& lines) {};
+		GBHttpReader() = default;
 		virtual ~GBHttpReader() = default;
 
 		// \GBHttpRequestLineInformation - The information of this request line.

@@ -27,6 +27,8 @@ namespace GenericBoson
 		for (auto& iLine : m_lines)
 		{
 		}
+
+		return true;
 	}
 
 	bool GBHttpResponseWriter::WriteHeader(const std::map<std::string, std::string>& map)

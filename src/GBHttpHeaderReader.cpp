@@ -6,7 +6,6 @@ namespace GenericBoson
 {
 	HTTP_STATUS_CODE GBHttpHeaderReader::Read(GBHttpInformation* pOutInfo)
 	{
-
 		return HTTP_STATUS_CODE::OK;
 	}
 

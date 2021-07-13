@@ -11,7 +11,7 @@ namespace GenericBoson
 
 	class GBHttpHeaderReader : public GBHttpReader
 	{
-		std::queue<std::string>& m_lines;
+		std::queue<std::string_view>& m_lines;
 
 		// Inherited via GBHttpReader
 		virtual HTTP_STATUS_CODE Read(GBHttpInformation* pOutInfo) override;
@@ -21,7 +21,7 @@ namespace GenericBoson
 	public:
 		std::map<std::string, std::string> m_headerMap;
 
-		GBHttpHeaderReader(std::queue<std::string>& lines)
-			: m_lines(lines), GBHttpReader(lines) {}
+		GBHttpHeaderReader(std::queue<std::string_view>& lines)
+			: m_lines(lines) {}
 	};
 }

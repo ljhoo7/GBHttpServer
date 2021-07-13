@@ -5,8 +5,8 @@
 
 namespace GenericBoson
 {
-	GBHttpRequestLineReader::GBHttpRequestLineReader(std::queue<std::string>& lines)
-	: m_requestLineCandidate(lines.front()), GBHttpReader(lines)
+	GBHttpRequestLineReader::GBHttpRequestLineReader(std::queue<std::string_view>& lines)
+	: m_requestLineCandidate(lines.front())
 	{
 		lines.pop();
 	}
