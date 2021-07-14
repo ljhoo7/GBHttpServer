@@ -6,7 +6,7 @@ namespace GenericBoson
 {
 	HTTP_STATUS_CODE GBHttpReader::ParseAndRead(GBHttpInformation* pOutInfo)
 	{
-		HTTP_STATUS_CODE parseResult = ParseToken();
+		HTTP_STATUS_CODE parseResult = ParseToken(pOutInfo);
 
 		if (HTTP_STATUS_CODE::OK != parseResult)
 		{

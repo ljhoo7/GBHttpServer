@@ -11,7 +11,7 @@ namespace GenericBoson
 		lines.pop();
 	}
 
-	HTTP_STATUS_CODE GBHttpRequestLineReader::ParseToken()
+	HTTP_STATUS_CODE GBHttpRequestLineReader::ParseToken(GBHttpInformation* pOutInfo)
 	{
 		size_t findResult = 0, prevIndex = 0;
 		while (std::string::npos != findResult)

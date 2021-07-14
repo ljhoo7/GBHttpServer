@@ -16,7 +16,7 @@ namespace GenericBoson
 		// \return bool - succeeded? GBHttpRequestLineInformation - The information of this request line.
 		virtual HTTP_STATUS_CODE Read(GBHttpInformation* pOutInfo) = 0;
 
-		virtual HTTP_STATUS_CODE ParseToken() = 0;
+		virtual HTTP_STATUS_CODE ParseToken(GBHttpInformation* pOutInfo) = 0;
 
 	public:
 

@@ -9,7 +9,7 @@ namespace GenericBoson
 		// All Http message ( except for Entity-Body ) must be ended by CRLF.
 		PARSE_LINE_STATE state = PARSE_LINE_STATE::OTHER_READ;
 		int k = m_offset;
-		char* pLineStart = &m_buffer[k];
+		char* pLineStart = nullptr;
 		for (; k < m_offset + receivedBytes; ++k)
 		{
 			switch (m_buffer[k])
@@ -22,7 +22,6 @@ namespace GenericBoson
 				{
 					m_lines.emplace(pLineStart, stringOffset);
 					stringOffset = 0;
-					pLineStart = &m_buffer[k];
 
 					state = PARSE_LINE_STATE::CRLF_READ;
 					break;
@@ -31,6 +30,10 @@ namespace GenericBoson
 				state = PARSE_LINE_STATE::LF_READ;
 				break;
 			default:
+				if (0 == stringOffset)
+				{
+					pLineStart = &m_buffer[k];
+				}
 				stringOffset++;
 
 				state = PARSE_LINE_STATE::OTHER_READ;
