@@ -4,6 +4,9 @@
 
 namespace GenericBoson
 {
+	GBHttpResponseWriter::GBHttpResponseWriter(const char * pBuffer, const int bufferSize)
+		: m_wholeBufferStringView(pBuffer, bufferSize){}
+
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse & response, const std::string& reason)
 	{

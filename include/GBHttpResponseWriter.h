@@ -10,9 +10,10 @@ namespace GenericBoson
 {
 	class GBHttpResponseWriter
 	{
-		std::vector<std::string> m_lines;
+		std::string_view m_wholeBufferStringView;
+		std::vector<std::string_view> m_lines;
 	public:
-		GBHttpResponseWriter() = default;
+		GBHttpResponseWriter(const char* pBuffer, const int bufferSize);
 		
 		bool WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
 
