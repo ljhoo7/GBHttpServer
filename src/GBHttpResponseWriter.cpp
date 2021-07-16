@@ -25,15 +25,6 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBHttpResponseWriter::LoadToBuffer(const GBExpandedOverlapped* pEol)
-	{
-		for (auto& iLine : m_lines)
-		{
-		}
-
-		return true;
-	}
-
 	bool GBHttpResponseWriter::WriteHeader(const std::map<std::string, std::string>& map)
 	{
 		std::stringstream sstream;
