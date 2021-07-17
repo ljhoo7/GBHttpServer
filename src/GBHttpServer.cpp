@@ -150,15 +150,6 @@ namespace GenericBoson
 		return recvResult;
 	}
 
-	int GBHttpServer::IssueSend(GBExpandedOverlapped* pEol)
-	{
-		WSABUF bufToSend;
-		bufToSend.buf = pEol->m_buffer;
-		bufToSend.len = pEol->m_leftBytesToTransfer;
-		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, nullptr, 0, pEol, nullptr);
-		return -1;
-	}
-
 	bool GBHttpServer::OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes)
 	{
 		return true;
@@ -260,14 +251,11 @@ namespace GenericBoson
 			}
 		}
 
-		pEol->m_offset = 0;
-		GBHttpResponseWriter responseWriter(pEol->m_buffer, BUFFER_SIZE);
+		GBHttpResponseWriter responseWriter(pEol);
 		responseWriter.WriteStatusLine(requestReader.m_pRequestLineInformation->m_version, response, "none");
 
 		std::map<std::string, std::string> headerMap;
 		responseWriter.WriteHeader(headerMap);
-
-		int issueSendResult = IssueSend(pEol);
 
 		return true;
 	}

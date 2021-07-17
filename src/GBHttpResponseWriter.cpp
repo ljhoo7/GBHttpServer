@@ -4,8 +4,25 @@
 
 namespace GenericBoson
 {
-	GBHttpResponseWriter::GBHttpResponseWriter(const char * pBuffer, const int bufferSize)
-		: m_wholeBufferStringView(pBuffer, bufferSize){}
+	GBHttpResponseWriter::GBHttpResponseWriter(GBExpandedOverlapped* pEol)
+		: m_pEol(pEol), m_wholeBufferStringView(pEol->m_buffer, BUFFER_SIZE)
+	{
+		pEol->m_offset = 0;
+	}
+
+	GBHttpResponseWriter::~GBHttpResponseWriter()
+	{
+		int issueSendResult = IssueSend();
+	}
+
+	int GBHttpResponseWriter::IssueSend()
+	{
+		WSABUF bufToSend;
+		bufToSend.buf = m_pEol->m_buffer;
+		bufToSend.len = m_pEol->m_leftBytesToTransfer;
+		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, nullptr, 0, m_pEol, nullptr);
+		return -1;
+	}
 
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse & response, const std::string& reason)

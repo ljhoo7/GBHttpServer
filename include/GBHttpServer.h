@@ -53,7 +53,6 @@ namespace GenericBoson
 		static bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes);
 
 		static int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
-		static int IssueSend(GBExpandedOverlapped* pEol);
 
 		static std::mutex g_mainCriticalsection;
 
