@@ -5,7 +5,7 @@
 namespace GenericBoson
 {
 	GBHttpResponseWriter::GBHttpResponseWriter(GBExpandedOverlapped* pEol)
-		: m_pEol(pEol), m_wholeBufferStringView(pEol->m_buffer, BUFFER_SIZE)
+		: m_pEol(pEol)
 	{
 		pEol->m_offset = 0;
 	}
@@ -21,23 +21,26 @@ namespace GenericBoson
 		bufToSend.buf = m_pEol->m_buffer;
 		bufToSend.len = m_pEol->m_leftBytesToTransfer;
 		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, nullptr, 0, m_pEol, nullptr);
-		return -1;
+		return sendResult;
 	}
 
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse & response, const std::string& reason)
 	{
-		std::stringstream sstream;
-
 		float versionFloat = ((int)version) / 10.0f;
-
-		sstream.precision(2);
 
 		int statusCodeInteger = (int)response.GetStatusCode();
 
-		sstream << "HTTP/" << versionFloat << ' ' << statusCodeInteger << ' ' << Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger) << '\r' << '\n';
+		int writtenCountOrErrorCode = sprintf_s(&m_pEol->m_buffer[m_pEol->m_offset], BUFFER_SIZE, "HTTP/%.2f %d %s\r\n", versionFloat, statusCodeInteger, Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger).c_str());
 
-		m_lines.push_back(sstream.str());
+		if (-1 == writtenCountOrErrorCode)
+		{
+			return false;
+		}
+
+		m_lines.emplace_back(m_pEol->m_offset, writtenCountOrErrorCode);
+
+		m_pEol->m_offset += writtenCountOrErrorCode;
 
 		return true;
 	}

@@ -11,7 +11,6 @@ namespace GenericBoson
 	class GBHttpResponseWriter final
 	{
 		GBExpandedOverlapped* m_pEol = nullptr;
-		std::string_view m_wholeBufferStringView;
 		std::vector<std::string_view> m_lines;
 	public:
 		GBHttpResponseWriter(GBExpandedOverlapped* pEol);
