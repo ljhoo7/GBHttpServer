@@ -19,7 +19,7 @@ namespace GenericBoson
 	{
 		WSABUF bufToSend;
 		bufToSend.buf = m_pEol->m_buffer;
-		bufToSend.len = m_pEol->m_leftBytesToTransfer;
+		bufToSend.len = m_pEol->m_offset;
 		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, nullptr, 0, m_pEol, nullptr);
 		return sendResult;
 	}
@@ -31,14 +31,16 @@ namespace GenericBoson
 
 		int statusCodeInteger = (int)response.GetStatusCode();
 
-		int writtenCountOrErrorCode = sprintf_s(&m_pEol->m_buffer[m_pEol->m_offset], BUFFER_SIZE, "HTTP/%.2f %d %s\r\n", versionFloat, statusCodeInteger, Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger).c_str());
+		char* pLineStartPosition = &m_pEol->m_buffer[m_pEol->m_offset];
+
+		int writtenCountOrErrorCode = sprintf_s(pLineStartPosition, BUFFER_SIZE, "HTTP/%.2f %d %s\r\n", versionFloat, statusCodeInteger, Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger).c_str());
 
 		if (-1 == writtenCountOrErrorCode)
 		{
 			return false;
 		}
 
-		m_lines.emplace_back(m_pEol->m_offset, writtenCountOrErrorCode);
+		m_lines.emplace_back(pLineStartPosition, writtenCountOrErrorCode);
 
 		m_pEol->m_offset += writtenCountOrErrorCode;
 
@@ -51,10 +53,19 @@ namespace GenericBoson
 
 		for (auto& iHeader : map)
 		{
-			sstream << iHeader.first << ':' << ' ' << iHeader.second << '/r' << '/n';
-		}
+			char* pLineStartPosition = &m_pEol->m_buffer[m_pEol->m_offset];
 
-		m_lines.push_back(sstream.str());
+			int writtenCountOrErrorCode = sprintf_s(pLineStartPosition, BUFFER_SIZE, "%s: %s\r\n", iHeader.first.c_str(), iHeader.second.c_str());
+
+			if (-1 == writtenCountOrErrorCode)
+			{
+				return false;
+			}
+
+			m_lines.emplace_back(pLineStartPosition, writtenCountOrErrorCode);
+
+			m_pEol->m_offset += writtenCountOrErrorCode;
+		}
 
 		return false;
 	}

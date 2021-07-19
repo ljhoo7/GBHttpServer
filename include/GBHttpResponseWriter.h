@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <cstdarg>
 
 #include "GBHttpVersionTypes.h"
 #include "GBHttpResponse.h"
