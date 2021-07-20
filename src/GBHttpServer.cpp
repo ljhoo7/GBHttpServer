@@ -255,6 +255,11 @@ namespace GenericBoson
 		responseWriter.WriteStatusLine(requestReader.m_pRequestLineInformation->m_version, response, "none");
 
 		std::map<std::string, std::string> headerMap;
+
+		headerMap.emplace("Host", "localhost:8000");
+		headerMap.emplace("Connection", "keep-alive");
+		headerMap.emplace("Accept", "*/*");
+
 		responseWriter.WriteHeader(headerMap);
 
 		return true;
