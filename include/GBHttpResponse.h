@@ -9,7 +9,7 @@ namespace GenericBoson
 
 	class GBHttpResponse
 	{
-		const HTTP_STATUS_CODE m_cStatusCode = HTTP_STATUS_CODE::OK;
+		HTTP_STATUS_CODE m_cStatusCode = HTTP_STATUS_CODE::OK;
 	public:
 		GBHttpResponse() = default;
 		GBHttpResponse(const HTTP_STATUS_CODE statusCode);

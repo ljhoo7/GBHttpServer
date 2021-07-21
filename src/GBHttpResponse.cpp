@@ -82,7 +82,7 @@ namespace GenericBoson
 	}
 	GBHttpResponse GBHttpResponse::operator=(GBHttpResponse& rvalue)
 	{
-		return rvalue;
+		return m_cStatusCode = rvalue.GetStatusCode();
 	}
 	HTTP_STATUS_CODE GBHttpResponse::GetStatusCode() const
 	{
