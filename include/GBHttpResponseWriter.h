@@ -19,7 +19,9 @@ namespace GenericBoson
 		
 		bool WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason);
 
-		bool WriteHeader(const std::map<std::string, std::string>& map);
+		bool WriteHeader(const std::vector<std::pair<std::string, std::string>>& map);
+
+		bool WriteOneLineToBuffer(const char* format, ...);
 
 		int IssueSend();
 	};

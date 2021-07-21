@@ -31,9 +31,33 @@ namespace GenericBoson
 
 		int statusCodeInteger = (int)response.GetStatusCode();
 
+		return WriteOneLineToBuffer("HTTP/%.2f %d %s\r\n", versionFloat, statusCodeInteger, Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger).c_str());
+	}
+
+	bool GBHttpResponseWriter::WriteHeader(const std::vector<std::pair<std::string, std::string>>& headerList)
+	{
+		std::stringstream sstream;
+
+		for(auto riter = headerList.rbegin(); riter != headerList.rend(); ++riter)
+		{
+			bool ret = WriteOneLineToBuffer("%s: %s\r\n", riter->first.c_str(), riter->second.c_str());
+			if (false == ret)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool GBHttpResponseWriter::WriteOneLineToBuffer(const char* format, ...)
+	{
 		char* pLineStartPosition = &m_pEol->m_buffer[m_pEol->m_offset];
 
-		int writtenCountOrErrorCode = sprintf_s(pLineStartPosition, BUFFER_SIZE, "HTTP/%.2f %d %s\r\n", versionFloat, statusCodeInteger, Constant::g_cStatusCodeToReasonPhaseMap.at(statusCodeInteger).c_str());
+		va_list argList;
+		__crt_va_start(argList, format);
+		int writtenCountOrErrorCode = _vsprintf_s_l(pLineStartPosition, BUFFER_SIZE - m_pEol->m_offset, format, NULL, argList);
+		__crt_va_end(argList);
 
 		if (-1 == writtenCountOrErrorCode)
 		{
@@ -45,28 +69,5 @@ namespace GenericBoson
 		m_pEol->m_offset += writtenCountOrErrorCode;
 
 		return true;
-	}
-
-	bool GBHttpResponseWriter::WriteHeader(const std::map<std::string, std::string>& map)
-	{
-		std::stringstream sstream;
-
-		for (auto& iHeader : map)
-		{
-			char* pLineStartPosition = &m_pEol->m_buffer[m_pEol->m_offset];
-
-			int writtenCountOrErrorCode = sprintf_s(pLineStartPosition, BUFFER_SIZE, "%s: %s\r\n", iHeader.first.c_str(), iHeader.second.c_str());
-
-			if (-1 == writtenCountOrErrorCode)
-			{
-				return false;
-			}
-
-			m_lines.emplace_back(pLineStartPosition, writtenCountOrErrorCode);
-
-			m_pEol->m_offset += writtenCountOrErrorCode;
-		}
-
-		return false;
 	}
 }

@@ -29,6 +29,9 @@ namespace GenericBoson
 		// #ToDo
 		// This must be exchanged with a circular lock-free queue.
 		char m_buffer[BUFFER_SIZE] = { 0, };
+
+		int m_test = 0;
+
 		DWORD m_offset = 0;
 
 		/*

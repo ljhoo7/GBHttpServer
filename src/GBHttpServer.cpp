@@ -254,13 +254,13 @@ namespace GenericBoson
 		GBHttpResponseWriter responseWriter(pEol);
 		responseWriter.WriteStatusLine(requestReader.m_pRequestLineInformation->m_version, response, "none");
 
-		std::map<std::string, std::string> headerMap;
+		std::vector<std::pair<std::string, std::string>> headerList;
 
-		headerMap.emplace("Host", "localhost:8000");
-		headerMap.emplace("Connection", "keep-alive");
-		headerMap.emplace("Accept", "*/*");
+		headerList.emplace_back("Host", "localhost:8000");
+		headerList.emplace_back("Connection", "keep-alive");
+		headerList.emplace_back("Accept", "*/*");
 
-		responseWriter.WriteHeader(headerMap);
+		responseWriter.WriteHeader(headerList);
 
 		return true;
 	}
