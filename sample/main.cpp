@@ -13,7 +13,7 @@ int main()
 		{
 			std::cout << "here !" << std::endl;
 
-			return GBHttpResponse(HTTP_STATUS_CODE::NOT_FOUND);
+			return GBHttpResponse(HTTP_STATUS_CODE::OK);
 		});
 
 	srv.Start();

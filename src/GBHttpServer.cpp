@@ -252,15 +252,19 @@ namespace GenericBoson
 		}
 
 		GBHttpResponseWriter responseWriter(pEol);
-		responseWriter.WriteStatusLine(requestReader.m_pRequestLineInformation->m_version, response, "none");
+		responseWriter.WriteStatusLine(HttpVersion::Http10, response, "none");//requestReader.m_pRequestLineInformation->m_version
 
 		std::vector<std::pair<std::string, std::string>> headerList;
 
-		headerList.emplace_back("Host", "localhost:8000");
-		headerList.emplace_back("Connection", "keep-alive");
-		headerList.emplace_back("Accept", "*/*");
+		//headerList.emplace_back("Host", "localhost:8000");
+		//headerList.emplace_back("Connection", "keep-alive");
+		//headerList.emplace_back("Accept", "*/*");
+
+		headerList.emplace_back("Content-type", "text/html");
 
 		responseWriter.WriteHeader(headerList);
+
+		responseWriter.WriteBody();
 
 		return true;
 	}

@@ -18,9 +18,10 @@ namespace GenericBoson
 	int GBHttpResponseWriter::IssueSend()
 	{
 		WSABUF bufToSend;
+		DWORD sentBytes = 0;
 		bufToSend.buf = m_pEol->m_buffer;
 		bufToSend.len = m_pEol->m_offset;
-		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, nullptr, 0, m_pEol, nullptr);
+		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, &sentBytes, 0, m_pEol, nullptr);
 		return sendResult;
 	}
 
@@ -36,8 +37,6 @@ namespace GenericBoson
 
 	bool GBHttpResponseWriter::WriteHeader(const std::vector<std::pair<std::string, std::string>>& headerList)
 	{
-		std::stringstream sstream;
-
 		for(auto riter = headerList.rbegin(); riter != headerList.rend(); ++riter)
 		{
 			bool ret = WriteOneLineToBuffer("%s: %s\r\n", riter->first.c_str(), riter->second.c_str());
@@ -45,6 +44,29 @@ namespace GenericBoson
 			{
 				return false;
 			}
+		}
+
+		return true;
+	}
+
+	bool GBHttpResponseWriter::WriteBody()
+	{
+		bool ret = WriteOneLineToBuffer(
+			"<!DOCTYPE html>\n"
+			"<html lang = \"ja\">\n"
+			"<head>\n"
+			"<meta charset = \"utf-8\">\n"
+			"</head>\n"
+			"<body>\n"
+			"<h1>Page2</h1>\n"
+			"<a href=\"/page1\">->page1</a>\n"
+			"</body>\n"
+			"</html>\r\n"
+		);
+
+		if (false == ret)
+		{
+			return false;
 		}
 
 		return true;

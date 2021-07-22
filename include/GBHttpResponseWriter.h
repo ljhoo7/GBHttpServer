@@ -21,6 +21,8 @@ namespace GenericBoson
 
 		bool WriteHeader(const std::vector<std::pair<std::string, std::string>>& map);
 
+		bool WriteBody();
+
 		bool WriteOneLineToBuffer(const char* format, ...);
 
 		int IssueSend();
