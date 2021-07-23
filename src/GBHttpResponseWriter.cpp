@@ -17,12 +17,50 @@ namespace GenericBoson
 
 	int GBHttpResponseWriter::IssueSend()
 	{
-		WSABUF bufToSend;
+		/*WSABUF bufToSend;
 		DWORD sentBytes = 0;
 		bufToSend.buf = m_pEol->m_buffer;
 		bufToSend.len = m_pEol->m_offset;
 		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, &sentBytes, 0, m_pEol, nullptr);
-		return sendResult;
+		return sendResult;*/
+
+		// HTTP
+		const char* header =
+			"HTTP/1.0 200 OK\n"
+			"Content-type: text/html\n";
+
+		int sendResult = send(m_pEol->m_socket, header, strlen(header), 0);
+		if (sendResult < 1)
+		{
+			std::cout << "send response header failed : " << WSAGetLastError() << '\n';
+
+			return false;
+		}
+
+		char html[1024] = { 0, };
+
+		strcpy(html,
+			"<!DOCTYPE html>\n"
+			"<html lang = \"ja\">\n"
+			"<head>\n"
+			"<meta charset = \"utf-8\">\n"
+			"</head>\n"
+			"<body>\n"
+			"<h1>Page1</h1>\n"
+			"<a href=\"/page2\">->page2</a>\n"
+			"</body>"
+			"</html>");
+
+		// 응답（HTML을 보낸다
+		sendResult = send(m_pEol->m_socket, html, strlen(html), 0);
+		if (sendResult < 1)
+		{
+			std::cout << "send response body failed : " << WSAGetLastError() << '\n';
+
+			return false;
+		};
+
+		return 0;
 	}
 
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
