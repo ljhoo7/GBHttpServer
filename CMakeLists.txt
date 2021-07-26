@@ -34,9 +34,16 @@ target_link_libraries(Sample PRIVATE GBHttpServerFramework ws2_32.lib)
 
 set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
 
+####################################
+
+add_subdirectory(lib/curl/lib)
+add_subdirectory(TestHttpClient)
+
 include_external_msproject(Test Test/Test.csproj PLATFORM "Any CPU")
 
 add_dependencies(Test GBHttpServerFramework Sample)
+
+add_dependencies(TestHttpClient libcurl)
 
 set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT Test)
 
