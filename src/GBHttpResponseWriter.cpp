@@ -36,7 +36,7 @@ namespace GenericBoson
 
 			return false;
 		}
-
+		
 		char html[1024] = { 0, };
 
 		strcpy(html,
