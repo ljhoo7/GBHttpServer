@@ -256,11 +256,11 @@ namespace GenericBoson
 
 		std::vector<std::pair<std::string, std::string>> headerList;
 
-		//headerList.emplace_back("Host", "localhost:8000");
-		//headerList.emplace_back("Connection", "keep-alive");
-		//headerList.emplace_back("Accept", "*/*");
+		headerList.emplace_back("Host", "localhost:8000");
+		headerList.emplace_back("Connection", "keep-alive");
+		headerList.emplace_back("Accept", "*/*");
 
-		headerList.emplace_back("Content-type", "text/html");
+		//headerList.emplace_back("Content-type", "text/html");
 
 		responseWriter.WriteHeader(headerList);
 

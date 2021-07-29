@@ -17,48 +17,49 @@ namespace GenericBoson
 
 	int GBHttpResponseWriter::IssueSend()
 	{
-		/*WSABUF bufToSend;
+		WSABUF bufToSend;
 		DWORD sentBytes = 0;
 		bufToSend.buf = m_pEol->m_buffer;
 		bufToSend.len = m_pEol->m_offset;
 		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, &sentBytes, 0, m_pEol, nullptr);
-		return sendResult;*/
+		return sendResult;
 
-		// HTTP
-		const char* header =
-			"HTTP/1.0 200 OK\n"
-			"Content-type: text/html\n";
+		//// HTTP
+		//const char* header =
+		//	"HTTP/1.0 200 OK\n"
+		//	"Content-type: text/html\n"
+		//	"\n";
 
-		int sendResult = send(m_pEol->m_socket, header, strlen(header), 0);
-		if (sendResult < 1)
-		{
-			std::cout << "send response header failed : " << WSAGetLastError() << '\n';
+		//int sendResult = send(m_pEol->m_socket, header, strlen(header), 0);
+		//if (sendResult < 1)
+		//{
+		//	std::cout << "send response header failed : " << WSAGetLastError() << '\n';
 
-			return false;
-		}
-		
-		char html[1024] = { 0, };
+		//	return false;
+		//}
+		//
+		//char html[1024] = { 0, };
 
-		strcpy(html,
-			"<!DOCTYPE html>\n"
-			"<html lang = \"ja\">\n"
-			"<head>\n"
-			"<meta charset = \"utf-8\">\n"
-			"</head>\n"
-			"<body>\n"
-			"<h1>Page1</h1>\n"
-			"<a href=\"/page2\">->page2</a>\n"
-			"</body>"
-			"</html>");
+		//strcpy(html,
+		//	"<!DOCTYPE html>\n"
+		//	"<html lang = \"ja\">\n"
+		//	"<head>\n"
+		//	"<meta charset = \"utf-8\">\n"
+		//	"</head>\n"
+		//	"<body>\n"
+		//	"<h1>Page1</h1>\n"
+		//	"<a href=\"/page2\">->page2</a>\n"
+		//	"</body>"
+		//	"</html>");
 
-		// 응답（HTML을 보낸다
-		sendResult = send(m_pEol->m_socket, html, strlen(html), 0);
-		if (sendResult < 1)
-		{
-			std::cout << "send response body failed : " << WSAGetLastError() << '\n';
+		//// 응답（HTML을 보낸다
+		//sendResult = send(m_pEol->m_socket, html, strlen(html), 0);
+		//if (sendResult < 1)
+		//{
+		//	std::cout << "send response body failed : " << WSAGetLastError() << '\n';
 
-			return false;
-		};
+		//	return false;
+		//};
 
 		return 0;
 	}
@@ -84,6 +85,22 @@ namespace GenericBoson
 			}
 		}
 
+		// RFC 7230에 HTTP 메세지란 다음과 같은 형태라고 나와있다.
+		/*
+		HTTP-message = start-line
+					  *( header-field CRLF )
+					  CRLF
+					  [ message-body ]
+		*/
+		// 여기에서 엄청 주의할 점은 헤더필드 리스트와 메세지 바디 사이의 CRLF이다.
+		// 모든 헤더-필드 쌍은 CRLF로 끝나는데 그러한 쌍들의 마지막에 CRLF가 한번 더 붙어야 제대로된 메세지라는 뜻이다.
+		// 이 모양새를 대충보고 HTTP message writer를 구현한다면,
+		// 헤더-필드쌍들을 다 쓰고 바로 메세지 바디를 이어서 써버릴 수도 있다.
+		// 그렇게 하면 Http Client들이 무한행이 걸리거나 잘못된 메세지라고 뱉어버리게 된다. 왜 그러는지 이유도 알려주지 않아서 디버깅이 곤란해진다.
+		// 속 편하게 헤더-필드 리스트가 끝나면 개행이 반드시 "두번"되고 바디가 붙는다고 이해하면 편하다.
+		// 물론 CRLF가 2번이면 더 좋지만 LF만 두번해도 제대로 동작하는 듯하다.
+		WriteOneLineToBuffer("\r\n");
+
 		return true;
 	}
 
@@ -96,10 +113,10 @@ namespace GenericBoson
 			"<meta charset = \"utf-8\">\n"
 			"</head>\n"
 			"<body>\n"
-			"<h1>Page2</h1>\n"
-			"<a href=\"/page1\">->page1</a>\n"
-			"</body>\n"
-			"</html>\r\n"
+			"<h1>Page1</h1>\n"
+			"<a href=\"/page2\">->page2</a>\n"
+			"</body>"
+			"</html>"
 		);
 
 		if (false == ret)
