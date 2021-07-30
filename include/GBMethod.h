@@ -2,10 +2,11 @@
 
 #include "GBHttpResponse.h"
 #include <functional>
+#include <cstdarg>
 
 namespace GenericBoson
 {
-	typedef std::function<GBHttpResponse(int)> GB_ACTION_METHOD;
+	typedef std::function<GBHttpResponse(...)> GB_ACTION_METHOD;
 
 	/*
 	http에서 GET, PUT, POST 같은 것을 뜻합니다.
