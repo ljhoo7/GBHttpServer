@@ -3,8 +3,11 @@
 
 namespace GenericBoson
 {
-	std::pair<bool, GBHttpResponse> GBHttpRouterBase::Route(PathSegment& rootPath, const std::string_view targetPath, const std::string_view methodName)
+	std::pair<bool, GBHttpResponse> GBHttpRouterBase::Route(PathSegment& rootPath, const GBHttpRequestReader& requestReader)
 	{
+		const std::string_view targetPath = requestReader.m_pRequestLineInformation->m_targetPath;
+		const std::string_view methodName = requestReader.m_pRequestLineInformation->m_methodName;
+
 		std::vector<std::string> pathSegmentArray;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
 
@@ -47,7 +50,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pGetMethod->m_method(0);
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, , );
 
 			return { true, response };
 		}
@@ -60,7 +63,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pHeadMethod->m_method(0);
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, , );
 
 			return { true, response };
 		}
@@ -73,7 +76,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pPostMethod->m_method(0);
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, , );
 
 			return { true, response };
 		}

@@ -10,6 +10,7 @@
 #include "GBHttpRequestLineReader.h"
 #include "GBHttpUtil.h"
 #include "GBMethod.h"
+#include "GBHttpRequestReader.h"
 
 namespace GenericBoson
 {
