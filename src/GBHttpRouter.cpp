@@ -9,7 +9,8 @@ namespace GenericBoson
 		const std::string_view methodName = requestReader.m_pRequestLineInformation->m_methodName;
 
 		std::vector<std::string> pathSegmentArray;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+		std::map<std::string, std::string> queryMap;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
 		{

@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	bool ParseUrlString(const std::string_view urlCandidate, std::vector<std::string>& parsedPath)
+	bool ParseUrlString(const std::string_view urlCandidate, std::vector<std::string>& parsedPath, std::map<std::string, std::string>& queryMap)
 	{
 		// 아래 if는 원래 false == urlCandidate.starts_with('/') 이었지만,
 		// travis windows가 VS2017까지만 지원해서 아래처럼 바꿈.

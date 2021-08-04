@@ -14,7 +14,8 @@ namespace GenericBoson
 
 			if (HTTP_STATUS_CODE::OK != readResult)
 			{
-
+				// #ToDo
+				return readResult;
 			}
 
 			m_readerToInformationQueue.pop();
