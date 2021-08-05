@@ -24,6 +24,8 @@ namespace GenericBoson
 			{
 				if (0 < urlCandidate.size())
 				{
+					offset = urlCandidateCopy.find_first_of('?', 0);
+
 					parsedPath.emplace_back(urlCandidateCopy);
 				}
 
