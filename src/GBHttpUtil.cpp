@@ -24,9 +24,26 @@ namespace GenericBoson
 			{
 				if (0 < urlCandidate.size())
 				{
-					offset = urlCandidateCopy.find_first_of('?', 0);
+					while(true)
+					{
+						offset = urlCandidateCopy.find_first_of('?', 0);
 
-					parsedPath.emplace_back(urlCandidateCopy);
+						if (std::string_view::npos == offset)
+						{
+							if (0 < urlCandidate.size())
+							{
+								parsedPath.emplace_back(urlCandidateCopy);
+							}
+
+							break;
+						}
+
+						std::string_view parsedSegment = urlCandidateCopy.substr(0, offset);
+
+						parsedPath.emplace_back(parsedSegment);
+
+						urlCandidateCopy = urlCandidateCopy.substr(offset + 1);
+					}
 				}
 
 				break;
