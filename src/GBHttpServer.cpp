@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	bool GBHttpServer::TraversePathTree(const std::vector<std::string>& pathTree, PathSegment*& pTargetPath)
+	bool GBHttpServer::TraversePathTree(const std::vector<std::string>& pathTree, const std::map<std::string, std::string> queryMap, PathSegment*& pTargetPath)
 	{
 		for (auto& iPathSegment : pathTree)
 		{
@@ -361,7 +361,8 @@ namespace GenericBoson
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
 		std::vector<std::string> pathSegmentArray;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+		std::map<std::string, std::string> queryMap;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
 		{
@@ -371,7 +372,7 @@ namespace GenericBoson
 		}
 
 		PathSegment* pTargetPath = &g_rootPath;
-		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
+		bool traverseResult = TraversePathTree(pathSegmentArray, queryMap, pTargetPath);
 
 		if (false == traverseResult)
 		{
@@ -391,7 +392,8 @@ namespace GenericBoson
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
 		std::vector<std::string> pathSegmentArray;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+		std::map<std::string, std::string> queryMap;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
 		{
@@ -401,7 +403,7 @@ namespace GenericBoson
 		}
 
 		PathSegment* pTargetPath = &g_rootPath;
-		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
+		bool traverseResult = TraversePathTree(pathSegmentArray, queryMap, pTargetPath);
 
 		if (false == traverseResult)
 		{
@@ -421,7 +423,8 @@ namespace GenericBoson
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
 		std::vector<std::string> pathSegmentArray;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray);
+		std::map<std::string, std::string> queryMap;
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
 		{
@@ -431,7 +434,7 @@ namespace GenericBoson
 		}
 
 		PathSegment* pTargetPath = &g_rootPath;
-		bool traverseResult = TraversePathTree(pathSegmentArray, pTargetPath);
+		bool traverseResult = TraversePathTree(pathSegmentArray, queryMap, pTargetPath);
 
 		if (false == traverseResult)
 		{

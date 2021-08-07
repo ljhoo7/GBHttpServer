@@ -9,6 +9,7 @@ namespace GenericBoson
 	{
 		std::string m_methodName;
 		std::string m_targetPath;
+		std::map<std::string, std::string> m_queryMap;
 		HttpVersion m_version = HttpVersion::None;
 	};
 

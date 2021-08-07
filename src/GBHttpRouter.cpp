@@ -51,7 +51,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, , );
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, requestReader.m_pRequestLineInformation->m_queryMap, *requestReader.m_pMessageBody);
 
 			return { true, response };
 		}
@@ -64,7 +64,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, , );
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, requestReader.m_pRequestLineInformation->m_queryMap, *requestReader.m_pMessageBody);
 
 			return { true, response };
 		}
@@ -77,7 +77,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, , );
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, requestReader.m_pRequestLineInformation->m_queryMap, *requestReader.m_pMessageBody);
 
 			return { true, response };
 		}
