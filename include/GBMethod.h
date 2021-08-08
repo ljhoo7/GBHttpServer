@@ -5,6 +5,8 @@
 #include <functional>
 #include <cstdarg>
 
+#define GB_ACTION_METHOD_PARAMETERS const std::map<std::string, std::string>&, const std::map<std::string, std::string>&, const GBHttpMessageBody&
+
 namespace GenericBoson
 {
 	// Explanation about std::functino template parameter :
@@ -14,7 +16,7 @@ namespace GenericBoson
 	//		3. const GBHttpMessageBody& : HTTP message body 객체
 	// Return Value
 	//		1. GBHttpResponse : 보낼 response 객체
-	typedef std::function<GBHttpResponse(const std::map<std::string, std::string>&, const std::map<std::string, std::string>&, const GBHttpMessageBody&)> GB_ACTION_METHOD;
+	typedef std::function<GBHttpResponse(GB_ACTION_METHOD_PARAMETERS)> GB_ACTION_METHOD;
 
 	/*
 	http에서 GET, PUT, POST 같은 것을 뜻합니다.
