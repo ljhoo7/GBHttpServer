@@ -8,8 +8,8 @@ namespace GenericBoson
 		const std::string_view targetPath = requestReader.m_pRequestLineInformation->m_targetPath;
 		const std::string_view methodName = requestReader.m_pRequestLineInformation->m_methodName;
 
-		std::vector<std::string> pathSegmentArray;
-		std::map<std::string, std::string> queryMap;
+		std::vector<std::string_view> pathSegmentArray;
+		std::map<std::string_view, std::string_view> queryMap;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
@@ -33,7 +33,7 @@ namespace GenericBoson
 		{
 			// 원래 true == pNode->m_subTreeMap.contains(iPathSegment) 였는데,
 			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
-			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(iPathSegment))
+			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(iPathSegment.data()))
 			{
 				// #ToDo ActionMethod not found.
 				return { false, {} };

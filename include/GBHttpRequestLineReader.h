@@ -7,9 +7,9 @@ namespace GenericBoson
 {
 	struct GBHttpRequestLineInformation final : public GBHttpInformation
 	{
-		std::string m_methodName;
-		std::string m_targetPath;
-		std::map<std::string, std::string> m_queryMap;
+		std::string_view m_methodName;
+		std::string_view m_targetPath;
+		std::map<std::string_view, std::string_view> m_queryMap;
 		HttpVersion m_version = HttpVersion::None;
 	};
 

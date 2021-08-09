@@ -43,7 +43,7 @@ namespace GenericBoson
 		// \param pathTree
 		// \param queryMap
 		// \param pTargetPath
-		bool TraversePathTree(const std::vector<std::string>& pathTree, const std::map<std::string, std::string> queryMap, PathSegment*& pTargetPath);
+		bool TraversePathTree(const std::vector<std::string_view>& pathTree, const std::map<std::string_view, std::string_view> queryMap, PathSegment*& pTargetPath);
 
 		std::pair<bool, std::string> SetListeningSocket();
 		std::string GetWSALastErrorString();

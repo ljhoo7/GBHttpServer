@@ -6,7 +6,7 @@ namespace GenericBoson
 {
 	struct GBHttpHeaderInformation final : public GBHttpInformation
 	{
-		std::map<std::string, std::string> m_headerMap;
+		std::map<std::string_view, std::string_view> m_headerMap;
 	};
 
 	class GBHttpHeaderReader : public GBHttpReader

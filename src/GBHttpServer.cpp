@@ -4,9 +4,9 @@
 
 namespace GenericBoson
 {
-	bool GBHttpServer::TraversePathTree(const std::vector<std::string>& pathTree, const std::map<std::string, std::string> queryMap, PathSegment*& pTargetPath)
+	bool GBHttpServer::TraversePathTree(const std::vector<std::string_view>& pathTree, const std::map<std::string_view, std::string_view> queryMap, PathSegment*& pTargetPath)
 	{
-		for (auto& iPathSegment : pathTree)
+		for (const auto& iPathSegment : pathTree)
 		{
 			// 원래 true == pTargetPath->m_subTreeMap.contains(iPathSegment) 였는데,
 			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
@@ -144,7 +144,7 @@ namespace GenericBoson
 		DWORD flag = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-		wsaBuffer.buf = &pEol->m_buffer[pEol->m_offset];
+		wsaBuffer.buf = &pEol->m_recvBuffer[pEol->m_recvOffset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
@@ -160,7 +160,7 @@ namespace GenericBoson
 		bool succeeded = false;
 
 		bool parseResult = pEol->GatherAndParseLines(receivedBytes);
-		pEol->m_offset += receivedBytes;
+		pEol->m_recvOffset += receivedBytes;
 
 		bool gatheringNotFinished = false;
 		bool gatheringFinishedButNothing = false;
@@ -169,7 +169,7 @@ namespace GenericBoson
 		{
 			gatheringNotFinished = true;
 		}
-		else if (0 == pEol->m_offset)
+		else if (0 == pEol->m_recvOffset)
 		{
 			gatheringFinishedButNothing = true;
 		}
@@ -177,7 +177,7 @@ namespace GenericBoson
 		// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
 		if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
 		{
-			int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
+			int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_recvOffset);
 			int lastError = WSAGetLastError();
 
 			if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
@@ -189,13 +189,13 @@ namespace GenericBoson
 			return false;
 		}
 
-		GBHttpRequestReader requestReader(pEol->m_lines);
+		GBHttpRequestReader requestReader(pEol);
 		HTTP_STATUS_CODE readResult = requestReader.Read();
 
 
 #if defined(_DEBUG)
 		// 통신 표시
-		std::cout << pEol->m_buffer << '\n';
+		std::cout << pEol->m_recvBuffer << '\n';
 #endif
 
 		GBHttpResponse response;
@@ -360,8 +360,8 @@ namespace GenericBoson
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-		std::vector<std::string> pathSegmentArray;
-		std::map<std::string, std::string> queryMap;
+		std::vector<std::string_view> pathSegmentArray;
+		std::map<std::string_view, std::string_view> queryMap;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
@@ -391,8 +391,8 @@ namespace GenericBoson
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-		std::vector<std::string> pathSegmentArray;
-		std::map<std::string, std::string> queryMap;
+		std::vector<std::string_view> pathSegmentArray;
+		std::map<std::string_view, std::string_view> queryMap;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)
@@ -422,8 +422,8 @@ namespace GenericBoson
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-		std::vector<std::string> pathSegmentArray;
-		std::map<std::string, std::string> queryMap;
+		std::vector<std::string_view> pathSegmentArray;
+		std::map<std::string_view, std::string_view> queryMap;
 		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
 
 		if (false == parseResult)

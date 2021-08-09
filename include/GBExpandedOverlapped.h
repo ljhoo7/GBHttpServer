@@ -28,11 +28,12 @@ namespace GenericBoson
 
 		// #ToDo
 		// This must be exchanged with a circular lock-free queue.
-		char m_buffer[BUFFER_SIZE] = { 0, };
+		char m_recvBuffer[BUFFER_SIZE] = { 0, };
+		char m_sendBuffer[BUFFER_SIZE] = { 0, };
 
 		int m_test = 0;
 
-		DWORD m_offset = 0;
+		DWORD m_recvOffset = 0, m_sendOffset = 0;
 
 		/*
 		lines parsed by GatherAndParseLines function.

@@ -14,7 +14,7 @@ namespace GenericBoson
 {
 	class PathSegment;
 
-	typedef std::map<std::string, std::unique_ptr<PathSegment>> GBHttpPathTreeNode;
+	typedef std::map<std::string_view, std::unique_ptr<PathSegment>> GBHttpPathTreeNode;
 
 	struct PathSegment
 	{
