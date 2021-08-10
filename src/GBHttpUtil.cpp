@@ -38,10 +38,13 @@ namespace GenericBoson
 
 				std::vector<std::string_view> queryPairStringArray;
 				std::string_view leftStringView2 = Split(leftStringView1, '&', queryPairStringArray);
+				queryPairStringArray.push_back(leftStringView2);
 
-				for(const auto& iQueryPair : queryPairStringArray)
+				for(const auto& iQueryPairStr : queryPairStringArray)
 				{
-
+					std::string_view valueStr;
+					std::string_view keyStr = Split(iQueryPairStr, '=', valueStr);
+					queryMap.emplace(keyStr, valueStr);
 				}
 			}
 		}
@@ -49,36 +52,37 @@ namespace GenericBoson
 		return true;
 	}
 
-	std::string_view Split(const std::string_view targetStringView, char separator, std::string_view* pOutputStringViewArray, int stringViewArraySize)
+	std::string_view Split(const std::string_view targetStringView, char separator, std::string_view& outputStringView)
 	{
-		size_t offset = 0;
-		std::string_view stringViewCopy = targetStringView;
+		size_t offset = targetStringView.find_first_of(separator, 0);
 
-		int cnt = 0;
-		while (true)
+		if (std::string_view::npos == offset)
 		{
-			offset = stringViewCopy.find_first_of('/', 0);
-
-			if (std::string_view::npos == offset)
-			{
-				return stringViewCopy;
-			}
-
-			std::string_view parsedSegment = stringViewCopy.substr(0, offset);
-
-			*pOutputStringViewArray = parsedSegment;
-
-			pOutputStringViewArray++;
-			cnt++;
-
-			assert(cnt < stringViewArraySize);
-
-			stringViewCopy = stringViewCopy.substr(offset + 1);
+			return targetStringView;
 		}
+
+		outputStringView = targetStringView.substr(offset + 1);
+
+		return targetStringView.substr(0, offset);
 	}
 
 	std::string_view Split(const std::string_view targetStringView, char separator, std::vector<std::string_view>& outputArray)
 	{
-		return Split(targetStringView, separator, &outputArray[0], outputArray.size());
+		
+		std::string_view stringViewCopy = targetStringView;
+
+		while (true)
+		{
+			std::string_view leftPart;
+			std::string_view parsedPart = Split(stringViewCopy, separator, leftPart);
+
+			if (true == leftPart.empty())
+			{
+				return parsedPart;
+			}
+
+			stringViewCopy = leftPart;
+			outputArray.push_back(parsedPart);
+		}
 	}
 }
