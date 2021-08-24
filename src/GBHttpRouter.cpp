@@ -9,8 +9,7 @@ namespace GenericBoson
 		const std::string_view methodName = requestReader.m_pRequestLineInformation->m_methodName;
 
 		std::vector<std::string_view> pathSegmentArray;
-		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, requestReader.m_pRequestLineInformation->m_queryMap);
 
 		if (false == parseResult)
 		{
@@ -31,15 +30,21 @@ namespace GenericBoson
 		PathSegment* pNode = &rootPath;
 		for (auto& iPathSegment : pathSegmentArray)
 		{
+			// ';'를 구분자로 해서 '파라미터'가 각 경로조각마다 붙어있을 수 있다.
+			std::string_view parameter;
+			std::string_view pathSegmentWithoutParameter = Split(iPathSegment, ';', parameter);
+
+			// #ToDo 파라미터 받은 것을 활용하는 로직을 여기에 넣자.
+
 			// 원래 true == pNode->m_subTreeMap.contains(iPathSegment) 였는데,
 			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
-			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(iPathSegment.data()))
+			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(pathSegmentWithoutParameter.data()))
 			{
 				// #ToDo ActionMethod not found.
 				return { false, {} };
 			}
 
-			pNode = pNode->m_subTreeMap[iPathSegment].get();
+			pNode = pNode->m_subTreeMap[pathSegmentWithoutParameter].get();
 		}
 
 		if ("GET" == methodName)
