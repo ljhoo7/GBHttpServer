@@ -16,37 +16,22 @@ namespace GenericBoson
 		size_t offset = 0;
 		std::string_view urlCandidateCopy = urlCandidate.substr(1);
 
-		std::string_view leftStringView1 = Split(urlCandidateCopy, '/', parsedPath);
+		std::string_view leftStringView1 = Split(urlCandidateCopy, '/', '?', parsedPath);
 
-		if (0 < leftStringView1.size())
+		if (true == leftStringView1.empty())
 		{
-			offset = leftStringView1.find_first_of('?', 0);
+			return true;
+		}
 
-			if (std::string_view::npos == offset)
-			{
-				// 쿼리가 없으므로 '/' 뒤에 몽땅 마지막 경로 조각으로 넣는다.
-				parsedPath.emplace_back(leftStringView1);
-			}
-			else
-			{
-				// 쿼리가 있으므로 '/'와 '?' 사이의 것만 마지막 경로로 넣는다.
-				std::string_view parsedSegment = leftStringView1.substr(0, offset);
+		std::vector<std::string_view> queryPairStringArray;
+		std::string_view leftStringView2 = Split(leftStringView1, '&', queryPairStringArray);
+		queryPairStringArray.push_back(leftStringView2);
 
-				parsedPath.emplace_back(parsedSegment);
-
-				leftStringView1 = leftStringView1.substr(offset + 1);
-
-				std::vector<std::string_view> queryPairStringArray;
-				std::string_view leftStringView2 = Split(leftStringView1, '&', queryPairStringArray);
-				queryPairStringArray.push_back(leftStringView2);
-
-				for(const auto& iQueryPairStr : queryPairStringArray)
-				{
-					std::string_view valueStr;
-					std::string_view keyStr = Split(iQueryPairStr, '=', valueStr);
-					queryMap.emplace(keyStr, valueStr);
-				}
-			}
+		for (const auto& iQueryPairStr : queryPairStringArray)
+		{
+			std::string_view valueStr;
+			std::string_view keyStr = Split(iQueryPairStr, '=', valueStr);
+			queryMap.emplace(keyStr, valueStr);
 		}
 
 		return true;
@@ -68,7 +53,6 @@ namespace GenericBoson
 
 	std::string_view Split(const std::string_view targetStringView, char separator, std::vector<std::string_view>& outputArray)
 	{
-		
 		std::string_view stringViewCopy = targetStringView;
 
 		while (true)
@@ -84,5 +68,30 @@ namespace GenericBoson
 			stringViewCopy = leftPart;
 			outputArray.push_back(parsedPart);
 		}
+	}
+
+	std::string_view Split(const std::string_view targetStringView, char separator, char endCharacter, std::vector<std::string_view>& outputArray)
+	{
+		std::string_view leftString = Split(targetStringView, '/', outputArray);
+
+		if (0 == leftString.size())
+		{
+			return {};
+		}
+
+		size_t offset = leftString.find_first_of(endCharacter, 0);
+
+		if (std::string_view::npos != offset)
+		{
+			// endCharacter가 있으므로 separator와 endCharacter 사이의 것만 outputArray에 넣는다.
+			std::string_view parsedSegment = leftString.substr(0, offset);
+
+			outputArray.emplace_back(parsedSegment);
+
+			return leftString.substr(offset + 1);
+		}
+
+		// endCharacter가 없으므로 separator 뒤에 몽땅 outputArray에 넣는다.
+		outputArray.emplace_back(leftString);
 	}
 }

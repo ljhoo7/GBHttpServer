@@ -22,11 +22,5 @@ namespace GenericBoson
 	// \return
 	std::string_view Split(const std::string_view targetStringView, char separator, std::vector<std::string_view>& outputArray);
 
-	template<template<typename> class CONTAINER, typename... PACK>
-	void Split(std::string_view targetString, const char* separator, const CONTAINER<std::string_view>& container, PACK... pack)
-	{
-
-
-		Split(...);
-	}
+	std::string_view Split(const std::string_view targetStringView, char separator, char endCharacter, std::vector<std::string_view>& outputArray);
 }
