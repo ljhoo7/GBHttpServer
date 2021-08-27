@@ -93,5 +93,7 @@ namespace GenericBoson
 
 		// endCharacter가 없으므로 separator 뒤에 몽땅 outputArray에 넣는다.
 		outputArray.emplace_back(leftString);
+
+		return {};
 	}
 }
