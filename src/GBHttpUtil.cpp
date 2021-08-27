@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	bool ParseUrlString(const std::string_view urlCandidate, std::vector<std::string_view>& parsedPath, std::map<std::string_view, std::string_view>& queryMap)
+	bool ParseUrlString(const std::string_view urlCandidate, std::vector<std::string_view>& parsedPath, std::map<std::string_view, std::string_view>& queryMap, std::string_view fragment)
 	{
 		// 아래 if는 원래 false == urlCandidate.starts_with('/') 이었지만,
 		// travis windows가 VS2017까지만 지원해서 아래처럼 바꿈.
@@ -16,16 +16,15 @@ namespace GenericBoson
 		size_t offset = 0;
 		std::string_view urlCandidateCopy = urlCandidate.substr(1);
 
-		std::string_view leftStringView1 = Split(urlCandidateCopy, '/', '?', parsedPath);
+		std::string_view queryAndFragment = Split(urlCandidateCopy, '/', '?', parsedPath);
 
-		if (true == leftStringView1.empty())
+		if (true == queryAndFragment.empty())
 		{
 			return true;
 		}
 
 		std::vector<std::string_view> queryPairStringArray;
-		std::string_view leftStringView2 = Split(leftStringView1, '&', queryPairStringArray);
-		queryPairStringArray.push_back(leftStringView2);
+		fragment = Split(queryAndFragment, '&', '#', queryPairStringArray);
 
 		for (const auto& iQueryPairStr : queryPairStringArray)
 		{
