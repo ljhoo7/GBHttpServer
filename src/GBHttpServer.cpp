@@ -360,9 +360,10 @@ namespace GenericBoson
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
+		std::string_view fragmentStr;
 		std::vector<std::string_view> pathSegmentArray;
 		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap, fragmentStr);
 
 		if (false == parseResult)
 		{
@@ -391,9 +392,10 @@ namespace GenericBoson
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
+		std::string_view fragmentStr;
 		std::vector<std::string_view> pathSegmentArray;
 		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap, fragmentStr);
 
 		if (false == parseResult)
 		{
@@ -422,9 +424,10 @@ namespace GenericBoson
 	{
 		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
+		std::string_view fragmentStr;
 		std::vector<std::string_view> pathSegmentArray;
 		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
+		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap, fragmentStr);
 
 		if (false == parseResult)
 		{
