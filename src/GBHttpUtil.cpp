@@ -71,7 +71,7 @@ namespace GenericBoson
 
 	std::string_view Split(const std::string_view targetStringView, char separator, char endCharacter, std::vector<std::string_view>& outputArray)
 	{
-		std::string_view leftString = Split(targetStringView, '/', outputArray);
+		std::string_view leftString = Split(targetStringView, separator, outputArray);
 
 		if (0 == leftString.size())
 		{
