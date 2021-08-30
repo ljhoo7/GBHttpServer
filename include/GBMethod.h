@@ -5,7 +5,7 @@
 #include <functional>
 #include <cstdarg>
 
-#define GB_ACTION_METHOD_PARAMETERS const std::map<std::string_view, std::string_view>&, const std::map<std::string_view, std::string_view>&, const GBHttpMessageBody&
+#define GB_ACTION_METHOD_PARAMETERS const std::map<std::string_view, std::string_view>& queryMap, const std::map<std::string_view, std::string_view>& headerMap, const GBHttpMessageBody& body
 
 namespace GenericBoson
 {
