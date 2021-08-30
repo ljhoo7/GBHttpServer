@@ -5,10 +5,12 @@
 #include <functional>
 #include <cstdarg>
 
-#define GB_ACTION_METHOD_PARAMETERS const std::map<std::string_view, std::string_view>& queryMap, const std::map<std::string_view, std::string_view>& headerMap, const GBHttpMessageBody& body
-
 namespace GenericBoson
 {
+	using RequestQueryMap = const std::map<std::string_view, std::string_view>&;
+	using RequestHeaderMap = const std::map<std::string_view, std::string_view>&;
+	using RequestBody = const GBHttpMessageBody&;
+
 	// Explanation about std::functino template parameter :
 	// Parameters
 	//		1. const std::map<std::string, std::string>& : 쿼리 키-값 리스트
@@ -16,7 +18,7 @@ namespace GenericBoson
 	//		3. const GBHttpMessageBody& : HTTP message body 객체
 	// Return Value
 	//		1. GBHttpResponse : 보낼 response 객체
-	typedef std::function<GBHttpResponse(GB_ACTION_METHOD_PARAMETERS)> GB_ACTION_METHOD;
+	typedef std::function<GBHttpResponse(RequestQueryMap, RequestHeaderMap, RequestBody)> GB_ACTION_METHOD;
 
 	/*
 	http에서 GET, PUT, POST 같은 것을 뜻합니다.

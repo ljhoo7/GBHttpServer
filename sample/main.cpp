@@ -9,11 +9,17 @@ int main()
 {
 	GBHttpServer srv;
 
-	srv.GET("/test/test2", [](GB_ACTION_METHOD_PARAMETERS)->GBHttpResponse
+	srv.GET("/test/test2", [](RequestQueryMap requestQueryMap, RequestHeaderMap requestHeaderMap, RequestBody requestBody)->GBHttpResponse
 		{
 			std::cout << "here !" << std::endl;
 
-			return GBHttpResponse(HTTP_STATUS_CODE::OK);
+			//requestBody.ReadFile();
+
+			GBHttpResponse response(HTTP_STATUS_CODE::OK);
+
+			//response.WriteFile();
+
+			return response;
 		});
 
 	srv.Start();
