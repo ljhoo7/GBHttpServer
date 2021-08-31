@@ -21,7 +21,7 @@ namespace GenericBoson
 
 		// 원래 true == m_supportMethodMap.contains(methodName.data()) 였는데,
 		// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
-		if (m_supportMethodMap.end() == m_supportMethodMap.find(methodName.data()))
+		if (m_supportMethodMap.end() == m_supportMethodMap.find(std::string(methodName)))
 		{
 			// #ToDo
 			// Invalid request : The method name is not matched with the version.
@@ -39,7 +39,7 @@ namespace GenericBoson
 
 			// 원래 true == pNode->m_subTreeMap.contains(iPathSegment) 였는데,
 			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
-			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(pathSegmentWithoutParameter.data()))
+			if (pNode->m_subTreeMap.end() == pNode->m_subTreeMap.find(std::string(pathSegmentWithoutParameter)))
 			{
 				// #ToDo ActionMethod not found.
 				return { false, {} };
@@ -57,7 +57,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, requestReader.m_pRequestLineInformation->m_queryMap, *requestReader.m_pMessageBody);
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pRequestLineInformation->m_queryMap, requestReader.m_pHeaderInformation->m_headerMap, *requestReader.m_pMessageBody);
 
 			return { true, response };
 		}
@@ -70,7 +70,7 @@ namespace GenericBoson
 				return { false, {} };
 			}
 
-			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pHeaderInformation->m_headerMap, requestReader.m_pRequestLineInformation->m_queryMap, *requestReader.m_pMessageBody);
+			auto response = pNode->m_pGetMethod->m_method(requestReader.m_pRequestLineInformation->m_queryMap, requestReader.m_pHeaderInformation->m_headerMap, *requestReader.m_pMessageBody);
 
 			return { true, response };
 		}
