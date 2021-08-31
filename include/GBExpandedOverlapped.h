@@ -13,14 +13,6 @@ namespace GenericBoson
 		SEND,
 	};
 
-	enum class PARSE_LINE_STATE : uint8_t
-	{
-		CR_READ,
-		LF_READ,
-		CRLF_READ,
-		OTHER_READ,
-	};
-
 	struct GBExpandedOverlapped : public WSAOVERLAPPED
 	{
 		SOCKET m_socket = INVALID_SOCKET;
