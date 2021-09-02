@@ -1,14 +1,10 @@
 #pragma once
 
 #include "GBHttpReader.h"
+#include "GBHttpMessageBody.h"
 
 namespace GenericBoson
 {
-	struct GBHttpBodyInformation final : public GBHttpInformation
-	{
-		std::map<std::string_view, std::string_view> m_headerMap;
-	};
-
 	class GBHttpBodyReader : public GBHttpReader
 	{
 		std::queue<std::string_view>& m_lines;

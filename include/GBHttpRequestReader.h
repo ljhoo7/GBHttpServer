@@ -4,6 +4,7 @@
 #include "GBHttpHeaderReader.h"
 #include "GBHttpMessageBody.h"
 #include "GBExpandedOverlapped.h"
+#include "GBHttpBodyReader.h"
 
 namespace GenericBoson
 {
@@ -18,8 +19,8 @@ namespace GenericBoson
 			m_readerToInformationQueue.emplace(std::make_unique<GBHttpRequestLineReader>(pEol->m_lines), m_pRequestLineInformation);
 			m_pHeaderInformation = std::make_shared<GBHttpHeaderInformation>();
 			m_readerToInformationQueue.emplace(std::make_unique<GBHttpHeaderReader>(pEol->m_lines), m_pHeaderInformation);
-
 			m_pMessageBody = std::make_shared<GBHttpMessageBody>();
+			m_readerToInformationQueue.emplace(std::make_unique<GBHttpBodyReader>(pEol), m_pMessageBody);
 		}
 
 		std::shared_ptr<GBHttpRequestLineInformation> m_pRequestLineInformation = nullptr;

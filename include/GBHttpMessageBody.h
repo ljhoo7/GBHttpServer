@@ -2,7 +2,7 @@
 
 namespace GenericBoson
 {
-	class GBHttpMessageBody
+	class GBHttpMessageBody : public GBHttpInformation 
 	{
 	public:
 		GBHttpMessageBody() = default;
