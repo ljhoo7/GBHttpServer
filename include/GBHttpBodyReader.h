@@ -5,10 +5,10 @@
 
 namespace GenericBoson
 {
+	class GBExpandedOverlapped;
+
 	class GBHttpBodyReader : public GBHttpReader
 	{
-		std::queue<std::string_view>& m_lines;
-
 		// Inherited via GBHttpReader
 		virtual HTTP_STATUS_CODE Read(GBHttpInformation* pOutInfo) override;
 
@@ -16,7 +16,6 @@ namespace GenericBoson
 
 	public:
 
-		GBHttpBodyReader(std::queue<std::string_view>& lines)
-			: m_lines(lines) {}
+		GBHttpBodyReader(const GBExpandedOverlapped* lines){}
 	};
 }

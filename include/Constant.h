@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	static struct Constant
+	struct Constant
 	{
 		static const std::map<int, std::string> g_cStatusCodeToReasonPhaseMap;
 	};
