@@ -65,7 +65,7 @@ namespace Proud
 	template<const char* METHOD_NAME, const char* PATH>
 	void Before()
 	{
-
+		
 	}
 
 	template<const char* METHOD_NAME, const char* PATH>
