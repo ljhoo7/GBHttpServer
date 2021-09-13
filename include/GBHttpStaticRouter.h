@@ -10,18 +10,21 @@
 
 namespace Proud
 {
-	template<const char* PATH, typename CALLABLE>
-	void Put(CALLABLE callable)
+	template<const char* PATH>
+	class Put
 	{
-		// 사전 작업을 여기서 한다.
-		static const char[] putStr = "Put";
-		Before<putStr, PATH>();
 
-		callable();
 
-		// 사후 작업을 여기서 한다.
-		After<putStr, PATH>();
+		template<typename CALLABLE>
+		void Enroll(CALLABLE callable)
+		{
+			callable();
+
+			// 사후 작업을 여기서 한다.
+			After<putStr, PATH>();
+		}
 	}
+	
 
 	template<const char* PATH, typename CALLABLE>
 	void Head(CALLABLE callable)
@@ -65,7 +68,11 @@ namespace Proud
 	template<const char* METHOD_NAME, const char* PATH>
 	void Before()
 	{
-		
+		std::string_view methodName(METHOD_NAME);
+		if constexpr (methodName == "")
+		{
+
+		}
 	}
 
 	template<const char* METHOD_NAME, const char* PATH>
