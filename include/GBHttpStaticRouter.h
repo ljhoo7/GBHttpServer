@@ -13,19 +13,21 @@ namespace Proud
 	template<const char* PATH>
 	class Put
 	{
-
+		static std::function<void()> g_callable;
 
 		template<typename CALLABLE>
 		void Enroll(CALLABLE callable)
 		{
-			callable();
+			if (nullptr != g_callable)
+			{
+				
+				return;
+			}
 
-			// 사후 작업을 여기서 한다.
-			After<putStr, PATH>();
+			g_callable = callable;
 		}
-	}
+	};
 	
-
 	template<const char* PATH, typename CALLABLE>
 	void Head(CALLABLE callable)
 	{
