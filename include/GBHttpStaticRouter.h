@@ -1,85 +1,64 @@
 #pragma once
 
-#define COMBINE_INTERNAL(X,Y) X##Y
-#define COMBINE(X,Y) COMBINE_INTERNAL(X,Y)
-
-#define PUT(PATH,CALLABLE) static const char COMBINE(PUT,__LINE__)[]{ PATH };Put<COMBINE(PUT,__LINE__)>(CALLABLE)
-#define HEAD(PATH,CALLABLE) static const char COMBINE(HEAD,__LINE__)[]{ PATH };Head<COMBINE(HEAD,__LINE__)>(CALLABLE)
-#define GET(PATH,CALLABLE) static const char COMBINE(GET,__LINE__)[]{ PATH };Get<COMBINE(GET,__LINE__)>(CALLABLE)
-#define POST(PATH,CALLABLE) static const char COMBINE(POST,__LINE__)[]{ PATH };Post<COMBINE(POST,__LINE__)>(CALLABLE)
-
-namespace Proud
+namespace GenericBoson
 {
 	template<const char* PATH>
-	class Put
+	class METHOD
 	{
-		static std::function<void()> g_callable;
+		static void ThrowAlreadyRegisterdException(const std::string_view methodName)
+		{
+			std::stringstream strstream;
+			strstream << "A " << methodName << " method has already been registered at this " << PATH << "." << std::endl;
+			throw new std::exception(strstream.str().c_str());
+		}
+	public:
+		static std::function<void()> g_put;
+		static std::function<void()> g_get;
+		static std::function<void()> g_post;
+		static std::function<void()> g_head;
 
 		template<typename CALLABLE>
-		void Enroll(CALLABLE callable)
+		static void PUT(CALLABLE callable)
 		{
-			if (nullptr != g_callable)
+			if (nullptr != g_put)
 			{
-				
-				return;
+				ThrowAlreadyRegisterdException("PUT");
 			}
 
-			g_callable = callable;
+			g_put = callable;
+		}
+
+		template<typename CALLABLE>
+		static void GET(CALLABLE callable)
+		{
+			if (nullptr != g_get)
+			{
+				ThrowAlreadyRegisterdException("GET");
+			}
+
+			g_get = callable;
+		}
+
+		template<typename CALLABLE>
+		static void POST(CALLABLE callable)
+		{
+			if (nullptr != g_post)
+			{
+				ThrowAlreadyRegisterdException("POST");
+			}
+
+			g_post = callable;
+		}
+
+		template<typename CALLABLE>
+		static void HEAD(CALLABLE callable)
+		{
+			if (nullptr != g_head)
+			{
+				ThrowAlreadyRegisterdException("HEAD");
+			}
+
+			g_head = callable;
 		}
 	};
-	
-	template<const char* PATH, typename CALLABLE>
-	void Head(CALLABLE callable)
-	{
-		// 사전 작업을 여기서 한다.
-		static const char[] putStr = "Head";
-		Before<putStr, PATH>();
-
-		callable();
-
-		// 사후 작업을 여기서 한다.
-		After<putStr, PATH>();
-	}
-
-	template<const char* PATH, typename CALLABLE>
-	void Get(CALLABLE callable)
-	{
-		// 사전 작업을 여기서 한다.
-		static const char[] putStr = "Get";
-		Before<putStr, PATH>();
-
-		callable();
-
-		// 사후 작업을 여기서 한다.
-		After<putStr, PATH>();
-	}
-
-	template<const char* PATH, typename CALLABLE>
-	void Post(CALLABLE callable)
-	{
-		// 사전 작업을 여기서 한다.
-		static const char[] putStr = "Post";
-		Before<putStr, PATH>();
-
-		callable();
-
-		// 사후 작업을 여기서 한다.
-		After<putStr, PATH>();
-	}
-
-	template<const char* METHOD_NAME, const char* PATH>
-	void Before()
-	{
-		std::string_view methodName(METHOD_NAME);
-		if constexpr (methodName == "")
-		{
-
-		}
-	}
-
-	template<const char* METHOD_NAME, const char* PATH>
-	void After()
-	{
-
-	}
 }
