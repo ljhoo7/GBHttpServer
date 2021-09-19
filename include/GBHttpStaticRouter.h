@@ -1,5 +1,14 @@
 #pragma once
 
+#include <string_view>
+
+#define COMBINE_INTERNAL(X,Y) X##Y
+#define COMBINE(X,Y) COMBINE_INTERNAL(X,Y)
+#define PUT(PATH,CALLABLE) static const char COMBINE(METHOD,__LINE__)[]{ PATH };METHOD<COMBINE(METHOD,__LINE__)>::Put_internal(CALLABLE)
+#define GET(PATH,CALLABLE) static const char COMBINE(METHOD,__LINE__)[]{ PATH };METHOD<COMBINE(METHOD,__LINE__)>::Get_internal(CALLABLE)
+#define POST(PATH,CALLABLE) static const char COMBINE(METHOD,__LINE__)[]{ PATH };METHOD<COMBINE(METHOD,__LINE__)>::Post_internal(CALLABLE)
+#define HEAD(PATH,CALLABLE) static const char COMBINE(METHOD,__LINE__)[]{ PATH };METHOD<COMBINE(METHOD,__LINE__)>::Head_internal(CALLABLE)
+
 namespace GenericBoson
 {
 	template<const char* PATH>
@@ -8,57 +17,57 @@ namespace GenericBoson
 		static void ThrowAlreadyRegisterdException(const std::string_view methodName)
 		{
 			std::stringstream strstream;
-			strstream << "A " << methodName << " method has already been registered at this " << PATH << "." << std::endl;
+			strstream << "A " << methodName.data() << " method has already been registered at this " << PATH << "." << std::endl;
 			throw new std::exception(strstream.str().c_str());
 		}
 	public:
-		static std::function<void()> g_put;
-		static std::function<void()> g_get;
-		static std::function<void()> g_post;
-		static std::function<void()> g_head;
+		static std::function<void()> g_put_internal;
+		static std::function<void()> g_get_internal;
+		static std::function<void()> g_post_internal;
+		static std::function<void()> g_head_internal;
 
 		template<typename CALLABLE>
-		static void PUT(CALLABLE callable)
+		static void Put_internal(CALLABLE callable)
 		{
-			if (nullptr != g_put)
+			if (nullptr != g_put_internal)
 			{
 				ThrowAlreadyRegisterdException("PUT");
 			}
 
-			g_put = callable;
+			g_put_internal = callable;
 		}
 
 		template<typename CALLABLE>
-		static void GET(CALLABLE callable)
+		static void Get_internal(CALLABLE callable)
 		{
-			if (nullptr != g_get)
+			if (nullptr != g_get_internal)
 			{
 				ThrowAlreadyRegisterdException("GET");
 			}
 
-			g_get = callable;
+			g_get_internal = callable;
 		}
 
 		template<typename CALLABLE>
-		static void POST(CALLABLE callable)
+		static void Post_internal(CALLABLE callable)
 		{
-			if (nullptr != g_post)
+			if (nullptr != g_post_internal)
 			{
 				ThrowAlreadyRegisterdException("POST");
 			}
 
-			g_post = callable;
+			g_post_internal = callable;
 		}
 
 		template<typename CALLABLE>
-		static void HEAD(CALLABLE callable)
+		static void Head_internal(CALLABLE callable)
 		{
-			if (nullptr != g_head)
+			if (nullptr != g_head_internal)
 			{
 				ThrowAlreadyRegisterdException("HEAD");
 			}
 
-			g_head = callable;
+			g_head_internal = callable;
 		}
 	};
 }
