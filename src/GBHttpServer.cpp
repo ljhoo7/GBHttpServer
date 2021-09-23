@@ -242,9 +242,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			 auto routeResult = g_pRouter->Route(g_rootPath, requestReader);
-
-			 //std::tie(succeeded, response)
+			const auto& [a, b] = g_pRouter->Route(g_rootPath, requestReader);
 
 			if (false == succeeded)
 			{
