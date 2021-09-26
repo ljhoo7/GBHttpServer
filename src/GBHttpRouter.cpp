@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	std::pair<bool, GBHttpResponse> GBHttpRouterBase::Route(PathSegment& rootPath, const GBHttpRequestReader& requestReader)
+	std::pair<bool, std::string> GBHttpRouterBase::Route(PathSegment& rootPath, const GBHttpRequestReader& requestReader)
 	{
 		const std::string_view targetPath = requestReader.m_pRequestLineInformation->m_targetPath;
 		const std::string_view methodName = requestReader.m_pRequestLineInformation->m_methodName;
