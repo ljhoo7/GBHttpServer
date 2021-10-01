@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	std::pair<bool, std::string> GBHttpRouterBase::Route(PathSegment& rootPath, const GBHttpRequestReader& requestReader)
+	bool GBHttpRouterBase::Route(PathSegment& rootPath, const GBHttpRequestReader& requestReader, GBHttpResponse& outResponse)
 	{
 		const std::string_view targetPath = requestReader.m_pRequestLineInformation->m_targetPath;
 		const std::string_view methodName = requestReader.m_pRequestLineInformation->m_methodName;
@@ -17,7 +17,7 @@ namespace GenericBoson
 		{
 			// #ToDo
 			// The path in request line does not start with '/'.
-			return { false, {} };
+			return false;
 		}
 
 		// 원래 true == m_supportMethodMap.contains(methodName.data()) 였는데,
@@ -26,7 +26,7 @@ namespace GenericBoson
 		{
 			// #ToDo
 			// Invalid request : The method name is not matched with the version.
-			return { false, {} };
+			return false;
 		}
 
 		//PathSegment* pNode = &rootPath;
@@ -93,6 +93,6 @@ namespace GenericBoson
 
 		// #ToDo
 		// Internal logic error
-		return { false, {} };
+		return false;
 	}
 }
