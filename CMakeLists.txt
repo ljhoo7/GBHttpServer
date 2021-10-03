@@ -53,10 +53,10 @@ set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
 
 ####################################
 
-add_subdirectory(lib/curl/lib)
+#add_subdirectory(lib/curl/lib)
 add_subdirectory(TestHttpClient)
 
-add_dependencies(TestHttpClient libcurl)
+#add_dependencies(TestHttpClient libcurl)
 
 set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT Sample)
 
