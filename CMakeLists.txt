@@ -56,11 +56,7 @@ set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
 add_subdirectory(lib/curl/lib)
 add_subdirectory(TestHttpClient)
 
-include_external_msproject(UnitTester UnitTester/UnitTester.csproj PLATFORM "Any CPU")
-
-add_dependencies(UnitTester GBHttpServerFramework Sample)
-
 add_dependencies(TestHttpClient libcurl)
 
-set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT UnitTester)
+set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT Sample)
 
