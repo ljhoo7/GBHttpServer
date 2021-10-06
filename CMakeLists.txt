@@ -56,6 +56,8 @@ set_property(TARGET Sample PROPERTY CXX_STANDARD 20)
 add_subdirectory(lib/curl/lib)
 add_subdirectory(TestHttpClient)
 
+set_property(TARGET libcurl APPEND PROPERTY COMPILE_DEFINITIONS USE_SSLEAY USE_OPENSSL)
+
 add_dependencies(TestHttpClient libcurl)
 
 set_property(GLOBAL PROPERTY VS_STARTUP_PROJECT Sample)

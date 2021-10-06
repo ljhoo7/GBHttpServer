@@ -42,7 +42,7 @@ int main(void)
 	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
 	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, "localhost:8000/test/test2");
+		curl_easy_setopt(curl, CURLOPT_URL, "https://localhost:8000/test/test2");
 
 		/* send all data to this function  */
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -53,6 +53,9 @@ int main(void)
 		/* some servers don't like requests that are made without a user-agent
 		   field, so we provide one */
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
 
 		//curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postthis);
 
