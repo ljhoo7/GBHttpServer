@@ -58,6 +58,10 @@ add_subdirectory(TestHttpClient)
 
 set_property(TARGET libcurl APPEND PROPERTY COMPILE_DEFINITIONS USE_SSLEAY USE_OPENSSL)
 target_include_directories(libcurl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/openssl-1.1.1l/x64/include)
+target_link_libraries(libcurl PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/openssl-1.1.1l/x64/lib/libcrypto.lib
+		${CMAKE_CURRENT_SOURCE_DIR}/lib/openssl-1.1.1l/x64/lib/libssl.lib
+	)
 
 add_dependencies(TestHttpClient libcurl)
 
