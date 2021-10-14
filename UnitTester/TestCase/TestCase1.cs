@@ -10,6 +10,8 @@ namespace Test
     {
         public override async Task StartAsync()
         {
+            Console.WriteLine("Simple single request & response test.");
+
             var ret = await g_httpClient.GetAsync("http://localhost:8000/test/test2").ConfigureAwait(false);
 
             var response = await ret.Content.ReadAsStringAsync().ConfigureAwait(false);
