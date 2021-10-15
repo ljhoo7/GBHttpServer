@@ -15,10 +15,12 @@ namespace Test
             var taskList = new List<Task>();
             for(int k = 0; k < 100; ++k)
             {
-                var iTask = Task.Run(() => 
+                var iTask = Task.Run(async () => 
                 {
-
+                    var ret = await g_httpClient.GetAsync("http://localhost:8000/test/test2").ConfigureAwait(false);
+                    var response = await ret.Content.ReadAsStringAsync().ConfigureAwait(false);
                 });
+
                 taskList.Add(iTask);
             }
 
