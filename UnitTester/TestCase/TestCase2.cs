@@ -17,8 +17,25 @@ namespace Test
             {
                 var iTask = Task.Run(async () => 
                 {
-                    var ret = await g_httpClient.GetAsync("http://localhost:8000/test/test2").ConfigureAwait(false);
-                    var response = await ret.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    switch(k % 4)
+                    {
+                        case 0:
+                            {
+                                var ret = await g_httpClient.GetAsync("http://localhost:8000/test/test2").ConfigureAwait(false);
+                                var response = await ret.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            }
+                            break;
+                        case 1:
+                            {
+                                var ret = await g_httpClient.PostAsync("http://localhost:8000/test/test2", new StringContent("")).ConfigureAwait(false);
+                                var response = await ret.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            }
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                    }
                 });
 
                 taskList.Add(iTask);
