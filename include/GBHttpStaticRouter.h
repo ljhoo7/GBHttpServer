@@ -11,6 +11,28 @@
 
 namespace GenericBoson
 {
+	struct Head
+	{
+
+	};
+
+	struct Body
+	{
+
+	};
+
+	struct Request
+	{
+		Head m_head;
+		Body m_body;
+	};
+
+	struct Response
+	{
+		Head m_head;
+		Body m_body;
+	};
+
 	template<const char* PATH>
 	class METHOD
 	{
