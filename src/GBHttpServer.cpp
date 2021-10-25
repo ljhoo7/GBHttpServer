@@ -199,57 +199,32 @@ namespace GenericBoson
 #endif
 
 		GBHttpResponse response;
-		//{
-		//	std::lock_guard<std::mutex> lock(g_mainCriticalsection);
+		{
+			std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-		//	switch (requestReader.m_pRequestLineInformation->m_version)
-		//	{
-		//	case HttpVersion::Http09:
-		//	{
-		//		g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
-		//	}
-		//	break;
-		//	case HttpVersion::Http10:
-		//	{
-		//		g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
-		//	}
-		//	break;
-		//	case HttpVersion::Http11:
-		//	{
-		//		g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
-		//	}
-		//	break;
-		//	case HttpVersion::None:
-		//	{
-		//		// #ToDo 로깅으로 바꾸자
-		//		//return { false, "An abnormal line exists in HTTP message.\n" };
-		//	}
-		//	break;
-		//	default:
-		//		assert(false);
-		//	}
+			pEol->m_httpVersion = requestReader.m_pRequestLineInformation->m_version;
 
-		//	//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
-		//	//{
-		//	//	std::cout << "GET : path = " << path.data() << std::endl;
-		//	//});
-		//	//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
-		//	//{
-		//	//	std::cout << "PUT : path = " << path.data() << std::endl;
-		//	//});
-		//	//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
-		//	//{
-		//	//	std::cout << "POST : path = " << path.data() << std::endl;
-		//	//});
+			//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
+			//{
+			//	std::cout << "GET : path = " << path.data() << std::endl;
+			//});
+			//g_pRouter->m_methodList.emplace_back("PUT", [](const std::string_view path)
+			//{
+			//	std::cout << "PUT : path = " << path.data() << std::endl;
+			//});
+			//g_pRouter->m_methodList.emplace_back("POST", [](const std::string_view path)
+			//{
+			//	std::cout << "POST : path = " << path.data() << std::endl;
+			//});
 
-		//	succeeded = g_pRouter->Route(g_rootPath, requestReader, response);
+			//succeeded = g_pRouter->Route(g_rootPath, requestReader, response);
 
-		//	if (false == succeeded)
-		//	{
-		//		// #ToDo 로깅으로 바꾸자
-		//		//return { false, "Routing failed." };
-		//	}
-		//}
+			if (false == succeeded)
+			{
+				// #ToDo 로깅으로 바꾸자
+				//return { false, "Routing failed." };
+			}
+		}
 
 		GBHttpResponseWriter responseWriter(pEol);
 		responseWriter.WriteStatusLine(HttpVersion::Http10, response, "none");//requestReader.m_pRequestLineInformation->m_version

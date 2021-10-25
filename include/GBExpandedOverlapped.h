@@ -15,6 +15,8 @@ namespace GenericBoson
 
 	struct GBExpandedOverlapped : public WSAOVERLAPPED
 	{
+		HttpVersion m_httpVersion;
+
 		SOCKET m_socket = INVALID_SOCKET;
 		IO_TYPE m_type = IO_TYPE::ACCEPT;
 
