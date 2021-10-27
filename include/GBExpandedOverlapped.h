@@ -2,6 +2,8 @@
 
 #include <queue>
 
+#include "GBHttpVersionTypes.h"
+
 namespace GenericBoson
 {
 	const int BUFFER_SIZE = 4096;

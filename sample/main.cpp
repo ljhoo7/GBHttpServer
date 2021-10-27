@@ -1,6 +1,5 @@
 #include "../include/stdafx.h"
 #include "../include/GBHttpServer.h"
-#include "../include/GBHttpStaticRouter.h"
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -23,18 +22,18 @@ int main()
 	//		return response;
 	//	});
 
-	PUT("/test/test2", []()
-	{
-		std::cout << "here !" << std::endl;
+	//PUT("/test/test2", []()
+	//{
+	//	std::cout << "here !" << std::endl;
 
-		//requestBody.ReadFile();
+	//	//requestBody.ReadFile();
 
-		//GBHttpResponse response(HTTP_STATUS_CODE::OK);
+	//	//GBHttpResponse response(HTTP_STATUS_CODE::OK);
 
-		//response.WriteFile();
+	//	//response.WriteFile();
 
-		//return response;
-	});
+	//	//return response;
+	//});
 
 	srv.Start();
 
