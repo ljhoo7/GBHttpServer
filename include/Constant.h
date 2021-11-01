@@ -1,12 +1,13 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 namespace GenericBoson
 {
 	static struct Constant
 	{
-		static const std::map<int, std::string> g_cStatusCodeToReasonPhaseMap;
+		const std::map<int, std::string> g_cStatusCodeToReasonPhaseMap;
 	};
 
 	enum class MIME : int
