@@ -41,10 +41,14 @@ namespace Test
 
                 Debug.Assert(null != currentTestCase);
 
+                Console.WriteLine($"{currentTestCaseName} started.");
+
                 // Travis가 지원하는 가장 최신 VS인 2017에서는 async Main이 되는 닷넷 코어를 쓸 수 없다.
                 // 그 때까지는 이렇게 Wait를 써서 async await를 사용하도록 한다.
                 // FrameWork 4.7 이상, 닷넷코어 3 이상에서 async Main을 사용할 수 있다.
                 currentTestCase.StartAsync().Wait();
+
+                Console.WriteLine($"{currentTestCaseName} ended.");
             }
         }
     }

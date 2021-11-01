@@ -4,29 +4,29 @@
 
 namespace GenericBoson
 {
-	bool GBHttpServer::TraversePathTree(const std::vector<std::string_view>& pathTree, const std::map<std::string_view, std::string_view> queryMap, PathSegment*& pTargetPath)
-	{
-		for (const auto& iPathSegment : pathTree)
-		{
-			// 원래 true == pTargetPath->m_subTreeMap.contains(iPathSegment) 였는데,
-			// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
-			if (pTargetPath->m_subTreeMap.end() == pTargetPath->m_subTreeMap.find(iPathSegment))
-			{
-				pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
-			}
+	//bool GBHttpServer::TraversePathTree(const std::vector<std::string_view>& pathTree, const std::map<std::string_view, std::string_view> queryMap, PathSegment*& pTargetPath)
+	//{
+	//	for (const auto& iPathSegment : pathTree)
+	//	{
+	//		// 원래 true == pTargetPath->m_subTreeMap.contains(iPathSegment) 였는데,
+	//		// travis가 VS2017까지만 지원해서 아래와 같이 바꿈.
+	//		if (pTargetPath->m_subTreeMap.end() == pTargetPath->m_subTreeMap.find(iPathSegment))
+	//		{
+	//			pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
+	//		}
 
-			pTargetPath = (pTargetPath->m_subTreeMap[iPathSegment]).get();
-		}
+	//		pTargetPath = (pTargetPath->m_subTreeMap[iPathSegment]).get();
+	//	}
 
-		if (nullptr != pTargetPath->m_pGetMethod)
-		{
-			// #ToDo
-			// The action method Already Exists at the path.
-			return false;
-		}
+	//	if (nullptr != pTargetPath->m_pGetMethod)
+	//	{
+	//		// #ToDo
+	//		// The action method Already Exists at the path.
+	//		return false;
+	//	}
 
-		return true;
-	}
+	//	return true;
+	//}
 
 	std::string GBHttpServer::GetWSALastErrorString()
 	{
@@ -202,32 +202,7 @@ namespace GenericBoson
 		{
 			std::lock_guard<std::mutex> lock(g_mainCriticalsection);
 
-			switch (requestReader.m_pRequestLineInformation->m_version)
-			{
-			case HttpVersion::Http09:
-			{
-				g_pRouter = std::make_unique<GBHttpRouter<GBHttp09>>();
-			}
-			break;
-			case HttpVersion::Http10:
-			{
-				g_pRouter = std::make_unique<GBHttpRouter<GBHttp10>>();
-			}
-			break;
-			case HttpVersion::Http11:
-			{
-				g_pRouter = std::make_unique<GBHttpRouter<GBHttp11>>();
-			}
-			break;
-			case HttpVersion::None:
-			{
-				// #ToDo 로깅으로 바꾸자
-				//return { false, "An abnormal line exists in HTTP message.\n" };
-			}
-			break;
-			default:
-				assert(false);
-			}
+			pEol->m_httpVersion = requestReader.m_pRequestLineInformation->m_version;
 
 			//g_pRouter->m_methodList.emplace_back("GET", [](const std::string_view path)
 			//{
@@ -242,7 +217,7 @@ namespace GenericBoson
 			//	std::cout << "POST : path = " << path.data() << std::endl;
 			//});
 
-			std::tie(succeeded, response) = g_pRouter->Route(g_rootPath, requestReader);
+			//succeeded = g_pRouter->Route(g_rootPath, requestReader, response);
 
 			if (false == succeeded)
 			{
@@ -356,103 +331,7 @@ namespace GenericBoson
 		return { true, {} };
 	}
 
-	bool GBHttpServer::GET(const std::string_view targetPath, const GB_ACTION_METHOD& func)
-	{
-		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
-
-		std::vector<std::string_view> pathSegmentArray;
-		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
-
-		if (false == parseResult)
-		{
-			// #ToDo
-			// targetPaht does not start with '/'.
-			return false;
-		}
-
-		PathSegment* pTargetPath = &g_rootPath;
-		bool traverseResult = TraversePathTree(pathSegmentArray, queryMap, pTargetPath);
-
-		if (false == traverseResult)
-		{
-			// #ToDo
-			// The action method Already Exists at the path.
-			return false;
-		}
-
-		pTargetPath->m_pGetMethod = std::make_unique<GBMethodGET>();
-		pTargetPath->m_pGetMethod->m_method = func;
-
-		return true;
-	}
-
-	bool GBHttpServer::HEAD(const std::string_view targetPath, const GB_ACTION_METHOD& func)
-	{
-		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
-
-		std::vector<std::string_view> pathSegmentArray;
-		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
-
-		if (false == parseResult)
-		{
-			// #ToDo
-			// targetPaht does not start with '/'.
-			return false;
-		}
-
-		PathSegment* pTargetPath = &g_rootPath;
-		bool traverseResult = TraversePathTree(pathSegmentArray, queryMap, pTargetPath);
-
-		if (false == traverseResult)
-		{
-			// #ToDo
-			// The action method Already Exists at the path.
-			return false;
-		}
-
-		pTargetPath->m_pHeadMethod = std::make_unique<GBMethodHEAD>();
-		pTargetPath->m_pHeadMethod->m_method = func;
-
-		return true;
-	}
-
-	bool GBHttpServer::POST(const std::string_view targetPath, const GB_ACTION_METHOD& func)
-	{
-		std::lock_guard<std::mutex> lock(g_mainCriticalsection);
-
-		std::vector<std::string_view> pathSegmentArray;
-		std::map<std::string_view, std::string_view> queryMap;
-		bool parseResult = ParseUrlString(targetPath, pathSegmentArray, queryMap);
-
-		if (false == parseResult)
-		{
-			// #ToDo
-			// targetPaht does not start with '/'.
-			return false;
-		}
-
-		PathSegment* pTargetPath = &g_rootPath;
-		bool traverseResult = TraversePathTree(pathSegmentArray, queryMap, pTargetPath);
-
-		if (false == traverseResult)
-		{
-			// #ToDo
-			// The action method Already Exists at the path.
-			return false;
-		}
-
-		pTargetPath->m_pPostMethod = std::make_unique<GBMethodPOST>();
-		pTargetPath->m_pPostMethod->m_method = func;
-
-		return true;
-	}
-
 	std::mutex GBHttpServer::g_mainCriticalsection;
-
-	PathSegment GBHttpServer::g_rootPath;
-	std::unique_ptr<GBHttpRouterBase> GBHttpServer::g_pRouter;
 
 	HANDLE GBHttpServer::g_IOCP = INVALID_HANDLE_VALUE;
 	volatile bool GBHttpServer::g_keepLooping = true;

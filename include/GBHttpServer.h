@@ -5,11 +5,6 @@
 #include <thread>
 #include <mutex>
 
-#include "GBHttpRouter.h"
-#include "GBMethod.h"
-#include "GBGETMethod.h"
-#include "GBPathSegment.h"
-#include "GBHttpRouter.h"
 #include "GBExpandedOverlapped.h"
 #include "GBHttpResponseWriter.h"
 #include "GBHttpRequestReader.h"
@@ -39,11 +34,11 @@ namespace GenericBoson
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
 		char m_listenBuffer[1024] = { 0, };
 
-		//
-		// \param pathTree
-		// \param queryMap
-		// \param pTargetPath
-		bool TraversePathTree(const std::vector<std::string_view>& pathTree, const std::map<std::string_view, std::string_view> queryMap, PathSegment*& pTargetPath);
+		////
+		//// \param pathTree
+		//// \param queryMap
+		//// \param pTargetPath
+		//bool TraversePathTree(const std::vector<std::string_view>& pathTree, const std::map<std::string_view, std::string_view> queryMap, PathSegment*& pTargetPath);
 
 		std::pair<bool, std::string> SetListeningSocket();
 		std::string GetWSALastErrorString();
@@ -58,8 +53,8 @@ namespace GenericBoson
 		static std::mutex g_mainCriticalsection;
 
 		// Equivalent to '/'
-		static PathSegment g_rootPath;
-		static std::unique_ptr<GBHttpRouterBase> g_pRouter;
+		/*static PathSegment g_rootPath;
+		static std::unique_ptr<GBHttpRouterBase> g_pRouter;*/
 
 		static HANDLE g_IOCP;
 		static volatile bool g_keepLooping;
@@ -68,10 +63,6 @@ namespace GenericBoson
 		GBHttpServer() : GBHttpServer(8000) {};
 		GBHttpServer(uint16_t portNum) : m_port(portNum) {};
 		virtual ~GBHttpServer();
-
-		bool GET(const std::string_view targetPath, const GB_ACTION_METHOD& func);
-		bool HEAD(const std::string_view targetPath, const GB_ACTION_METHOD& func);
-		bool POST(const std::string_view targetPath, const GB_ACTION_METHOD& func);
 
 		std::pair<bool, std::string> Start();
 	};

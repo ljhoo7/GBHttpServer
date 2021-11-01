@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	bool ParseUrlString(const std::string_view urlCandidate, std::vector<std::string_view>& parsedPath, std::map<std::string_view, std::string_view>& queryMap)
+	bool ParseUrlString(const std::string_view urlCandidate, std::vector<std::string_view>& parsedPath, std::map<std::string_view, std::string_view>& queryMap, std::string_view fragment)
 	{
 		// 아래 if는 원래 false == urlCandidate.starts_with('/') 이었지만,
 		// travis windows가 VS2017까지만 지원해서 아래처럼 바꿈.
@@ -16,69 +16,83 @@ namespace GenericBoson
 		size_t offset = 0;
 		std::string_view urlCandidateCopy = urlCandidate.substr(1);
 
-		std::string_view leftStringView1 = Split(urlCandidateCopy, '/', parsedPath);
+		std::string_view queryAndFragment = Split(urlCandidateCopy, '/', '?', parsedPath);
 
-		if (0 < leftStringView1.size())
+		if (true == queryAndFragment.empty())
 		{
-			offset = leftStringView1.find_first_of('?', 0);
+			return true;
+		}
 
-			if (std::string_view::npos == offset)
-			{
-				// 쿼리가 없으므로 '/' 뒤에 몽땅 마지막 경로 조각으로 넣는다.
-				parsedPath.emplace_back(leftStringView1);
-			}
-			else
-			{
-				// 쿼리가 있으므로 '/'와 '?' 사이의 것만 마지막 경로로 넣는다.
-				std::string_view parsedSegment = leftStringView1.substr(0, offset);
+		std::vector<std::string_view> queryPairStringArray;
+		fragment = Split(queryAndFragment, '&', '#', queryPairStringArray);
 
-				parsedPath.emplace_back(parsedSegment);
-
-				leftStringView1 = leftStringView1.substr(offset + 1);
-
-				std::vector<std::string_view> queryPairStringArray;
-				std::string_view leftStringView2 = Split(leftStringView1, '&', queryPairStringArray);
-
-				for(const auto& iQueryPair : queryPairStringArray)
-				{
-
-				}
-			}
+		for (const auto& iQueryPairStr : queryPairStringArray)
+		{
+			std::string_view valueStr;
+			std::string_view keyStr = Split(iQueryPairStr, '=', valueStr);
+			queryMap.emplace(keyStr, valueStr);
 		}
 
 		return true;
 	}
 
-	std::string_view Split(const std::string_view targetStringView, char separator, std::string_view* pOutputStringViewArray, int stringViewArraySize)
+	std::string_view Split(const std::string_view targetStringView, char separator, std::string_view& outputStringView)
 	{
-		size_t offset = 0;
-		std::string_view stringViewCopy = targetStringView;
+		size_t offset = targetStringView.find_first_of(separator, 0);
 
-		int cnt = 0;
-		while (true)
+		if (std::string_view::npos == offset)
 		{
-			offset = stringViewCopy.find_first_of('/', 0);
-
-			if (std::string_view::npos == offset)
-			{
-				return stringViewCopy;
-			}
-
-			std::string_view parsedSegment = stringViewCopy.substr(0, offset);
-
-			*pOutputStringViewArray = parsedSegment;
-
-			pOutputStringViewArray++;
-			cnt++;
-
-			assert(cnt < stringViewArraySize);
-
-			stringViewCopy = stringViewCopy.substr(offset + 1);
+			return targetStringView;
 		}
+
+		outputStringView = targetStringView.substr(offset + 1);
+
+		return targetStringView.substr(0, offset);
 	}
 
 	std::string_view Split(const std::string_view targetStringView, char separator, std::vector<std::string_view>& outputArray)
 	{
-		return Split(targetStringView, separator, &outputArray[0], outputArray.size());
+		std::string_view stringViewCopy = targetStringView;
+
+		while (true)
+		{
+			std::string_view leftPart;
+			std::string_view parsedPart = Split(stringViewCopy, separator, leftPart);
+
+			if (true == leftPart.empty())
+			{
+				return parsedPart;
+			}
+
+			stringViewCopy = leftPart;
+			outputArray.push_back(parsedPart);
+		}
+	}
+
+	std::string_view Split(const std::string_view targetStringView, char separator, char endCharacter, std::vector<std::string_view>& outputArray)
+	{
+		std::string_view leftString = Split(targetStringView, separator, outputArray);
+
+		if (0 == leftString.size())
+		{
+			return {};
+		}
+
+		size_t offset = leftString.find_first_of(endCharacter, 0);
+
+		if (std::string_view::npos != offset)
+		{
+			// endCharacter가 있으므로 separator와 endCharacter 사이의 것만 outputArray에 넣는다.
+			std::string_view parsedSegment = leftString.substr(0, offset);
+
+			outputArray.emplace_back(parsedSegment);
+
+			return leftString.substr(offset + 1);
+		}
+
+		// endCharacter가 없으므로 separator 뒤에 몽땅 outputArray에 넣는다.
+		outputArray.emplace_back(leftString);
+
+		return {};
 	}
 }

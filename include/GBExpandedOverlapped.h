@@ -2,6 +2,8 @@
 
 #include <queue>
 
+#include "GBHttpVersionTypes.h"
+
 namespace GenericBoson
 {
 	const int BUFFER_SIZE = 4096;
@@ -13,16 +15,10 @@ namespace GenericBoson
 		SEND,
 	};
 
-	enum class PARSE_LINE_STATE : uint8_t
-	{
-		CR_READ,
-		LF_READ,
-		CRLF_READ,
-		OTHER_READ,
-	};
-
 	struct GBExpandedOverlapped : public WSAOVERLAPPED
 	{
+		HttpVersion m_httpVersion;
+
 		SOCKET m_socket = INVALID_SOCKET;
 		IO_TYPE m_type = IO_TYPE::ACCEPT;
 

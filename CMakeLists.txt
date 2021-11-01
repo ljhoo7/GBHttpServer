@@ -5,14 +5,12 @@ project(GBHttpServerFramework)
 file(GLOB GBHttpServerFramework_SRC src/*.cpp)
 
 file(GLOB ROUTER_FILES src/*Router.cpp include/*Router.h src/GBPathSegment.cpp include/GBPathSegment.h)
-file(GLOB METHOD_FILES src/*Method.cpp include/*Method.h)
 file(GLOB READER_FILES src/*Reader.cpp include/*Reader.h)
 file(GLOB WRITER_FILES src/*Writer.cpp include/*Writer.h)
 
 file(GLOB GBHttpServerFramework_HEADER include/*.h)
 
 source_group("Router" FILES ${ROUTER_FILES})
-source_group("Method" FILES ${METHOD_FILES})
 source_group("Reader" FILES ${READER_FILES})
 source_group("Writer" FILES ${WRITER_FILES})
 
