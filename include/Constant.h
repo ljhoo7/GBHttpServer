@@ -7,7 +7,7 @@ namespace GenericBoson
 {
 	struct Constant
 	{
-		const std::map<int, std::string> g_cStatusCodeToReasonPhaseMap;
+		static const std::map<int, std::string> g_cStatusCodeToReasonPhaseMap;
 	};
 
 	enum class MIME : int

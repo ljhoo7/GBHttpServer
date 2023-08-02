@@ -26,6 +26,8 @@ file(GLOB SAMPLE_SRC sample/*.cpp sample/*.h)
 
 add_executable(Sample ${SAMPLE_SRC})
 
+find_package(Boost REQUIRED)
+
 set_property(TARGET GBHttpServerFramework PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 target_link_libraries(Sample PRIVATE GBHttpServerFramework ws2_32.lib)
