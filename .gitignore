@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/.vs
+/UnitTester/obj
+/out/build/x64-debug
