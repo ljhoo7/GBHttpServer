@@ -16,6 +16,9 @@ source_group("Writer" FILES ${WRITER_FILES})
 
 add_library(GBHttpServerFramework STATIC ${GBHttpServerFramework_SRC} ${GBHttpServerFramework_HEADER})
 
+target_include_directories(GBHttpServerFramework PRIVATE $ENV{BOOST_ROOT})
+target_link_directories(GBHttpServerFramework PRIVATE $ENV{BOOST_ROOT}/stage/lib)
+
 set_property(TARGET GBHttpServerFramework PROPERTY CXX_STANDARD 20)
 
 target_compile_definitions(GBHttpServerFramework PRIVATE _UNICODE UNICODE)
@@ -26,7 +29,11 @@ file(GLOB SAMPLE_SRC sample/*.cpp sample/*.h)
 
 add_executable(Sample ${SAMPLE_SRC})
 
-find_package(Boost REQUIRED)
+target_include_directories(Sample PRIVATE $ENV{BOOST_ROOT})
+target_link_directories(Sample PRIVATE $ENV{BOOST_ROOT}/stage/lib)
+
+## using boost through vcpkg + cmake not working yet
+#find_package(Boost REQUIRED)
 
 set_property(TARGET GBHttpServerFramework PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
