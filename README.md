@@ -1,4 +1,4 @@
-# GBHttpServer
-Windows HTTP Server Framework
+# GBServer
+Windows Server Framework
 
-[![Build Status](https://travis-ci.com/ljhoo7/GBHttpServerFramework.svg?branch=main)](https://travis-ci.com/ljhoo7/GBHttpServerFramework)
+[![Build Status](https://travis-ci.com/ljhoo7/GBServerFramework.svg?branch=main)](https://travis-ci.com/ljhoo7/GBServerFramework)
