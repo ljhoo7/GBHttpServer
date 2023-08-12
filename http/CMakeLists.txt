@@ -1,14 +1,5 @@
-file(GLOB HTTP_SRC src/*.cpp)
-
-file(GLOB ROUTER_FILES src/*Router.cpp include/*Router.h src/GBPathSegment.cpp include/GBPathSegment.h)
-file(GLOB READER_FILES src/*Reader.cpp include/*Reader.h)
-file(GLOB WRITER_FILES src/*Writer.cpp include/*Writer.h)
-
-file(GLOB HTTP_HEADER include/*.h)
-
-source_group("Router" FILES ${ROUTER_FILES})
-source_group("Reader" FILES ${READER_FILES})
-source_group("Writer" FILES ${WRITER_FILES})
+file(GLOB HTTP_SRC *.cpp)
+file(GLOB HTTP_HEADER *.h)
 
 add_library(GBHttpServerFramework STATIC ${HTTP_SRC} ${HTTP_HEADER})
 

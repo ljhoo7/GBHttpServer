@@ -1,5 +1,5 @@
-#include "../include/stdafx.h"
-#include "../include/GBHttpServer.h"
+#include "stdafx.h"
+#include "GBHttpServer.h"
 
 #include "boost/thread/future.hpp"
 

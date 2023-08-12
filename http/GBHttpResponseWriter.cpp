@@ -1,6 +1,6 @@
-#include "../include/stdafx.h"
+#include "stdafx.h"
 
-#include "../include/GBHttpResponseWriter.h"
+#include "GBHttpResponseWriter.h"
 
 namespace GenericBoson
 {

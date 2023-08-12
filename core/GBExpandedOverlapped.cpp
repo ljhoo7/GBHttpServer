@@ -1,5 +1,5 @@
-#include "../include/stdafx.h"
-#include "../include/GBExpandedOverlapped.h"
+#include "stdafx.h"
+#include "GBExpandedOverlapped.h"
 
 namespace GenericBoson
 {

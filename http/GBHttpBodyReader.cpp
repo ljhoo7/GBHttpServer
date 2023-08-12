@@ -1,6 +1,6 @@
-#include "../include/stdafx.h"
+#include "stdafx.h"
 
-#include "../include/GBHttpBodyReader.h"
+#include "GBHttpBodyReader.h"
 
 namespace GenericBoson
 {

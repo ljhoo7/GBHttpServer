@@ -1,4 +1,4 @@
-#include "../include/Constant.h"
+#include "Constant.h"
 
 namespace GenericBoson
 {

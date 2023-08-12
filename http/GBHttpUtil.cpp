@@ -1,6 +1,6 @@
-#include "../include/stdafx.h"
+#include "stdafx.h"
 
-#include "../include/GBHttpUtil.h"
+#include "GBHttpUtil.h"
 
 namespace GenericBoson
 {

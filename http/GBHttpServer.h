@@ -13,7 +13,7 @@ namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
-	class GBHttpServer
+	class GBHttpServer// : public GBServer
 	{
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;
