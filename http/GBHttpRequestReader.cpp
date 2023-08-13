@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "GBHttpRequestReader.h"
 
 namespace GenericBoson

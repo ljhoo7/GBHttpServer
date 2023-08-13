@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "GBHttpServer.h"
+#include "../http/GBHttpServer.h"
 
 #include "boost/thread/future.hpp"
 
@@ -9,9 +8,6 @@ using namespace GenericBoson;
 
 int main()
 {
-	
-}
-
 //GBHttpServer srv;
 
 //srv.Start();
@@ -48,3 +44,6 @@ int main()
 
 //	//return response;
 //});
+
+}
+
