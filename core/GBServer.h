@@ -7,11 +7,13 @@
 #include <thread>
 #include <vector>
 #include <string>
+#include <atomic>
 
 namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
+	template<typename T>
 	class GBServer
 	{
 	public:
@@ -19,18 +21,68 @@ namespace GenericBoson
 
 		GBServer() : m_port(8000) {};
 		GBServer(uint16_t portNum) : m_port(portNum) {};
-		virtual ~GBServer();
+		~GBServer()
+		{
+			// winsock2 종료 처리
+			closesocket(m_listeningSocket);
+			WSACleanup();
+
+			m_keepLooping = false;
+		}
 
 	private:
 		std::string GetWSALastErrorString();
 		std::string GetWSALastErrorString(int lastError);
 		std::pair<bool, std::string> SetListeningSocket();
 
-		void ThreadFunction();
+		void ThreadFunction()
+		{
+			DWORD transferredBytes;
+			u_long completionKey;
+			GBExpandedOverlapped* pEol = nullptr;
 
-		// \return true - all completed, false - not yet gathering completed.
-		virtual bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
-		virtual bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes) = 0;
+			while (true == m_keepLooping)
+			{
+				BOOL result = GetQueuedCompletionStatus(g_IOCP, &transferredBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
+
+				switch (pEol->m_type)
+				{
+				case IO_TYPE::ACCEPT:
+				{
+					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+					int lastError = WSAGetLastError();
+
+					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+					{
+						// #ToDo
+						// Issue receiving failed.
+					}
+				}
+				break;
+				case IO_TYPE::RECEIVE:
+				{
+					bool ret = T.OnReceived(pEol, transferredBytes);
+					if (false == ret)
+					{
+						continue;
+					}
+				}
+				break;
+				case IO_TYPE::SEND:
+				{
+					bool ret = T.OnSent(pEol, transferredBytes);
+
+					// 소켓 닫기
+					closesocket(pEol->m_socket);
+				}
+				break;
+				}
+			}
+		}
+
+		//// \return true - all completed, false - not yet gathering completed.
+		//virtual bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
+		//virtual bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes) = 0;
 
 		static int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
 	private:
@@ -53,7 +105,8 @@ namespace GenericBoson
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
 		char m_listenBuffer[1024] = { 0, };
 
+		std::atomic_bool m_keepLooping = true;
+
 		static HANDLE g_IOCP;
-		static volatile bool g_keepLooping;
 	};
 }

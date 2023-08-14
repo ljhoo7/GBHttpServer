@@ -4,23 +4,7 @@
 
 namespace GenericBoson
 {
-	std::string GBServer::GetWSALastErrorString()
-	{
-		return GetWSALastErrorString(WSAGetLastError());
-	}
-
-	std::string GBServer::GetWSALastErrorString(int lastError)
-	{
-		char* s = NULL;
-		FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, lastError,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPSTR)&s, 0, NULL);
-		std::string errorString(s);
-		LocalFree(s);
-
-		return errorString;
-	}
+	
 
 	std::pair<bool, std::string> GBServer::SetListeningSocket()
 	{
@@ -97,15 +81,6 @@ namespace GenericBoson
 		return { true, {} };
 	}
 
-	GBServer::~GBServer()
-	{
-		// winsock2 辆丰 贸府
-		closesocket(m_listeningSocket);
-		WSACleanup();
-
-		g_keepLooping = false;
-	}
-
 	int GBServer::IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive)
 	{
 		pEol->m_type = IO_TYPE::RECEIVE;
@@ -116,51 +91,6 @@ namespace GenericBoson
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
-	}
-
-	void GBServer::ThreadFunction()
-	{
-		DWORD transferredBytes;
-		u_long completionKey;
-		GBExpandedOverlapped* pEol = nullptr;
-
-		while (true == g_keepLooping)
-		{
-			BOOL result = GetQueuedCompletionStatus(g_IOCP, &transferredBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
-
-			switch (pEol->m_type)
-			{
-			case IO_TYPE::ACCEPT:
-			{
-				int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
-				int lastError = WSAGetLastError();
-
-				if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
-				{
-					// #ToDo
-					// Issue receiving failed.
-				}
-			}
-			break;
-			case IO_TYPE::RECEIVE:
-			{
-				bool ret = OnReceived(pEol, transferredBytes);
-				if (false == ret)
-				{
-					continue;
-				}
-			}
-			break;
-			case IO_TYPE::SEND:
-			{
-				bool ret = OnSent(pEol, transferredBytes);
-
-				// 家南 摧扁
-				closesocket(pEol->m_socket);
-			}
-			break;
-			}
-		}
 	}
 
 	std::pair<bool, std::string> GBServer::Start()
@@ -206,5 +136,4 @@ namespace GenericBoson
 	}
 
 	HANDLE GBServer::g_IOCP = INVALID_HANDLE_VALUE;
-	volatile bool GBServer::g_keepLooping = true;
 }
