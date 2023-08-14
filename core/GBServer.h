@@ -31,8 +31,7 @@ namespace GenericBoson
 		}
 
 	private:
-		std::string GetWSALastErrorString();
-		std::string GetWSALastErrorString(int lastError);
+		
 		std::pair<bool, std::string> SetListeningSocket();
 
 		void ThreadFunction()

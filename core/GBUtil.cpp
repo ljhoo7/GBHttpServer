@@ -1,3 +1,6 @@
+#include "stdafx.h"
+
+#include "GBUtil.h"
 
 namespace GenericBoson
 {
