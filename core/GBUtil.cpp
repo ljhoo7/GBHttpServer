@@ -1,15 +1,16 @@
 #include "stdafx.h"
 
 #include "GBUtil.h"
+#include "Winsock2.h"
 
 namespace GenericBoson
 {
-	std::string GBServer::GetWSALastErrorString()
+	std::string GetWSALastErrorString()
 	{
 		return GetWSALastErrorString(WSAGetLastError());
 	}
 
-	std::string GBServer::GetWSALastErrorString(int lastError)
+	std::string GetWSALastErrorString(int lastError)
 	{
 		char* s = NULL;
 		FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
