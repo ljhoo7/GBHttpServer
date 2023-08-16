@@ -25,7 +25,7 @@ namespace GenericBoson
 		m_threadPoolSize = 2 * std::thread::hardware_concurrency();
 		for (int k = 0; k < m_threadPoolSize; ++k)
 		{
-			m_threadPool.emplace_back(&GBServer::ThreadFunction, this);
+			m_threadPool.emplace_back(&GBServer::ThreadFunction<>, this);
 		}
 
 		// [1] - 3.  소켓 만들기
