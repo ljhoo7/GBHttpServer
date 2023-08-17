@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GBUtil.h"
 #include "GBExpandedOverlapped.h"
 #include "winsock2.h"
 #include "MSWSock.h"
@@ -13,7 +14,7 @@ namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
-	template<typename T>
+	template<typename PROTOCOL>
 	class GBServer
 	{
 	public:
@@ -49,7 +50,7 @@ namespace GenericBoson
 				}
 
 				// Associate this accept socket withd IOCP.
-				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, g_IOCP, (u_long)0, 0);
+				HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, m_IOCP, (u_long)0, 0);
 				if (NULL == associateAcceptSocketResult)
 				{
 					return { false, GetWSALastErrorString() };
@@ -80,8 +81,8 @@ namespace GenericBoson
 			}
 
 			// [1] - 2.  IOCP 커널 오브젝트 만들기.
-			g_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
-			if (NULL == g_IOCP)
+			m_IOCP = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (u_long)0, 0);
+			if (NULL == m_IOCP)
 			{
 				return { false, GetWSALastErrorString() };
 			}
@@ -89,7 +90,7 @@ namespace GenericBoson
 			m_threadPoolSize = 2 * std::thread::hardware_concurrency();
 			for (int k = 0; k < m_threadPoolSize; ++k)
 			{
-				m_threadPool.emplace_back(&GBServer::ThreadFunction<>, this);
+				m_threadPool.emplace_back(&GBServer::ThreadFunction, this);
 			}
 
 			// [1] - 3.  소켓 만들기
@@ -100,7 +101,7 @@ namespace GenericBoson
 			}
 
 			// [1] - 4.  Associate the listening socket with the IOCP.
-			HANDLE ret1 = CreateIoCompletionPort((HANDLE)m_listeningSocket, g_IOCP, (u_long)0, 0);
+			HANDLE ret1 = CreateIoCompletionPort((HANDLE)m_listeningSocket, m_IOCP, (u_long)0, 0);
 
 			if (NULL == ret1)
 			{
@@ -153,7 +154,7 @@ namespace GenericBoson
 
 			while (true == m_keepLooping)
 			{
-				BOOL result = GetQueuedCompletionStatus(g_IOCP, &transferredBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
+				BOOL result = GetQueuedCompletionStatus(m_IOCP, &transferredBytes, (PULONG_PTR)&completionKey, (OVERLAPPED**)&pEol, INFINITE);
 
 				switch (pEol->m_type)
 				{
@@ -171,7 +172,7 @@ namespace GenericBoson
 				break;
 				case IO_TYPE::RECEIVE:
 				{
-					bool ret = T.OnReceived(pEol, transferredBytes);
+					bool ret = m_protocol.OnReceived(pEol, transferredBytes);
 					if (false == ret)
 					{
 						continue;
@@ -180,7 +181,7 @@ namespace GenericBoson
 				break;
 				case IO_TYPE::SEND:
 				{
-					bool ret = T.OnSent(pEol, transferredBytes);
+					bool ret = m_protocol.OnSent(pEol, transferredBytes);
 
 					// 소켓 닫기
 					closesocket(pEol->m_socket);
@@ -205,6 +206,8 @@ namespace GenericBoson
 			return recvResult;
 		}
 	private:
+		PROTOCOL m_protocol;
+
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;
 		std::vector<GBExpandedOverlapped> m_sessions;
