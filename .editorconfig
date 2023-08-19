@@ -1,0 +1,5 @@
+root = ture
+
+[*.{cpp,h}]
+charset = utf-8
+guidelines = 110 1px dotted green, 130 1px dotted red
