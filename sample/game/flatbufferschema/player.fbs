@@ -1,0 +1,8 @@
+include "primitive.fbs"
+
+table Player
+{
+    position: Vector3;
+    hp: int64;
+    name: string;
+}
