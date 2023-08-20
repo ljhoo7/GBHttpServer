@@ -17,7 +17,7 @@ namespace GenericBoson
 	{
 		WSABUF bufToSend;
 		DWORD sentBytes = 0;
-		bufToSend.buf = m_pEol->m_sendBuffer;
+		bufToSend.buf = m_pEol->m_pSendBuffer;
 		bufToSend.len = m_pEol->m_sendOffset;
 		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, &sentBytes, 0, m_pEol, nullptr);
 
@@ -25,7 +25,7 @@ namespace GenericBoson
 	}
 
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
-	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse & response, const std::string& reason)
+	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason)
 	{
 		float versionFloat = ((int)version) / 10.0f;
 
@@ -36,7 +36,7 @@ namespace GenericBoson
 
 	bool GBHttpResponseWriter::WriteHeader(const std::vector<std::pair<std::string, std::string>>& headerList)
 	{
-		for(auto riter = headerList.rbegin(); riter != headerList.rend(); ++riter)
+		for (auto riter = headerList.rbegin(); riter != headerList.rend(); ++riter)
 		{
 			bool ret = WriteOneLineToBuffer("%s: %s\r\n", riter->first.c_str(), riter->second.c_str());
 			if (false == ret)
@@ -45,20 +45,20 @@ namespace GenericBoson
 			}
 		}
 
-		// RFC 7230¿¡ HTTP ¸Þ¼¼Áö¶õ ´ÙÀ½°ú °°Àº ÇüÅÂ¶ó°í ³ª¿ÍÀÖ´Ù.
+		// RFC 7230ì— HTTP ë©”ì„¸ì§€ëž€ ë‹¤ìŒê³¼ ê°™ì€ í˜•íƒœë¼ê³  ë‚˜ì™€ìžˆë‹¤.
 		/*
 		HTTP-message = start-line
 					  *( header-field CRLF )
 					  CRLF
 					  [ message-body ]
 		*/
-		// ¿©±â¿¡¼­ ¾öÃ» ÁÖÀÇÇÒ Á¡Àº Çì´õÇÊµå ¸®½ºÆ®¿Í ¸Þ¼¼Áö ¹Ùµð »çÀÌÀÇ CRLFÀÌ´Ù.
-		// ¸ðµç Çì´õ-ÇÊµå ½ÖÀº CRLF·Î ³¡³ª´Âµ¥ ±×·¯ÇÑ ½ÖµéÀÇ ¸¶Áö¸·¿¡ CRLF°¡ ÇÑ¹ø ´õ ºÙ¾î¾ß Á¦´ë·ÎµÈ ¸Þ¼¼Áö¶ó´Â ¶æÀÌ´Ù.
-		// ÀÌ ¸ð¾ç»õ¸¦ ´ëÃæº¸°í HTTP message writer¸¦ ±¸ÇöÇÑ´Ù¸é,
-		// Çì´õ-ÇÊµå½ÖµéÀ» ´Ù ¾²°í ¹Ù·Î ¸Þ¼¼Áö ¹Ùµð¸¦ ÀÌ¾î¼­ ½á¹ö¸± ¼öµµ ÀÖ´Ù.
-		// ±×·¸°Ô ÇÏ¸é Http ClientµéÀÌ ¹«ÇÑÇàÀÌ °É¸®°Å³ª Àß¸øµÈ ¸Þ¼¼Áö¶ó°í ¹ñ¾î¹ö¸®°Ô µÈ´Ù. ¿Ö ±×·¯´ÂÁö ÀÌÀ¯µµ ¾Ë·ÁÁÖÁö ¾Ê¾Æ¼­ µð¹ö±ëÀÌ °ï¶õÇØÁø´Ù.
-		// ¼Ó ÆíÇÏ°Ô Çì´õ-ÇÊµå ¸®½ºÆ®°¡ ³¡³ª¸é °³ÇàÀÌ ¹Ýµå½Ã "µÎ¹ø"µÇ°í ¹Ùµð°¡ ºÙ´Â´Ù°í ÀÌÇØÇÏ¸é ÆíÇÏ´Ù.
-		// ¹°·Ð CRLF°¡ 2¹øÀÌ¸é ´õ ÁÁÁö¸¸ LF¸¸ µÎ¹øÇØµµ Á¦´ë·Î µ¿ÀÛÇÏ´Â µíÇÏ´Ù.
+		// ì—¬ê¸°ì—ì„œ ì—„ì²­ ì£¼ì˜í•  ì ì€ í—¤ë”í•„ë“œ ë¦¬ìŠ¤íŠ¸ì™€ ë©”ì„¸ì§€ ë°”ë”” ì‚¬ì´ì˜ CRLFì´ë‹¤.
+		// ëª¨ë“  í—¤ë”-í•„ë“œ ìŒì€ CRLFë¡œ ëë‚˜ëŠ”ë° ê·¸ëŸ¬í•œ ìŒë“¤ì˜ ë§ˆì§€ë§‰ì— CRLFê°€ í•œë²ˆ ë” ë¶™ì–´ì•¼ ì œëŒ€ë¡œëœ ë©”ì„¸ì§€ë¼ëŠ” ëœ»ì´ë‹¤.
+		// ì´ ëª¨ì–‘ìƒˆë¥¼ ëŒ€ì¶©ë³´ê³  HTTP message writerë¥¼ êµ¬í˜„í•œë‹¤ë©´,
+		// í—¤ë”-í•„ë“œìŒë“¤ì„ ë‹¤ ì“°ê³  ë°”ë¡œ ë©”ì„¸ì§€ ë°”ë””ë¥¼ ì´ì–´ì„œ ì¨ë²„ë¦´ ìˆ˜ë„ ìžˆë‹¤.
+		// ê·¸ë ‡ê²Œ í•˜ë©´ Http Clientë“¤ì´ ë¬´í•œí–‰ì´ ê±¸ë¦¬ê±°ë‚˜ ìž˜ëª»ëœ ë©”ì„¸ì§€ë¼ê³  ë±‰ì–´ë²„ë¦¬ê²Œ ëœë‹¤. ì™œ ê·¸ëŸ¬ëŠ”ì§€ ì´ìœ ë„ ì•Œë ¤ì£¼ì§€ ì•Šì•„ì„œ ë””ë²„ê¹…ì´ ê³¤ëž€í•´ì§„ë‹¤.
+		// ì† íŽ¸í•˜ê²Œ í—¤ë”-í•„ë“œ ë¦¬ìŠ¤íŠ¸ê°€ ëë‚˜ë©´ ê°œí–‰ì´ ë°˜ë“œì‹œ "ë‘ë²ˆ"ë˜ê³  ë°”ë””ê°€ ë¶™ëŠ”ë‹¤ê³  ì´í•´í•˜ë©´ íŽ¸í•˜ë‹¤.
+		// ë¬¼ë¡  CRLFê°€ 2ë²ˆì´ë©´ ë” ì¢‹ì§€ë§Œ LFë§Œ ë‘ë²ˆí•´ë„ ì œëŒ€ë¡œ ë™ìž‘í•˜ëŠ” ë“¯í•˜ë‹¤.
 		WriteOneLineToBuffer("\r\n");
 
 		return true;
@@ -89,7 +89,7 @@ namespace GenericBoson
 
 	bool GBHttpResponseWriter::WriteOneLineToBuffer(const char* format, ...)
 	{
-		char* pLineStartPosition = &m_pEol->m_sendBuffer[m_pEol->m_sendOffset];
+		char* pLineStartPosition = &m_pEol->m_pSendBuffer[m_pEol->m_sendOffset];
 
 		va_list argList;
 		__crt_va_start(argList, format);

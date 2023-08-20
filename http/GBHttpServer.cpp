@@ -6,8 +6,8 @@ namespace GenericBoson
 	//{
 	//	for (const auto& iPathSegment : pathTree)
 	//	{
-	//		// ø¯∑° true == pTargetPath->m_subTreeMap.contains(iPathSegment) ø¥¥¬µ•,
-	//		// travis∞° VS2017±Ó¡ˆ∏∏ ¡ˆø¯«ÿº≠ æ∆∑°øÕ ∞∞¿Ã πŸ≤ﬁ.
+	//		// ÏõêÎûò true == pTargetPath->m_subTreeMap.contains(iPathSegment) ÏòÄÎäîÎç∞,
+	//		// travisÍ∞Ä VS2017ÍπåÏßÄÎßå ÏßÄÏõêÌï¥ÏÑú ÏïÑÎûòÏôÄ Í∞ôÏù¥ Î∞îÍøà.
 	//		if (pTargetPath->m_subTreeMap.end() == pTargetPath->m_subTreeMap.find(iPathSegment))
 	//		{
 	//			pTargetPath->m_subTreeMap.emplace(iPathSegment, std::make_unique<PathSegment>());
@@ -50,7 +50,7 @@ namespace GenericBoson
 			gatheringFinishedButNothing = true;
 		}*/
 
-		// ∞≥¥ı∏µ¿Ã ≥°≥™¡ˆ æ æ“∞≈≥™, ≥°≥µæÓµµ πﬁ¿∫∞‘ ¿¸«Ùæ¯¥Ÿ∏È, ¥ı πﬁ¿∏∑¡∞Ì «—¥Ÿ.
+		// Í∞úÎçîÎßÅÏù¥ ÎÅùÎÇòÏßÄ ÏïäÏïòÍ±∞ÎÇò, ÎÅùÎÇ¨Ïñ¥ÎèÑ Î∞õÏùÄÍ≤å Ï†ÑÌòÄÏóÜÎã§Î©¥, Îçî Î∞õÏúºÎ†§Í≥† ÌïúÎã§.
 		if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
 		{
 			int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_recvOffset);
@@ -70,8 +70,8 @@ namespace GenericBoson
 
 
 #if defined(_DEBUG)
-		// ≈ÎΩ≈ «•Ω√
-		std::cout << pEol->m_recvBuffer << '\n';
+		// ÌÜµÏã† ÌëúÏãú
+		std::cout << pEol->m_pRecvBuffer << '\n';
 #endif
 
 		GBHttpResponse response;
@@ -97,7 +97,7 @@ namespace GenericBoson
 
 			if (false == succeeded)
 			{
-				// #ToDo ∑Œ±Î¿∏∑Œ πŸ≤Ÿ¿⁄
+				// #ToDo Î°úÍπÖÏúºÎ°ú Î∞îÍæ∏Ïûê
 				//return { false, "Routing failed." };
 			}
 		}
@@ -128,12 +128,12 @@ namespace GenericBoson
 	//	char* pLineStart = nullptr;
 	//	for (; k < m_recvOffset + receivedBytes; ++k)
 	//	{
-	//		switch (m_recvBuffer[k])
+	//		switch (m_pRecvBuffer[k])
 	//		{
 	//		case '\r':
-	//			// carrage return¿∫ π´Ω√«—¥Ÿ.
-	//			// RFC πÆº≠ø° ¿««œ∏È HTTP message¿« request line∞˙ header-value listµÈ¿∫ ∞≥«◊¿ª CRLF∑Œ «ÿæﬂ µ»¥Ÿ∞Ì ≥™ø‘¿÷¥Ÿ.
-	//			// ±◊∑Ø≥™, 'HTTP øœ∫Æ ∞°¿ÃµÂ'√•ø° ¿««œ∏È, øæ≥Ø «¡∑Œ±◊∑• ¡ﬂ CR æ¯¿Ã LF∏∏¿∏∑Œ ∞≥«‡«œ¥¬ ∞ÕµÈ¿Ã ∏π¥Ÿ∞Ì «—¥Ÿ.
+	//			// carrage returnÏùÄ Î¨¥ÏãúÌïúÎã§.
+	//			// RFC Î¨∏ÏÑúÏóê ÏùòÌïòÎ©¥ HTTP messageÏùò request lineÍ≥º header-value listÎì§ÏùÄ Í∞úÌï≠ÏùÑ CRLFÎ°ú Ìï¥Ïïº ÎêúÎã§Í≥† ÎÇòÏôîÏûàÎã§.
+	//			// Í∑∏Îü¨ÎÇò, 'HTTP ÏôÑÎ≤Ω Í∞ÄÏù¥Îìú'Ï±ÖÏóê ÏùòÌïòÎ©¥, ÏòõÎÇ† ÌîÑÎ°úÍ∑∏Îû® Ï§ë CR ÏóÜÏù¥ LFÎßåÏúºÎ°ú Í∞úÌñâÌïòÎäî Í≤ÉÎì§Ïù¥ ÎßéÎã§Í≥† ÌïúÎã§.
 	//			break;
 	//		case '\n':
 	//			m_lines.emplace(pLineStart, stringOffset);
@@ -142,7 +142,7 @@ namespace GenericBoson
 	//		default:
 	//			if (0 == stringOffset)
 	//			{
-	//				pLineStart = &m_recvBuffer[k];
+	//				pLineStart = &m_pRecvBuffer[k];
 	//			}
 	//			stringOffset++;
 	//			break;
