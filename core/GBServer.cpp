@@ -156,19 +156,33 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool ret = OnReceive(pEol, transferredBytes);
+				bool ret = OnReceived(pEol, transferredBytes);
 				if (false == ret)
 				{
 					continue;
 				}
+
+				//// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
+				//if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
+				//{
+				//	int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_recvOffset);
+				//	int lastError = WSAGetLastError();
+
+				//	if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+				//	{
+				//		// #ToDo
+				//		// Issue receiving failed.
+				//	}
+
+				//	return false;
+				//}
 			}
 			break;
 			case IO_TYPE::SEND:
 			{
-				bool ret = OnSend(pEol, transferredBytes);
+				bool ret = OnSent(pEol, transferredBytes);
 
-				// 소켓 닫기
-				closesocket(pEol->m_socket);
+				// IssueSend
 			}
 			break;
 			}
@@ -185,5 +199,36 @@ namespace GenericBoson
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
+	}
+
+	int GBServer::IssueSend(GBExpandedOverlapped* pEol)
+	{
+		WSABUF bufToSend;
+		DWORD sentBytes = 0;
+		bufToSend.buf = pEol->m_pSendBuffer;
+		bufToSend.len = pEol->m_sendOffset;
+		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
+
+		return sendResult;
+	}
+
+	bool GBServer::Send(const GBExpandedOverlapped* pEol)
+	{
+		// 큐잉
+
+		return true;
+	}
+
+	void GBServer::SendThreadFunction()
+	{
+		while (m_keepLooping)
+		{
+			// pop front ( 디큐잉 )
+
+			// IssueSend();
+		}
+
+		// 소켓 닫기
+		//closesocket(pEol->m_socket);
 	}
 }

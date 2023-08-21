@@ -6,23 +6,30 @@
 
 namespace GenericBoson
 {
-	bool GBGameServer::OnReceive(const GBExpandedOverlapped* pEol, const DWORD transferredBytes)
+	bool GBGameServer::OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 	{
 
 
 		return true;
 	}
 
-	bool GBGameServer::OnSend(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
+	bool GBGameServer::Send(const int messageID, const std::shared_ptr<::flatbuffers::Table>& pMessage)
 	{
 		::flatbuffers::FlatBufferBuilder fbb;
 
 		//fbb.
 
-		pEol->m_pRecvBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
+		GBExpandedOverlapped eol;
+		eol.m_pRecvBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
+		eol.m_sendOffset += fbb.GetSize();
 
-		pEol->m_sendOffset += fbb.GetSize();
+		__super::Send(&eol);
 
+		return true;
+	}
+
+	bool GBGameServer::OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
+	{
 		return true;
 	}
 }

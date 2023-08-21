@@ -13,16 +13,7 @@ namespace GenericBoson
 		int issueSendResult = IssueSend();
 	}
 
-	int GBHttpResponseWriter::IssueSend()
-	{
-		WSABUF bufToSend;
-		DWORD sentBytes = 0;
-		bufToSend.buf = m_pEol->m_pSendBuffer;
-		bufToSend.len = m_pEol->m_sendOffset;
-		int sendResult = WSASend(m_pEol->m_socket, &bufToSend, 1, &sentBytes, 0, m_pEol, nullptr);
 
-		return 0;
-	}
 
 	// Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 	bool GBHttpResponseWriter::WriteStatusLine(const HttpVersion version, const GBHttpResponse& response, const std::string& reason)

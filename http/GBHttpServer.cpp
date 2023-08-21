@@ -51,19 +51,7 @@ namespace GenericBoson
 		}*/
 
 		// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
-		if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
-		{
-			int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_recvOffset);
-			int lastError = WSAGetLastError();
-
-			if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
-			{
-				// #ToDo
-				// Issue receiving failed.
-			}
-
-			return false;
-		}
+		// ... 이 부분 코드 core로 옮김.
 
 		GBHttpRequestReader requestReader(pEol);
 		HTTP_STATUS_CODE readResult = requestReader.Read();

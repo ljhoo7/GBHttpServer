@@ -10,6 +10,11 @@
 #include <string>
 #include <atomic>
 
+namespace flatbuffers
+{
+	class Table;
+}
+
 namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
@@ -23,15 +28,19 @@ namespace GenericBoson
 		virtual ~GBServer();
 
 	protected:
-		virtual bool OnReceive(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
-		virtual bool OnSend(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
+		virtual bool OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
+		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
+
+		bool Send(const GBExpandedOverlapped* pEol);
 
 		//// \return true - all completed, false - not yet gathering completed.
 		//virtual bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
 		//virtual bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes) = 0;
 		int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
+		int IssueSend(GBExpandedOverlapped* pEol);
 	private:
 		std::pair<bool, std::string> SetListeningSocket();
+		void SendThreadFunction();
 
 		void ThreadFunction();
 	private:
