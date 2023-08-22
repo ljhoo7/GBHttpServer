@@ -9,3 +9,5 @@ set_property(TARGET GBServerFrameworkCore PROPERTY CXX_STANDARD 20)
 set_property(TARGET GBServerFrameworkCore PROPERTY RUNTIME_OUTPUT_DIRECTORY ../bin)
 
 target_compile_definitions(GBServerFrameworkCore PRIVATE _UNICODE UNICODE)
+
+target_include_directories(GBServerFrameworkCore PRIVATE $ENV{BOOST_ROOT})

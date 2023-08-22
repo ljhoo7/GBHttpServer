@@ -53,6 +53,18 @@ namespace GenericBoson
 		WSACleanup();
 
 		m_keepLooping = false;
+
+		for (int k = 0; k < m_threadPoolSize; ++k)
+		{
+			if (!m_threadPool[k].joinable())
+			{
+				continue;
+			}
+
+			m_threadPool[k].join();
+		}
+
+		m_sendTask.get();
 	}
 
 	std::pair<bool, std::string> GBServer::SetListeningSocket()
@@ -71,11 +83,13 @@ namespace GenericBoson
 			return { false, GetWSALastErrorString() };
 		}
 
-		m_threadPoolSize = 2 * std::thread::hardware_concurrency();
+		m_threadPoolSize = 2 * std::thread::hardware_concurrency() - 1; // 1 is send task
 		for (int k = 0; k < m_threadPoolSize; ++k)
 		{
 			m_threadPool.emplace_back(&GBServer::ThreadFunction, this);
 		}
+
+		m_sendTask = boost::async(boost::bind(&GBServer::SendThreadFunction, this));
 
 		// [1] - 3.  소켓 만들기
 		m_listeningSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);

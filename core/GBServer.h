@@ -2,6 +2,8 @@
 
 #include "GBUtil.h"
 #include "GBExpandedOverlapped.h"
+#include "boost/thread/future.hpp"
+#include "boost/thread/executors/executor.hpp"
 #include "winsock2.h"
 #include "MSWSock.h"
 
@@ -45,6 +47,7 @@ namespace GenericBoson
 		void ThreadFunction();
 	private:
 		int m_threadPoolSize = 0;
+		boost::future<void> m_sendTask;
 		std::vector<std::thread> m_threadPool;
 		std::vector<GBExpandedOverlapped> m_sessions;
 
@@ -55,9 +58,7 @@ namespace GenericBoson
 
 		// AcceptEx 함수 포인터
 		LPFN_ACCEPTEX m_lpfnAcceptEx = NULL;
-
 		uint16_t m_port = 0;
-
 		int m_addrSize = sizeof(sockaddr_in);
 
 		// 주의 : 실제 사용은 안하지만 있어야 제대로 동작한다.
