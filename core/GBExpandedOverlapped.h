@@ -20,9 +20,8 @@ namespace GenericBoson
 		SOCKET m_socket = INVALID_SOCKET;
 		IO_TYPE m_type = IO_TYPE::ACCEPT;
 
-		char* m_pRecvBuffer = nullptr;
-		char* m_pSendBuffer = nullptr;
+		char* m_pBuffer = nullptr;
 
-		DWORD m_recvOffset = 0, m_sendOffset = 0;
+		DWORD m_offset = 0;
 	};
 }

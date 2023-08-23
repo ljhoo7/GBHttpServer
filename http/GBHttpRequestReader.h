@@ -13,7 +13,7 @@ namespace GenericBoson
 	public:
 		GBHttpRequestReader(GBExpandedOverlapped* pEol)
 		{
-			pEol->m_recvOffset = 0;
+			pEol->m_offset = 0;
 
 			m_pRequestLineInformation = std::make_shared<GBHttpRequestLineInformation>();
 			m_readerToInformationQueue.emplace(std::make_unique<GBHttpRequestLineReader>(pEol->m_lines), m_pRequestLineInformation);

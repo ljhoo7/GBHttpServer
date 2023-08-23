@@ -179,7 +179,7 @@ namespace GenericBoson
 				//// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
 				//if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
 				//{
-				//	int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_recvOffset);
+				//	int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
 				//	int lastError = WSAGetLastError();
 
 				//	if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
@@ -209,7 +209,7 @@ namespace GenericBoson
 		DWORD flag = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-		wsaBuffer.buf = &pEol->m_pRecvBuffer[pEol->m_recvOffset];
+		wsaBuffer.buf = &pEol->m_pBuffer[pEol->m_offset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
@@ -219,8 +219,8 @@ namespace GenericBoson
 	{
 		WSABUF bufToSend;
 		DWORD sentBytes = 0;
-		bufToSend.buf = pEol->m_pSendBuffer;
-		bufToSend.len = pEol->m_sendOffset;
+		bufToSend.buf = pEol->m_pBuffer;
+		bufToSend.len = pEol->m_offset;
 		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
 
 		return sendResult;

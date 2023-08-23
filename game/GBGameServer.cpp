@@ -20,8 +20,8 @@ namespace GenericBoson
 		//fbb.
 
 		GBExpandedOverlapped eol;
-		eol.m_pRecvBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
-		eol.m_sendOffset += fbb.GetSize();
+		eol.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
+		eol.m_offset += fbb.GetSize();
 
 		__super::Send(&eol);
 

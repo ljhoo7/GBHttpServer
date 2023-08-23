@@ -5,7 +5,7 @@ namespace GenericBoson
 	GBHttpResponseWriter::GBHttpResponseWriter(GBExpandedOverlapped* pEol)
 		: m_pEol(pEol)
 	{
-		pEol->m_sendOffset = 0;
+		pEol->m_offset = 0;
 	}
 
 	GBHttpResponseWriter::~GBHttpResponseWriter()
@@ -80,11 +80,11 @@ namespace GenericBoson
 
 	bool GBHttpResponseWriter::WriteOneLineToBuffer(const char* format, ...)
 	{
-		char* pLineStartPosition = &m_pEol->m_pSendBuffer[m_pEol->m_sendOffset];
+		char* pLineStartPosition = &m_pEol->m_pBuffer[m_pEol->m_offset];
 
 		va_list argList;
 		__crt_va_start(argList, format);
-		int writtenCountOrErrorCode = _vsprintf_s_l(pLineStartPosition, BUFFER_SIZE - m_pEol->m_sendOffset, format, NULL, argList);
+		int writtenCountOrErrorCode = _vsprintf_s_l(pLineStartPosition, BUFFER_SIZE - m_pEol->m_offset, format, NULL, argList);
 		__crt_va_end(argList);
 
 		if (-1 == writtenCountOrErrorCode)
@@ -94,7 +94,7 @@ namespace GenericBoson
 
 		m_lines.emplace_back(pLineStartPosition, writtenCountOrErrorCode);
 
-		m_pEol->m_sendOffset += writtenCountOrErrorCode;
+		m_pEol->m_offset += writtenCountOrErrorCode;
 
 		return true;
 	}
