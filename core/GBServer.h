@@ -51,7 +51,7 @@ namespace GenericBoson
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;
 
-		//boost::lockfree::queue<
+		boost::lockfree::queue<GBExpandedOverlapped> m_sendQueue;
 
 		std::vector<GBExpandedOverlapped> m_sessions;
 

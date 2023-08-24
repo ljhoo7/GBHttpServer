@@ -48,6 +48,8 @@ namespace GenericBoson
 
 	GBServer::~GBServer()
 	{
+		using namespace std::chrono_literals;
+
 		// winsock2 종료 처리
 		closesocket(m_listeningSocket);
 		WSACleanup();
@@ -65,6 +67,12 @@ namespace GenericBoson
 		}
 
 		m_sendTask.get();
+
+		while (!m_sendQueue.empty())
+		{
+			// preventing busy waiting
+			std::this_thread::sleep_for(1ms);
+		}
 	}
 
 	std::pair<bool, std::string> GBServer::SetListeningSocket()
@@ -196,7 +204,8 @@ namespace GenericBoson
 			{
 				bool ret = OnSent(pEol, transferredBytes);
 
-				// IssueSend
+				// 소켓 닫기
+				//closesocket(pEol->m_socket);
 			}
 			break;
 			}
@@ -237,12 +246,11 @@ namespace GenericBoson
 	{
 		while (m_keepLooping)
 		{
-			// pop front ( 디큐잉 )
-
-			// IssueSend();
+			GBExpandedOverlapped eol;
+			if (m_sendQueue.pop(eol))
+			{
+				IssueSend(&eol);
+			}
 		}
-
-		// 소켓 닫기
-		//closesocket(pEol->m_socket);
 	}
 }
