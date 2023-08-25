@@ -15,6 +15,8 @@ namespace GenericBoson
 		// AcceptEx 이슈
 		for (int k = 0; k < ISSUED_ACCEPTEX_COUNT; ++k)
 		{
+			m_sessions[k].m_index = k;
+
 			// AcceptEx 소켓만들기
 			m_sessions[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 			if (INVALID_SOCKET == m_sessions[k].m_socket)
@@ -68,7 +70,7 @@ namespace GenericBoson
 
 		m_sendTask.get();
 
-		while (!m_sendQueue.empty())
+		while (!m_indexesToSend.empty())
 		{
 			// preventing busy waiting
 			std::this_thread::sleep_for(1ms);
@@ -166,13 +168,20 @@ namespace GenericBoson
 			{
 			case IO_TYPE::ACCEPT:
 			{
-				int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
-				int lastError = WSAGetLastError();
-
-				if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+				if (pEol->IsForSend())
 				{
-					// #ToDo
-					// Issue receiving failed.
+					m_indexesToSend.push(pEol->GetIndex());
+				}
+				else
+				{
+					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+					int lastError = WSAGetLastError();
+
+					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+					{
+						// #ToDo
+						// Issue receiving failed.
+					}
 				}
 			}
 			break;
@@ -187,7 +196,7 @@ namespace GenericBoson
 				//// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
 				//if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
 				//{
-				//	int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_offset);
+				//	int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_receiveOffset);
 				//	int lastError = WSAGetLastError();
 
 				//	if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
@@ -218,7 +227,7 @@ namespace GenericBoson
 		DWORD flag = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-		wsaBuffer.buf = &pEol->m_pBuffer[pEol->m_offset];
+		wsaBuffer.buf = &pEol->m_pReceiveBuffer[pEol->m_receiveOffset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
@@ -228,8 +237,8 @@ namespace GenericBoson
 	{
 		WSABUF bufToSend;
 		DWORD sentBytes = 0;
-		bufToSend.buf = pEol->m_pBuffer;
-		bufToSend.len = pEol->m_offset;
+		bufToSend.buf = pEol->m_pReceiveBuffer;
+		bufToSend.len = pEol->m_receiveOffset;
 		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
 
 		return sendResult;
@@ -247,7 +256,7 @@ namespace GenericBoson
 		while (m_keepLooping)
 		{
 			GBExpandedOverlapped eol;
-			if (m_sendQueue.pop(eol))
+			if (m_indexesToSend.pop(eol))
 			{
 				IssueSend(&eol);
 			}

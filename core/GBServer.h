@@ -4,7 +4,6 @@
 #include "GBExpandedOverlapped.h"
 #include "boost/thread/future.hpp"
 #include "boost/thread/executors/executor.hpp"
-#include "boost/lockfree/queue.hpp"
 #include "winsock2.h"
 #include "MSWSock.h"
 
@@ -51,8 +50,7 @@ namespace GenericBoson
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;
 
-		boost::lockfree::queue<GBExpandedOverlapped> m_sendQueue;
-
+		boost::lockfree::queue<GBExpandedOverlapped*> m_sendQueue;
 		std::vector<GBExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;

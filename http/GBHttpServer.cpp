@@ -36,7 +36,7 @@ namespace GenericBoson
 		bool succeeded = false;
 
 		//bool parseResult = pEol->GatherAndParseLines(receivedBytes);
-		pEol->m_offset += receivedBytes;
+		pEol->m_receiveOffset += receivedBytes;
 
 		bool gatheringNotFinished = false;
 		bool gatheringFinishedButNothing = false;
@@ -45,7 +45,7 @@ namespace GenericBoson
 		{
 			gatheringNotFinished = true;
 		}
-		else if (0 == pEol->m_offset)
+		else if (0 == pEol->m_receiveOffset)
 		{
 			gatheringFinishedButNothing = true;
 		}*/
@@ -59,7 +59,7 @@ namespace GenericBoson
 
 #if defined(_DEBUG)
 		// 통신 표시
-		std::cout << pEol->m_pBuffer << '\n';
+		std::cout << pEol->m_pReceiveBuffer << '\n';
 #endif
 
 		GBHttpResponse response;
@@ -112,9 +112,9 @@ namespace GenericBoson
 	//{
 	//	int stringOffset = 0;
 	//	// All Http message ( except for Entity-Body ) must be ended by CRLF or LF.
-	//	int k = m_offset;
+	//	int k = m_receiveOffset;
 	//	char* pLineStart = nullptr;
-	//	for (; k < m_offset + receivedBytes; ++k)
+	//	for (; k < m_receiveOffset + receivedBytes; ++k)
 	//	{
 	//		switch (m_pBuffer[k])
 	//		{
