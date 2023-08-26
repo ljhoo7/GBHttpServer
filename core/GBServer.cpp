@@ -70,10 +70,13 @@ namespace GenericBoson
 
 		m_sendTask.get();
 
-		while (!m_indexesToSend.empty())
+		for (const auto& [_, itSendQueue] : m_sendQueues)
 		{
-			// preventing busy waiting
-			std::this_thread::sleep_for(1ms);
+			while (!itSendQueue.empty())
+			{
+				// preventing busy waiting
+				std::this_thread::sleep_for(1ms);
+			}
 		}
 	}
 
@@ -168,20 +171,13 @@ namespace GenericBoson
 			{
 			case IO_TYPE::ACCEPT:
 			{
-				if (pEol->IsForSend())
-				{
-					m_indexesToSend.push(pEol->GetIndex());
-				}
-				else
-				{
-					int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
-					int lastError = WSAGetLastError();
+				int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
+				int lastError = WSAGetLastError();
 
-					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
-					{
-						// #ToDo
-						// Issue receiving failed.
-					}
+				if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+				{
+					// #ToDo
+					// Issue receiving failed.
 				}
 			}
 			break;
@@ -226,8 +222,8 @@ namespace GenericBoson
 		pEol->m_type = IO_TYPE::RECEIVE;
 		DWORD flag = 0;
 		WSABUF wsaBuffer;
-		wsaBuffer.len = lengthToReceive;			// packet length is 1 byte.
-		wsaBuffer.buf = &pEol->m_pReceiveBuffer[pEol->m_receiveOffset];
+		wsaBuffer.len = lengthToReceive;
+		wsaBuffer.buf = &pEol->m_pRecvBuffer[pEol->m_recvOffset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
@@ -237,8 +233,8 @@ namespace GenericBoson
 	{
 		WSABUF bufToSend;
 		DWORD sentBytes = 0;
-		bufToSend.buf = pEol->m_pReceiveBuffer;
-		bufToSend.len = pEol->m_receiveOffset;
+		bufToSend.buf = pEol->m_pSendBuffer;
+		bufToSend.len = pEol->m_sendOffset;
 		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
 
 		return sendResult;
@@ -253,13 +249,21 @@ namespace GenericBoson
 
 	void GBServer::SendThreadFunction()
 	{
+		using namespace std::chrono_literals;
+
+		int focusIndex = 0;
 		while (m_keepLooping)
 		{
-			GBExpandedOverlapped eol;
-			if (m_indexesToSend.pop(eol))
+			for (auto& [_, itSendQueue] : m_sendQueues)
 			{
-				IssueSend(&eol);
+				GBExpandedOverlapped* pEol;
+				if (itSendQueue.pop(pEol))
+				{
+					IssueSend(pEol);
+				}
 			}
+
+			std::this_thread::sleep_for(1ms);
 		}
 	}
 }

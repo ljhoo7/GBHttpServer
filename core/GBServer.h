@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <atomic>
+#include <unordered_map>
 
 namespace flatbuffers
 {
@@ -50,7 +51,7 @@ namespace GenericBoson
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;
 
-		boost::lockfree::queue<GBExpandedOverlapped*> m_sendQueue;
+		std::unordered_map<SOCKET, boost::lockfree::queue<GBExpandedOverlapped*>> m_sendQueues;
 		std::vector<GBExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;
