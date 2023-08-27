@@ -15,8 +15,6 @@ namespace GenericBoson
 		// AcceptEx 이슈
 		for (int k = 0; k < ISSUED_ACCEPTEX_COUNT; ++k)
 		{
-			m_sessions[k].m_index = k;
-
 			// AcceptEx 소켓만들기
 			m_sessions[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 			if (INVALID_SOCKET == m_sessions[k].m_socket)
@@ -240,11 +238,9 @@ namespace GenericBoson
 		return sendResult;
 	}
 
-	bool GBServer::Send(const GBExpandedOverlapped* pEol)
+	bool GBServer::Send(GBExpandedOverlapped* pEol)
 	{
-		// 큐잉
-
-		return true;
+		return m_sendQueues[pEol->m_socket].push(pEol);
 	}
 
 	void GBServer::SendThreadFunction()

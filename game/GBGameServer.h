@@ -13,7 +13,9 @@ namespace GenericBoson
 
 	class IMessageHandlerAdaptor
 	{
-
+	public:
+		virtual void CallReqHandler() = 0;
+		virtual void CallResHandler() = 0;
 	};
 
 	template<typename REQUEST_HANDLER, typename RESPONSE_HANDLER>
@@ -22,9 +24,20 @@ namespace GenericBoson
 	public:
 		MessageHandlerAdaptor(const REQUEST_HANDLER& reqHandler, const RESPONSE_HANDLER& resHandler)
 			: m_reqHandler(reqHandler), m_resHandler(resHandler) {}
-	private:
-		REQUEST_HANDLER m_reqHandler;
-		RESPONSE_HANDLER m_resHandler;
+
+		virtual void CallReqHandler() override
+		{
+			m_reqHandler();
+		}
+
+		virtual void CallResHandler() override
+		{
+			m_resHandler();
+		}
+
+	public:
+		const REQUEST_HANDLER m_reqHandler;
+		const RESPONSE_HANDLER m_resHandler;
 	};
 
 	class GBGameServer : public GBServer
@@ -47,8 +60,12 @@ namespace GenericBoson
 	private:
 		bool Send(const int messageID, const std::shared_ptr<::flatbuffers::Table>& pMessage);
 
-		bool OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
-		bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
+		virtual bool OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
+		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
+
+		virtual bool ErrorLog(const std::string_view msg) override;
+		virtual bool WarningLog(const std::string_view msg) override;
+		virtual bool InfoLog(const std::string_view msg) override;
 
 	private:
 		std::unordered_map<int, std::shared_ptr<IMessageHandlerAdaptor>> m_handlers;
