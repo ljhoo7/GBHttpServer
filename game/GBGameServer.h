@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core/GBServer.h"
+#include "flatbuffers/flatbuffers.h"
 #include "winsock2.h"
 
 #include <format>
@@ -14,8 +15,8 @@ namespace GenericBoson
 	class IMessageHandlerAdaptor
 	{
 	public:
-		virtual void CallReqHandler() = 0;
-		virtual void CallResHandler() = 0;
+		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallReqHandler() = 0;
+		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallResHandler() = 0;
 	};
 
 	template<typename REQUEST_HANDLER, typename RESPONSE_HANDLER>
@@ -25,14 +26,14 @@ namespace GenericBoson
 		MessageHandlerAdaptor(const REQUEST_HANDLER& reqHandler, const RESPONSE_HANDLER& resHandler)
 			: m_reqHandler(reqHandler), m_resHandler(resHandler) {}
 
-		virtual void CallReqHandler() override
+		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallReqHandler() override
 		{
-			m_reqHandler();
+			return m_reqHandler();
 		}
 
-		virtual void CallResHandler() override
+		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallResHandler() override
 		{
-			m_resHandler();
+			return m_resHandler();
 		}
 
 	public:
@@ -58,7 +59,7 @@ namespace GenericBoson
 			}
 		}
 	private:
-		bool Send(const int messageID, const std::shared_ptr<::flatbuffers::Table>& pMessage);
+		bool Send(const int messageID);
 
 		virtual bool OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;

@@ -2,7 +2,7 @@
 #include "GBGameServer.h"
 
 #include "../core/GBExpandedOverlapped.h"
-#include "flatbuffers/flatbuffers.h"
+
 
 namespace GenericBoson
 {
@@ -13,10 +13,8 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBGameServer::Send(const int messageID, const std::shared_ptr<::flatbuffers::Table>& pMessage)
+	bool GBGameServer::Send(const int messageID)
 	{
-		::flatbuffers::FlatBufferBuilder fbb;
-
 		const auto m_pHandler = m_handlers.find(messageID);
 		if (m_pHandler == m_handlers.end())
 		{
@@ -24,7 +22,11 @@ namespace GenericBoson
 			return false;
 		}
 
-		m_pHandler->second->CallReqHandler();
+		const auto [succeeded, fbb] = m_pHandler->second->CallReqHandler();
+		if (!succeeded)
+		{
+			return false;
+		}
 
 		GBExpandedOverlapped eol;
 		eol.m_pSendBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
@@ -40,16 +42,16 @@ namespace GenericBoson
 
 	bool GBGameServer::ErrorLog(const std::string_view msg)
 	{
-
+		return true;
 	}
 
 	bool GBGameServer::WarningLog(const std::string_view msg)
 	{
-
+		return true;
 	}
 
 	bool GBGameServer::InfoLog(const std::string_view msg)
 	{
-
+		return true;
 	}
 }
