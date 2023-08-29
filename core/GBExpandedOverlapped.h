@@ -7,7 +7,7 @@
 
 namespace GenericBoson
 {
-	const int BUFFER_SIZE = 4096;
+	constexpr short BUFFER_SIZE = 8 * 1024;
 
 	enum class IO_TYPE : int32_t
 	{
@@ -24,6 +24,17 @@ namespace GenericBoson
 		char* m_pRecvBuffer = nullptr;
 		char* m_pSendBuffer = nullptr;
 
-		DWORD m_recvOffset = 0, m_sendOffset = 0;
+		enum STATE : char
+		{
+			ID = 0,
+			LENGTH = 1,
+			PAYLOAD = 2,
+		};
+
+		STATE m_scatterState = STATE::ID;
+		STATE m_gatherState = STATE::ID;
+
+		std::decay_t<decltype(BUFFER_SIZE)> m_length = 0;
+		std::decay_t<decltype(BUFFER_SIZE)> m_recvOffset = 0, m_sendOffset = 0;
 	};
 }
