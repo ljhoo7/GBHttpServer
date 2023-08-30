@@ -6,9 +6,37 @@
 
 namespace GenericBoson
 {
-	bool GBGameServer::OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes)
+	bool GBGameServer::OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 	{
+		switch (pEol->m_gatherState)
+		{
+		case GBExpandedOverlapped::STATE::ID:
+		{
 
+		}
+		break;
+		case GBExpandedOverlapped::STATE::LENGTH:
+		{
+
+		}
+		break;
+		case GBExpandedOverlapped::STATE::PAYLOAD:
+		{
+			if (pEol->m_length <= pEol->m_recvOffset + transferredBytes)
+			{
+
+				return true;
+			}
+
+			IssueRecv(pEol, pEol->m_length);
+		}
+		break;
+		default:
+		{
+			assert(false);
+		}
+		break;
+		}
 
 		return true;
 	}

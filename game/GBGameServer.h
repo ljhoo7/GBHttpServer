@@ -61,7 +61,7 @@ namespace GenericBoson
 	private:
 		bool Send(const int messageID);
 
-		virtual bool OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
+		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
 
 		virtual bool ErrorLog(const std::string_view msg) override;
@@ -69,6 +69,9 @@ namespace GenericBoson
 		virtual bool InfoLog(const std::string_view msg) override;
 
 	private:
+		const int MESSAGE_ID_SIZE = 2;
+		const int LENGTH_SIZE = 2;
+
 		std::unordered_map<int, std::shared_ptr<IMessageHandlerAdaptor>> m_handlers;
 	};
 }

@@ -31,7 +31,7 @@ namespace GenericBoson
 		virtual ~GBServer();
 
 	protected:
-		virtual bool OnReceived(const GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
+		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
 
 		virtual bool ErrorLog(const std::string_view msg) = 0;
