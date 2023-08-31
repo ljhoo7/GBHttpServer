@@ -7,7 +7,8 @@
 
 namespace GenericBoson
 {
-	constexpr short BUFFER_SIZE = 8 * 1024;
+	typedef short BUFFER_TYPE;
+	constexpr BUFFER_TYPE BUFFER_SIZE = 8 * 1024;
 
 	enum class IO_TYPE : int32_t
 	{
@@ -34,7 +35,7 @@ namespace GenericBoson
 		STATE m_scatterState = STATE::ID;
 		STATE m_gatherState = STATE::ID;
 
-		std::decay_t<decltype(BUFFER_SIZE)> m_length = 0;
-		std::decay_t<decltype(BUFFER_SIZE)> m_recvOffset = 0, m_sendOffset = 0;
+		BUFFER_TYPE m_length = 0;
+		BUFFER_TYPE m_recvOffset = 0, m_sendOffset = 0;
 	};
 }
