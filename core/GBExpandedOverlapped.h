@@ -28,9 +28,15 @@ namespace GenericBoson
 		enum STATE : char
 		{
 			ID = 0,
-			LENGTH = 1,
-			PAYLOAD = 2,
+			LENGTH,
+			PAYLOAD,
+			MAX_STATE
 		};
+
+		void AdvanceState()
+		{
+			m_gatherState = STATE{ (char{ m_gatherState } + 1) % STATE::MAX_STATE };
+		}
 
 		STATE m_scatterState = STATE::ID;
 		STATE m_gatherState = STATE::ID;

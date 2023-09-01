@@ -8,34 +8,40 @@ namespace GenericBoson
 {
 	bool GBGameServer::OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 	{
-		ULONG lengthToReceive = 0;
+		static ULONG messageID = 0, lengthToReceive = 0;
 
 		switch (pEol->m_gatherState)
 		{
 		case GBExpandedOverlapped::STATE::ID:
 		{
-			if (pEol->m_length < pEol->m_recvOffset + transferredBytes)
-			{
-
-				pEol->m_gatherState = GBExpandedOverlapped::STATE::LENGTH;
-			}
+			Gather(pEol, transferredBytes, messageID);
 		}
 		break;
 		case GBExpandedOverlapped::STATE::LENGTH:
 		{
-			if (pEol->m_length < pEol->m_recvOffset + transferredBytes)
-			{
-				lengthToReceive = reinterpret_cast<BUFFER_TYPE>(pEol->m_pRecvBuffer);
-				pEol->m_gatherState = GBExpandedOverlapped::STATE::PAYLOAD;
-			}
+			Gather(pEol, transferredBytes, lengthToReceive);
 		}
 		break;
 		case GBExpandedOverlapped::STATE::PAYLOAD:
 		{
-			if (pEol->m_length < pEol->m_recvOffset + transferredBytes)
+			// TO DO
+			// make fbb
+			// get fbb.buffer
+			char* fbbBuffer = 0;
+			if (Gather(pEol, transferredBytes, fbbBuffer))
 			{
+				const auto m_pHandler = m_handlers.find(messageID);
+				if (m_pHandler == m_handlers.end())
+				{
+					ErrorLog(std::format("receive packet handler not found. - messageID : {}", messageID));
+					return false;
+				}
 
-				pEol->m_gatherState = GBExpandedOverlapped::STATE::ID;
+				const auto [succeeded, fbb] = m_pHandler->second->CallResHandler();
+				if (!succeeded)
+				{
+					return false;
+				}
 			}
 
 

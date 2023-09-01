@@ -61,6 +61,23 @@ namespace GenericBoson
 	private:
 		bool Send(const int messageID);
 
+		template<typename T>
+		bool Gather(GBExpandedOverlapped* pEol, const DWORD transferredBytes, T& outParam)
+		{
+			if (pEol->m_length < pEol->m_recvOffset + transferredBytes)
+			{
+				return false;
+			}
+
+			pEol->m_length = sizeof(T);
+			pEol->m_recvOffset = 0;
+			pEol->AdvanceState();
+
+			outParam = reinterpret_cast<T>(pEol->m_pRecvBuffer);
+
+			return true;
+		}
+
 		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
 
