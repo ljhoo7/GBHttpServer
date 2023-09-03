@@ -71,7 +71,7 @@ namespace GenericBoson
 
 			pEol->m_length = sizeof(T);
 			pEol->m_recvOffset = 0;
-			pEol->AdvanceState();
+			pEol->AdvanceGatherState();
 
 			outParam = reinterpret_cast<T>(pEol->m_pRecvBuffer);
 

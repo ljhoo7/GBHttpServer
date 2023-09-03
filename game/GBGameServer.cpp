@@ -10,19 +10,19 @@ namespace GenericBoson
 	{
 		static ULONG messageID = 0, lengthToReceive = 0;
 
-		switch (pEol->m_gatherState)
+		switch (pEol->m_gatherInput.GetState())
 		{
-		case GBExpandedOverlapped::STATE::ID:
+		case VectoredIO::STATE::ID:
 		{
 			Gather(pEol, transferredBytes, messageID);
 		}
 		break;
-		case GBExpandedOverlapped::STATE::LENGTH:
+		case VectoredIO::STATE::LENGTH:
 		{
 			Gather(pEol, transferredBytes, lengthToReceive);
 		}
 		break;
-		case GBExpandedOverlapped::STATE::PAYLOAD:
+		case VectoredIO::STATE::PAYLOAD:
 		{
 			// TO DO
 			// make fbb

@@ -17,14 +17,9 @@ namespace GenericBoson
 		SEND,
 	};
 
-	struct GBExpandedOverlapped : public WSAOVERLAPPED
+	class VectoredIO
 	{
-		SOCKET m_socket = INVALID_SOCKET;
-		IO_TYPE m_type = IO_TYPE::ACCEPT;
-
-		char* m_pRecvBuffer = nullptr;
-		char* m_pSendBuffer = nullptr;
-
+	public:
 		enum STATE : char
 		{
 			ID = 0,
@@ -32,16 +27,30 @@ namespace GenericBoson
 			PAYLOAD,
 			MAX_STATE
 		};
-
+	public:
 		void AdvanceState()
 		{
-			m_gatherState = STATE{ (char{ m_gatherState } + 1) % STATE::MAX_STATE };
+			m_state = STATE{ (char{ m_state } + 1) % STATE::MAX_STATE };
 		}
 
-		STATE m_scatterState = STATE::ID;
-		STATE m_gatherState = STATE::ID;
+		STATE GetState() const
+		{
+			return m_state;
+		}
 
-		BUFFER_TYPE m_length = 0;
-		BUFFER_TYPE m_recvOffset = 0, m_sendOffset = 0;
+	public:
+		char* m_pBuffer = nullptr;
+		BUFFER_TYPE m_length = 0, m_offset = 0;
+
+	private:
+		STATE m_state = STATE::ID;
+	};
+
+	struct GBExpandedOverlapped : public WSAOVERLAPPED
+	{
+		SOCKET m_socket = INVALID_SOCKET;
+		IO_TYPE m_type = IO_TYPE::ACCEPT;
+
+		VectoredIO m_gatherInput, m_scatterOutput;
 	};
 }
