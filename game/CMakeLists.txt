@@ -5,8 +5,7 @@ file(GLOB GAME_HEADER *.h)
 
 add_library(GBGameServerFramework STATIC ${GAME_SRC} ${GAME_HEADER})
 
-target_include_directories (GBGameServerFramework PRIVATE "../flatbuffers/include")
-target_include_directories (GBGameServerFramework PRIVATE $ENV{BOOST_ROOT})
+target_include_directories (GBGameServerFramework PUBLIC $ENV{FLAT_BUFFER_INCLUDE} $ENV{BOOST_ROOT})
 
 set_property(TARGET GBGameServerFramework PROPERTY CXX_STANDARD 20)
 set_property(TARGET GBGameServerFramework PROPERTY RUNTIME_OUTPUT_DIRECTORY ../bin)

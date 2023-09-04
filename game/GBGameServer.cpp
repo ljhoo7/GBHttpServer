@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "GBGameServer.h"
 
+#define NOMINMAX
+
+#include "GBGameServer.h"
 #include "../core/GBExpandedOverlapped.h"
 
 
