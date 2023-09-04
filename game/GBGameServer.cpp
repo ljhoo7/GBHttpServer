@@ -74,8 +74,8 @@ namespace GenericBoson
 		}
 
 		GBExpandedOverlapped eol;
-		eol.m_pSendBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
-		eol.m_sendOffset += fbb.GetSize();
+		eol.m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
+		eol.m_scatterOutput.m_offset += fbb.GetSize();
 
 		return __super::Send(&eol);
 	}

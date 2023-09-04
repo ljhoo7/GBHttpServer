@@ -221,7 +221,7 @@ namespace GenericBoson
 		DWORD flag = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;
-		wsaBuffer.buf = &pEol->m_pRecvBuffer[pEol->m_recvOffset];
+		wsaBuffer.buf = &pEol->m_gatherInput.m_pBuffer[pEol->m_gatherInput.m_offset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;
@@ -231,8 +231,8 @@ namespace GenericBoson
 	{
 		WSABUF bufToSend;
 		DWORD sentBytes = 0;
-		bufToSend.buf = pEol->m_pSendBuffer;
-		bufToSend.len = pEol->m_sendOffset;
+		bufToSend.buf = pEol->m_scatterOutput.m_pBuffer;
+		bufToSend.len = pEol->m_scatterOutput.m_offset;
 		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
 
 		return sendResult;

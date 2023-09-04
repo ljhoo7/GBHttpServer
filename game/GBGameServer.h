@@ -64,16 +64,16 @@ namespace GenericBoson
 		template<typename T>
 		bool Gather(GBExpandedOverlapped* pEol, const DWORD transferredBytes, T& outParam)
 		{
-			if (pEol->m_length < pEol->m_recvOffset + transferredBytes)
+			if (pEol->m_gatherInput.m_length < pEol->m_gatherInput.m_offset + transferredBytes)
 			{
 				return false;
 			}
 
-			pEol->m_length = sizeof(T);
-			pEol->m_recvOffset = 0;
-			pEol->AdvanceGatherState();
+			pEol->m_gatherInput.m_length = sizeof(T);
+			pEol->m_gatherInput.m_offset = 0;
+			pEol->m_gatherInput.AdvanceState();
 
-			outParam = reinterpret_cast<T>(pEol->m_pRecvBuffer);
+			outParam = reinterpret_cast<T>(pEol->m_gatherInput.m_pBuffer);
 
 			return true;
 		}
