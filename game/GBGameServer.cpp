@@ -16,21 +16,24 @@ namespace GenericBoson
 		{
 		case VectoredIO::STATE::ID:
 		{
-			Gather(pEol, transferredBytes, messageID);
+			if (Gather(pEol, transferredBytes))
+			{
+				messageID = reinterpret_cast<ULONG>(pEol->m_gatherInput.m_pBuffer);
+				pEol->m_gatherInput.m_length = sizeof(pEol->m_gatherInput.m_length);
+			}
 		}
 		break;
 		case VectoredIO::STATE::LENGTH:
 		{
-			Gather(pEol, transferredBytes, lengthToReceive);
+			if (Gather(pEol, transferredBytes))
+			{
+				pEol->m_gatherInput.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(pEol->m_gatherInput.m_pBuffer);
+			}
 		}
 		break;
 		case VectoredIO::STATE::PAYLOAD:
 		{
-			// TO DO
-			// make fbb
-			// get fbb.buffer
-			char* fbbBuffer = 0;
-			if (Gather(pEol, transferredBytes, fbbBuffer))
+			if (Gather(pEol, transferredBytes))
 			{
 				const auto m_pHandler = m_handlers.find(messageID);
 				if (m_pHandler == m_handlers.end())
@@ -39,14 +42,14 @@ namespace GenericBoson
 					return false;
 				}
 
-				const auto [succeeded, fbb] = m_pHandler->second->CallResHandler();
+				const auto succeeded = m_pHandler->second->CallResHandler(pEol->m_gatherInput.m_pBuffer);
 				if (!succeeded)
 				{
 					return false;
 				}
+
+				pEol->m_gatherInput.m_length = sizeof(messageID);
 			}
-
-
 		}
 		break;
 		default:

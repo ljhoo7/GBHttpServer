@@ -1,4 +1,5 @@
 #include "../../../game/GBGameServer.h"
+#include "../flatbufferschema/player_generated.h"
 
 #include <future>
 

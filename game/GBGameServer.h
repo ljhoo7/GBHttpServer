@@ -16,7 +16,7 @@ namespace GenericBoson
 	{
 	public:
 		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallReqHandler() = 0;
-		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallResHandler() = 0;
+		virtual bool CallResHandler(char* rawBuffer) = 0;
 	};
 
 	template<typename REQUEST_HANDLER, typename RESPONSE_HANDLER>
@@ -31,9 +31,9 @@ namespace GenericBoson
 			return m_reqHandler();
 		}
 
-		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallResHandler() override
+		virtual bool CallResHandler(char* rawBuffer) override
 		{
-			return m_resHandler();
+			return m_resHandler(rawBuffer);
 		}
 
 	public:
@@ -61,19 +61,15 @@ namespace GenericBoson
 	private:
 		bool Send(const int messageID);
 
-		template<typename T>
-		bool Gather(GBExpandedOverlapped* pEol, const DWORD transferredBytes, T& outParam)
+		bool Gather(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 		{
 			if (pEol->m_gatherInput.m_length < pEol->m_gatherInput.m_offset + transferredBytes)
 			{
 				return false;
 			}
 
-			pEol->m_gatherInput.m_length = sizeof(T);
 			pEol->m_gatherInput.m_offset = 0;
 			pEol->m_gatherInput.AdvanceState();
-
-			outParam = reinterpret_cast<T>(pEol->m_gatherInput.m_pBuffer);
 
 			return true;
 		}
