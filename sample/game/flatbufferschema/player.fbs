@@ -8,3 +8,5 @@ table Player
     hp: int64;
     name: string;
 }
+
+root_type Player;

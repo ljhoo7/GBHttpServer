@@ -15,7 +15,7 @@ namespace GenericBoson
 	class IMessageHandlerAdaptor
 	{
 	public:
-		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallReqHandler() = 0;
+		virtual std::optional<::flatbuffers::FlatBufferBuilder> CallReqHandler() = 0;
 		virtual bool CallResHandler(char* rawBuffer) = 0;
 	};
 
@@ -26,7 +26,7 @@ namespace GenericBoson
 		MessageHandlerAdaptor(const REQUEST_HANDLER& reqHandler, const RESPONSE_HANDLER& resHandler)
 			: m_reqHandler(reqHandler), m_resHandler(resHandler) {}
 
-		virtual std::pair<bool, ::flatbuffers::FlatBufferBuilder> CallReqHandler() override
+		virtual std::optional<::flatbuffers::FlatBufferBuilder> CallReqHandler() override
 		{
 			return m_reqHandler();
 		}

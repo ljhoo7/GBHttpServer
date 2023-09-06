@@ -9,7 +9,7 @@ add_executable(GameClientSample ${GAME_SAMPLE_CLIENT_SRC})
 #target_include_directories(HttpSample PRIVATE $ENV{BOOST_ROOT})
 #target_link_directories(HttpSample PRIVATE $ENV{BOOST_ROOT}/stage/lib)
 
-target_include_directories(GameServerSample PRIVATE $ENV{BOOST_ROOT})
+target_include_directories(GameServerSample PRIVATE $ENV{FLAT_BUFFER_INCLUDE} $ENV{BOOST_ROOT})
 target_link_directories(GameServerSample PRIVATE $ENV{BOOST_ROOT}/stage/lib)
 
 ## using boost through vcpkg + cmake not working yet

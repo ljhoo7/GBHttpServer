@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	std::pair<bool, std::string> GBServer::Start()
+	std::string GBServer::Start()
 	{
 		bool result;
 		std::string errorMsg;
@@ -19,7 +19,7 @@ namespace GenericBoson
 			m_sessions[k].m_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 			if (INVALID_SOCKET == m_sessions[k].m_socket)
 			{
-				return { false, GetWSALastErrorString() };
+				return GetWSALastErrorString();
 			}
 
 			m_sessions[k].m_type = IO_TYPE::ACCEPT;
@@ -32,14 +32,14 @@ namespace GenericBoson
 			int lastSocketError = WSAGetLastError();
 			if (FALSE == result && ERROR_IO_PENDING != lastSocketError)
 			{
-				return { false, GetWSALastErrorString(lastSocketError) };
+				return GetWSALastErrorString(lastSocketError);
 			}
 
 			// Associate this accept socket withd IOCP.
 			HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, m_IOCP, (u_long)0, 0);
 			if (NULL == associateAcceptSocketResult)
 			{
-				return { false, GetWSALastErrorString() };
+				return GetWSALastErrorString();
 			}
 		}
 

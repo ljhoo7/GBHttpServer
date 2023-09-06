@@ -72,11 +72,13 @@ namespace GenericBoson
 			return false;
 		}
 
-		const auto [succeeded, fbb] = m_pHandler->second->CallReqHandler();
-		if (!succeeded)
+		const auto opFbb = m_pHandler->second->CallReqHandler();
+		if (!opFbb.has_value())
 		{
 			return false;
 		}
+
+		auto& fbb = opFbb.value();
 
 		GBExpandedOverlapped eol;
 		eol.m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());

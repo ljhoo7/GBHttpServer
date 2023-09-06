@@ -96,6 +96,36 @@ inline ::flatbuffers::Offset<Player> CreatePlayerDirect(
       name__);
 }
 
+inline const GenericBoson::GameTest::Player *GetPlayer(const void *buf) {
+  return ::flatbuffers::GetRoot<GenericBoson::GameTest::Player>(buf);
+}
+
+inline const GenericBoson::GameTest::Player *GetSizePrefixedPlayer(const void *buf) {
+  return ::flatbuffers::GetSizePrefixedRoot<GenericBoson::GameTest::Player>(buf);
+}
+
+inline bool VerifyPlayerBuffer(
+    ::flatbuffers::Verifier &verifier) {
+  return verifier.VerifyBuffer<GenericBoson::GameTest::Player>(nullptr);
+}
+
+inline bool VerifySizePrefixedPlayerBuffer(
+    ::flatbuffers::Verifier &verifier) {
+  return verifier.VerifySizePrefixedBuffer<GenericBoson::GameTest::Player>(nullptr);
+}
+
+inline void FinishPlayerBuffer(
+    ::flatbuffers::FlatBufferBuilder &fbb,
+    ::flatbuffers::Offset<GenericBoson::GameTest::Player> root) {
+  fbb.Finish(root);
+}
+
+inline void FinishSizePrefixedPlayerBuffer(
+    ::flatbuffers::FlatBufferBuilder &fbb,
+    ::flatbuffers::Offset<GenericBoson::GameTest::Player> root) {
+  fbb.FinishSizePrefixed(root);
+}
+
 }  // namespace GameTest
 }  // namespace GenericBoson
 

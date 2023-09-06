@@ -25,11 +25,15 @@ namespace GenericBoson
 	class GBServer
 	{
 	public:
-		std::pair<bool, std::string> Start();
+		std::string Start();
 
 		GBServer(uint16_t portNum) : m_port(portNum) {};
 		virtual ~GBServer();
 
+		bool GetKeepLooping() const
+		{
+			return m_keepLooping;
+		}
 	protected:
 		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
