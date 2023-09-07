@@ -43,7 +43,7 @@ namespace GenericBoson
 			}
 		}
 
-		return { true, {} };
+		return {};
 	}
 
 	GBServer::~GBServer()
@@ -70,7 +70,13 @@ namespace GenericBoson
 
 		for (const auto& [_, itSendQueue] : m_sendQueues)
 		{
-			while (!itSendQueue.empty())
+			bool isEmpty = false;
+			{
+				std::scoped_lock lock(m_sendLock);
+				isEmpty = itSendQueue.empty();
+			}
+
+			while (!isEmpty)
 			{
 				// preventing busy waiting
 				std::this_thread::sleep_for(1ms);
@@ -169,6 +175,8 @@ namespace GenericBoson
 			{
 			case IO_TYPE::ACCEPT:
 			{
+				OnConnected(pEol);
+
 				int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE);
 				int lastError = WSAGetLastError();
 
@@ -238,9 +246,10 @@ namespace GenericBoson
 		return sendResult;
 	}
 
-	bool GBServer::Send(GBExpandedOverlapped* pEol)
+	void GBServer::Send(GBExpandedOverlapped* pEol)
 	{
-		return m_sendQueues[pEol->m_socket].push(pEol);
+		std::scoped_lock lock(m_sendLock);
+		m_sendQueues[pEol->m_socket].push(pEol);
 	}
 
 	void GBServer::SendThreadFunction()
@@ -252,8 +261,13 @@ namespace GenericBoson
 		{
 			for (auto& [_, itSendQueue] : m_sendQueues)
 			{
-				GBExpandedOverlapped* pEol;
-				if (itSendQueue.pop(pEol))
+				GBExpandedOverlapped* pEol = nullptr;
+				{
+					std::scoped_lock lock(m_sendLock);
+					pEol = itSendQueue.front();
+				}
+
+				if (pEol)
 				{
 					IssueSend(pEol);
 				}

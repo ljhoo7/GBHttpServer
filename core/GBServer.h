@@ -37,12 +37,13 @@ namespace GenericBoson
 	protected:
 		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
+		virtual void OnConnected(GBExpandedOverlapped* pEol) = 0;
 
 		virtual bool ErrorLog(const std::string_view msg) = 0;
 		virtual bool WarningLog(const std::string_view msg) = 0;
 		virtual bool InfoLog(const std::string_view msg) = 0;
 
-		bool Send(GBExpandedOverlapped* pEol);
+		void Send(GBExpandedOverlapped* pEol);
 
 		//// \return true - all completed, false - not yet gathering completed.
 		//virtual bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
@@ -59,7 +60,9 @@ namespace GenericBoson
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;
 
-		std::unordered_map<SOCKET, boost::lockfree::queue<GBExpandedOverlapped*>> m_sendQueues;
+		std::mutex m_sendLock;
+
+		std::unordered_map<SOCKET, std::queue<GBExpandedOverlapped*>> m_sendQueues;
 		std::vector<GBExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;

@@ -58,8 +58,14 @@ namespace GenericBoson
 				throw std::format("Add handler failed. Message ID - {}", messageID);
 			}
 		}
+
+		bool Send(GBExpandedOverlapped* pEol, const int messageID);
+		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task)
+		{
+			m_connectedTask = task;
+		}
+
 	private:
-		bool Send(const int messageID);
 
 		bool Gather(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 		{
@@ -71,7 +77,6 @@ namespace GenericBoson
 			pEol->m_gatherInput.m_offset = 0;
 			pEol->m_gatherInput.AdvanceState();
 
-			return true;
 		}
 
 		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
@@ -81,9 +86,19 @@ namespace GenericBoson
 		virtual bool WarningLog(const std::string_view msg) override;
 		virtual bool InfoLog(const std::string_view msg) override;
 
+		virtual void OnConnected(GBExpandedOverlapped* pEol) override
+		{
+			if (m_connectedTask)
+			{
+				m_connectedTask(pEol);
+			}
+		}
+
 	private:
 		const int MESSAGE_ID_SIZE = 2;
 		const int LENGTH_SIZE = 2;
+
+		std::function<void(GBExpandedOverlapped* pEol)> m_connectedTask;
 
 		std::unordered_map<int, std::shared_ptr<IMessageHandlerAdaptor>> m_handlers;
 	};

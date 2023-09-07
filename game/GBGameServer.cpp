@@ -63,8 +63,15 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBGameServer::Send(const int messageID)
+	bool GBGameServer::Send(GBExpandedOverlapped* pEol, const int messageID)
 	{
+		if (!pEol)
+		{
+			// #ToDo
+			ErrorLog("");
+			return false;
+		}
+
 		const auto m_pHandler = m_handlers.find(messageID);
 		if (m_pHandler == m_handlers.end())
 		{
@@ -80,11 +87,12 @@ namespace GenericBoson
 
 		auto& fbb = opFbb.value();
 
-		GBExpandedOverlapped eol;
-		eol.m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
-		eol.m_scatterOutput.m_offset += fbb.GetSize();
+		pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
+		pEol->m_scatterOutput.m_offset += fbb.GetSize();
 
-		return __super::Send(&eol);
+		__super::Send(pEol);
+
+		return true;
 	}
 
 	bool GBGameServer::OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes)

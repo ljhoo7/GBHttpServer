@@ -1,5 +1,6 @@
 #define NOMINMAX
 
+#include "../../../core/GBExpandedOverlapped.h"
 #include "../../../game/GBGameServer.h"
 #include "../flatbufferschema/player_generated.h"
 
@@ -7,6 +8,7 @@
 #include <future>
 #include <chrono>
 
+using namespace GenericBoson;
 using namespace GenericBoson::GameTest;
 
 int main()
@@ -34,12 +36,22 @@ int main()
 			return true;
 		});
 
+	server.SetConnectedTask([&server](GBExpandedOverlapped* pEol) {
+		server.Send(pEol, 1);
+		});
+
 	if (const auto errorMsg = server.Start(); errorMsg.empty())
 	{
+		std::this_thread::sleep_for(100ms);
+
 		while (server.GetKeepLooping())
 		{
-			std::this_thread::sleep_for(1min);
+			std::this_thread::sleep_for(1ms);
 		}
+	}
+	else
+	{
+		std::cout << "Error occured : " << errorMsg << std::endl;
 	}
 
 	return 0;
