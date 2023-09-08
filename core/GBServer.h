@@ -60,8 +60,8 @@ namespace GenericBoson
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;
 
+		// #ToDo lock free circular queue
 		std::mutex m_sendLock;
-
 		std::unordered_map<SOCKET, std::queue<GBExpandedOverlapped*>> m_sendQueues;
 		std::vector<GBExpandedOverlapped> m_sessions;
 

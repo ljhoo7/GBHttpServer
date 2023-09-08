@@ -87,6 +87,7 @@ namespace GenericBoson
 
 		auto& fbb = opFbb.value();
 
+		auto span = fbb.GetBufferSpan();
 		pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
 		pEol->m_scatterOutput.m_offset += fbb.GetSize();
 
