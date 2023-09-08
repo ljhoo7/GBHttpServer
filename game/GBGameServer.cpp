@@ -79,7 +79,7 @@ namespace GenericBoson
 			return false;
 		}
 
-		const auto opFbb = m_pHandler->second->CallReqHandler();
+		auto opFbb = m_pHandler->second->CallReqHandler();
 		if (!opFbb.has_value())
 		{
 			return false;
@@ -87,9 +87,10 @@ namespace GenericBoson
 
 		auto& fbb = opFbb.value();
 
-		auto span = fbb.GetBufferSpan();
-		pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.GetBufferPointer());
-		pEol->m_scatterOutput.m_offset += fbb.GetSize();
+		size_t size, offset;
+		pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
+		pEol->m_scatterOutput.m_pBuffer += offset;
+		pEol->m_scatterOutput.m_offset = size;
 
 		__super::Send(pEol);
 

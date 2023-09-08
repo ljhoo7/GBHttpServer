@@ -7,7 +7,7 @@
 
 namespace GenericBoson
 {
-	typedef short BUFFER_SIZE_TYPE;
+	typedef uint64_t BUFFER_SIZE_TYPE;
 	constexpr BUFFER_SIZE_TYPE BUFFER_SIZE = 8 * 1024;
 
 	enum class IO_TYPE : int32_t
