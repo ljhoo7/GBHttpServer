@@ -59,6 +59,11 @@ int main()
 		if (receivedBytes)
 		{
 			std::cout << receivedBytes << " received.\n";
+
+			auto pPlayer = GetPlayer(buffer);
+
+			std::cout << "Name : " << pPlayer->name()->c_str() << '\n';
+			std::cout << "Hp : " << pPlayer->hp() << '\n';
 		}
 	} while (keepLooping);
 
