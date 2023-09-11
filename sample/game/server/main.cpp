@@ -17,14 +17,10 @@ int main()
 
 	GenericBoson::GBGameServer server(5076);
 
-	server.AddStub(1, 
-		[](const char* rawBuffer) -> bool {
-			const auto* pPlayer = GetPlayer(rawBuffer);
-
-			std::cout << "hp : " << pPlayer->hp() << '\n';
-			std::cout << "name : " << pPlayer->name() << '\n';
-
-			return true;
+	server.AddStub<Player>(1, 
+		[](const Player& player){
+			std::cout << "hp : " << player.hp() << '\n';
+			std::cout << "name : " << player.name() << '\n';
 		});
 
 	server.SetConnectedTask([&server](GBExpandedOverlapped* pEol) {

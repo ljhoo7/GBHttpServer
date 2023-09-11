@@ -15,19 +15,20 @@ namespace GenericBoson
 	class IStubAdaptor
 	{
 	public:
-		virtual bool CallStub(char* rawBuffer) = 0;
+		virtual void CallStub(char* rawBuffer) = 0;
 	};
 
-	template<typename STUB>
+	template<typename FLATBUFFER_TABLE, typename STUB>
 	class StubAdaptor : public IStubAdaptor
 	{
 	public:
 		StubAdaptor(const STUB& stub)
 			: m_Stub(stub) {}
 
-		virtual bool CallStub(char* rawBuffer) override
+		virtual void CallStub(char* rawBuffer) override
 		{
-			return m_Stub(rawBuffer);
+			auto pTable = ::flatbuffers::GetRoot<FLATBUFFER_TABLE>(rawBuffer);
+			m_Stub(*pTable);
 		}
 
 	public:
@@ -40,11 +41,11 @@ namespace GenericBoson
 		GBGameServer(uint16_t portNum) : GBServer(portNum) {}
 		virtual ~GBGameServer() = default;
 
-		template<typename STUB>
+		template<typename FLATBUFFER_TABLE, typename STUB>
 		bool AddStub(const int messageID, const STUB& stub)
 		{
 			const auto [_, isInserted] = m_stubs.emplace(messageID,
-				std::make_shared<StubAdaptor<STUB>>(stub));
+				std::make_shared<StubAdaptor<FLATBUFFER_TABLE, STUB>>(stub));
 
 			if (!isInserted)
 			{

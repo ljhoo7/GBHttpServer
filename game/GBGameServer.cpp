@@ -42,12 +42,7 @@ namespace GenericBoson
 					return false;
 				}
 
-				const auto succeeded = m_pStub->second->CallStub(pEol->m_gatherInput.m_pBuffer);
-				if (!succeeded)
-				{
-					return false;
-				}
-
+				m_pStub->second->CallStub(pEol->m_gatherInput.m_pBuffer);
 				pEol->m_gatherInput.m_length = sizeof(messageID);
 			}
 		}
