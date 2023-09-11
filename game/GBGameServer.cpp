@@ -35,14 +35,14 @@ namespace GenericBoson
 		{
 			if (Gather(pEol, transferredBytes))
 			{
-				const auto m_pHandler = m_handlers.find(messageID);
-				if (m_pHandler == m_handlers.end())
+				const auto m_pStub = m_stubs.find(messageID);
+				if (m_pStub == m_stubs.end())
 				{
 					ErrorLog(std::format("receive packet handler not found. - messageID : {}", messageID));
 					return false;
 				}
 
-				const auto succeeded = m_pHandler->second->CallResHandler(pEol->m_gatherInput.m_pBuffer);
+				const auto succeeded = m_pStub->second->CallStub(pEol->m_gatherInput.m_pBuffer);
 				if (!succeeded)
 				{
 					return false;
@@ -63,7 +63,8 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBGameServer::Send(GBExpandedOverlapped* pEol, const int messageID)
+	bool GBGameServer::Send(GBExpandedOverlapped* pEol, const int messageID,
+		::flatbuffers::FlatBufferBuilder& fbb)
 	{
 		if (!pEol)
 		{
@@ -71,21 +72,6 @@ namespace GenericBoson
 			ErrorLog("");
 			return false;
 		}
-
-		const auto m_pHandler = m_handlers.find(messageID);
-		if (m_pHandler == m_handlers.end())
-		{
-			ErrorLog(std::format("send packet handler not found. - messageID : {}", messageID));
-			return false;
-		}
-
-		auto opFbb = m_pHandler->second->CallReqHandler();
-		if (!opFbb.has_value())
-		{
-			return false;
-		}
-
-		auto& fbb = opFbb.value();
 
 		size_t size, offset;
 		pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));

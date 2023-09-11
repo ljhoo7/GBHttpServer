@@ -17,16 +17,7 @@ int main()
 
 	GenericBoson::GBGameServer server(5076);
 
-	server.AddHandler(1, []()
-		-> std::optional<::flatbuffers::FlatBufferBuilder> {
-			::flatbuffers::FlatBufferBuilder fbb;
-			auto name = fbb.CreateString("Slime");
-			auto pPlayer = CreatePlayer(fbb, nullptr, 99, name);
-
-			fbb.Finish(pPlayer);
-
-			return fbb;
-		},
+	server.AddStub(1, 
 		[](const char* rawBuffer) -> bool {
 			const auto* pPlayer = GetPlayer(rawBuffer);
 
@@ -37,7 +28,14 @@ int main()
 		});
 
 	server.SetConnectedTask([&server](GBExpandedOverlapped* pEol) {
-		server.Send(pEol, 1);
+		::flatbuffers::FlatBufferBuilder fbb;
+		auto name = fbb.CreateString("Slime");
+		auto pPlayer = CreatePlayer(fbb, nullptr, 99, name);
+
+		fbb.Finish(pPlayer);
+
+		return fbb;
+		server.Send(pEol, 1, fbb);
 		});
 
 	if (const auto errorMsg = server.Start(); errorMsg.empty())

@@ -12,33 +12,26 @@ namespace GenericBoson
 {
 	struct GBExpandedOverlapped;
 
-	class IMessageHandlerAdaptor
+	class IStubAdaptor
 	{
 	public:
-		virtual std::optional<::flatbuffers::FlatBufferBuilder> CallReqHandler() = 0;
-		virtual bool CallResHandler(char* rawBuffer) = 0;
+		virtual bool CallStub(char* rawBuffer) = 0;
 	};
 
-	template<typename REQUEST_HANDLER, typename RESPONSE_HANDLER>
-	class MessageHandlerAdaptor : public IMessageHandlerAdaptor
+	template<typename STUB>
+	class StubAdaptor : public IStubAdaptor
 	{
 	public:
-		MessageHandlerAdaptor(const REQUEST_HANDLER& reqHandler, const RESPONSE_HANDLER& resHandler)
-			: m_reqHandler(reqHandler), m_resHandler(resHandler) {}
+		StubAdaptor(const STUB& stub)
+			: m_Stub(stub) {}
 
-		virtual std::optional<::flatbuffers::FlatBufferBuilder> CallReqHandler() override
+		virtual bool CallStub(char* rawBuffer) override
 		{
-			return m_reqHandler();
-		}
-
-		virtual bool CallResHandler(char* rawBuffer) override
-		{
-			return m_resHandler(rawBuffer);
+			return m_Stub(rawBuffer);
 		}
 
 	public:
-		const REQUEST_HANDLER m_reqHandler;
-		const RESPONSE_HANDLER m_resHandler;
+		const STUB m_Stub;
 	};
 
 	class GBGameServer : public GBServer
@@ -47,19 +40,20 @@ namespace GenericBoson
 		GBGameServer(uint16_t portNum) : GBServer(portNum) {}
 		virtual ~GBGameServer() = default;
 
-		template<typename REQUEST_HANDLER, typename RESPONSE_HANDLER>
-		bool AddHandler(const int messageID, const REQUEST_HANDLER& requestHandler, const RESPONSE_HANDLER& responseHandler)
+		template<typename STUB>
+		bool AddStub(const int messageID, const STUB& stub)
 		{
-			const auto [_, isInserted] = m_handlers.emplace(messageID,
-				std::make_shared<MessageHandlerAdaptor<REQUEST_HANDLER, RESPONSE_HANDLER>>(requestHandler, responseHandler));
+			const auto [_, isInserted] = m_stubs.emplace(messageID,
+				std::make_shared<StubAdaptor<STUB>>(stub));
 
 			if (!isInserted)
 			{
-				throw std::format("Add handler failed. Message ID - {}", messageID);
+				throw std::format("Add stub failed. Message ID - {}", messageID);
 			}
 		}
 
-		bool Send(GBExpandedOverlapped* pEol, const int messageID);
+		bool Send(GBExpandedOverlapped* pEol, const int messageID,
+			::flatbuffers::FlatBufferBuilder& fbb);
 		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task)
 		{
 			m_connectedTask = task;
@@ -100,6 +94,6 @@ namespace GenericBoson
 
 		std::function<void(GBExpandedOverlapped* pEol)> m_connectedTask;
 
-		std::unordered_map<int, std::shared_ptr<IMessageHandlerAdaptor>> m_handlers;
+		std::unordered_map<int, std::shared_ptr<IStubAdaptor>> m_stubs;
 	};
 }
