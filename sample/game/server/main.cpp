@@ -11,17 +11,19 @@
 using namespace GenericBoson;
 using namespace GenericBoson::GameTest;
 
+void Test(const Player& player)
+{
+	std::cout << "hp : " << player.hp() << '\n';
+	std::cout << "name : " << player.name() << '\n';
+}
+
 int main()
 {
 	using namespace std::literals::chrono_literals;
 
 	GenericBoson::GBGameServer server(5076);
 
-	server.AddStub<Player>(1, 
-		[](const Player& player){
-			std::cout << "hp : " << player.hp() << '\n';
-			std::cout << "name : " << player.name() << '\n';
-		});
+	server.AddStub(1, Test);
 
 	server.SetConnectedTask([&server](GBExpandedOverlapped* pEol) {
 		::flatbuffers::FlatBufferBuilder fbb;
