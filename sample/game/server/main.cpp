@@ -32,7 +32,6 @@ int main()
 
 		fbb.Finish(pPlayer);
 
-		return fbb;
 		server.Send(pEol, 1, fbb);
 		});
 
