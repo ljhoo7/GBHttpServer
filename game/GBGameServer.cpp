@@ -58,26 +58,6 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBGameServer::Send(GBExpandedOverlapped* pEol, const int messageID,
-		::flatbuffers::FlatBufferBuilder& fbb)
-	{
-		if (!pEol)
-		{
-			// #ToDo
-			ErrorLog("");
-			return false;
-		}
-
-		size_t size, offset;
-		pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
-		pEol->m_scatterOutput.m_pBuffer += offset;
-		pEol->m_scatterOutput.m_offset = size;
-
-		__super::Send(pEol);
-
-		return true;
-	}
-
 	bool GBGameServer::OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 	{
 		return true;
@@ -97,4 +77,34 @@ namespace GenericBoson
 	{
 		return true;
 	}
+
+	bool GBGameServer::Gather(GBExpandedOverlapped* pEol, 
+		const DWORD transferredBytes)
+	{
+		if (pEol->m_gatherInput.m_length < pEol->m_gatherInput.m_offset + transferredBytes)
+		{
+			return false;
+		}
+
+		pEol->m_gatherInput.m_offset = 0;
+		pEol->m_gatherInput.AdvanceState();
+
+	}
+
+	void GBGameServer::OnConnected(GBExpandedOverlapped* pEol)
+	{
+		if (m_connectedTask)
+		{
+			m_connectedTask(pEol);
+		}
+	}
+
+	void GBGameServer::SetConnectedTask(
+		const std::function<void(GBExpandedOverlapped* pEol)>& task
+	)
+	{
+		m_connectedTask = task;
+	}
+
+	BufferAllocator GBGameServer::g_bufferAllocator;
 }

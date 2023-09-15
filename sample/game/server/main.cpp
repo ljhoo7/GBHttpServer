@@ -2,6 +2,7 @@
 
 #include "../../../core/GBExpandedOverlapped.h"
 #include "../../../game/GBGameServer.h"
+
 #include "../flatbufferschema/player_generated.h"
 
 #include <iostream>
@@ -25,14 +26,14 @@ int main()
 
 	server.AddStub(1, Test);
 
-	server.SetConnectedTask([&server](GBExpandedOverlapped* pEol) {
-		::flatbuffers::FlatBufferBuilder fbb;
-		auto name = fbb.CreateString("Slime");
-		auto pPlayer = CreatePlayer(fbb, nullptr, 99, name);
+	server.SetConnectedTask([&server](auto pEol) {
+		server.Send(pEol, 1, 
+			[](auto& fbb){
+				auto name = fbb.CreateString("Slime");
+				auto pPlayer = CreatePlayer(fbb, nullptr, 99, name);
 
-		fbb.Finish(pPlayer);
-
-		server.Send(pEol, 1, fbb);
+				return pPlayer;
+			});
 		});
 
 	if (const auto errorMsg = server.Start(); errorMsg.empty())
