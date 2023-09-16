@@ -9,14 +9,14 @@ namespace GenericBoson
 	class SendBufferManager
 	{
 	public:
-		SendBufferManager()
+		SendBufferManager(GBExpandedOverlapped* pEol)
 		{
-
+			// get length buffer
 		}
 
 		virtual ~SendBufferManager()
 		{
-
+			// 
 		}
 	};
 
