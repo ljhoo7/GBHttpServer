@@ -6,6 +6,20 @@
 
 namespace GenericBoson
 {
+	class SendBufferManager
+	{
+	public:
+		SendBufferManager()
+		{
+
+		}
+
+		virtual ~SendBufferManager()
+		{
+
+		}
+	};
+
 	class ThreadSafeBufferAllocator : public flatbuffers::Allocator
 	{
 	public:
