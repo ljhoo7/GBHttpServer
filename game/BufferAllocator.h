@@ -6,20 +6,6 @@
 
 namespace GenericBoson
 {
-	class SendBufferManager
-	{
-	public:
-		SendBufferManager(GBExpandedOverlapped* pEol)
-		{
-			// get length buffer
-		}
-
-		virtual ~SendBufferManager()
-		{
-			// 
-		}
-	};
-
 	class ThreadSafeBufferAllocator : public flatbuffers::Allocator
 	{
 	public:

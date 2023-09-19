@@ -106,5 +106,5 @@ namespace GenericBoson
 		m_connectedTask = task;
 	}
 
-	BufferAllocator GBGameServer::g_bufferAllocator;
+	ThreadSafeBufferAllocator GBGameServer::g_bufferAllocator;
 }
