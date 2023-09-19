@@ -7,7 +7,7 @@
 
 namespace GenericBoson
 {
-	typedef uint64_t BUFFER_SIZE_TYPE;
+	typedef size_t BUFFER_SIZE_TYPE;
 	constexpr BUFFER_SIZE_TYPE BUFFER_SIZE = 8 * 1024;
 
 	enum class IO_TYPE : int32_t
@@ -39,7 +39,7 @@ namespace GenericBoson
 		}
 
 	public:
-		char* m_pBuffer = nullptr;
+		char m_buffer[BUFFER_SIZE];
 		BUFFER_SIZE_TYPE m_length = 0, m_offset = 0;
 
 	private:

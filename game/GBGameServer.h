@@ -49,9 +49,18 @@ namespace GenericBoson
 			fbb.Finish(std::forward<CALLABLE>(callable)(fbb));
 
 			size_t size, offset;
-			pEol->m_scatterOutput.m_pBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
-			pEol->m_scatterOutput.m_pBuffer += offset;
-			pEol->m_scatterOutput.m_offset = size;
+			char* pFlatRawBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
+
+			char* buffer = pEol->m_scatterOutput.m_buffer;
+			
+			memcpy_s(buffer, BUFFER_SIZE, &messageID, sizeof(messageID));
+			buffer += sizeof(messageID);
+			memcpy_s(buffer, BUFFER_SIZE, &size, sizeof(size));
+			buffer += sizeof(size);
+			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer, size);
+			buffer += size;
+			
+			pEol->m_scatterOutput.m_offset = size + sizeof(messageID) + sizeof(size);
 
 			__super::Send(pEol);
 

@@ -10,7 +10,7 @@ namespace GenericBoson
 {
 	bool GBGameServer::OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
 	{
-		static ULONG messageID = 0, lengthToReceive = 0;
+		static BUFFER_SIZE_TYPE messageID = 0;
 
 		switch (pEol->m_gatherInput.GetState())
 		{
@@ -18,7 +18,7 @@ namespace GenericBoson
 		{
 			if (Gather(pEol, transferredBytes))
 			{
-				messageID = reinterpret_cast<ULONG>(pEol->m_gatherInput.m_pBuffer);
+				messageID = reinterpret_cast<decltype(messageID)>(pEol->m_gatherInput.m_buffer);
 				pEol->m_gatherInput.m_length = sizeof(pEol->m_gatherInput.m_length);
 			}
 		}
@@ -27,7 +27,7 @@ namespace GenericBoson
 		{
 			if (Gather(pEol, transferredBytes))
 			{
-				pEol->m_gatherInput.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(pEol->m_gatherInput.m_pBuffer);
+				pEol->m_gatherInput.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(pEol->m_gatherInput.m_buffer);
 			}
 		}
 		break;
@@ -42,7 +42,7 @@ namespace GenericBoson
 					return false;
 				}
 
-				m_pStub->second->CallStub(pEol->m_gatherInput.m_pBuffer);
+				m_pStub->second->CallStub(pEol->m_gatherInput.m_buffer);
 				pEol->m_gatherInput.m_length = sizeof(messageID);
 			}
 		}
@@ -81,14 +81,17 @@ namespace GenericBoson
 	bool GBGameServer::Gather(GBExpandedOverlapped* pEol, 
 		const DWORD transferredBytes)
 	{
-		if (pEol->m_gatherInput.m_length < pEol->m_gatherInput.m_offset + transferredBytes)
+		if (pEol->m_gatherInput.m_length <= pEol->m_gatherInput.m_offset + transferredBytes)
 		{
-			return false;
+			pEol->m_gatherInput.m_offset = 0;
+			pEol->m_gatherInput.AdvanceState();
+
+			return true;
 		}
 
-		pEol->m_gatherInput.m_offset = 0;
-		pEol->m_gatherInput.AdvanceState();
+		pEol->m_gatherInput.m_offset += transferredBytes;
 
+		return false;
 	}
 
 	void GBGameServer::OnConnected(GBExpandedOverlapped* pEol)
