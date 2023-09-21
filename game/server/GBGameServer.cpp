@@ -54,7 +54,7 @@ namespace GenericBoson
 		break;
 		}
 
-		IssueRecv(pEol, lengthToReceive);
+		IssueRecv(pEol, pEol->m_gatherInput.m_length - pEol->m_gatherInput.m_offset);
 		return true;
 	}
 
