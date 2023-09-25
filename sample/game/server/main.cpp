@@ -1,7 +1,7 @@
 #define NOMINMAX
 
-#include "../../../core/GBExpandedOverlapped.h"
-#include "../../../game/GBGameServer.h"
+#include "../../../core/server/GBExpandedOverlapped.h"
+#include "../../../game/server/GBGameServer.h"
 
 #include "../flatbufferschema/player_generated.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/GBServer.h"
+#include "../../core/server/GBServer.h"
 #include "StubAdaptor.h"
 #include "BufferAllocator.h"
 
