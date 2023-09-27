@@ -1,7 +1,7 @@
 #define NOMINMAX
 
-#include "../../../core/server/GBExpandedOverlapped.h"
-#include "../../../game/server/GBGameServer.h"
+#include "../../core/server/GBExpandedOverlapped.h"
+#include "../../game/server/GBGameServer.h"
 
 #include "../flatbufferschema/player_generated.h"
 
@@ -22,7 +22,7 @@ int main()
 {
 	using namespace std::literals::chrono_literals;
 
-	GenericBoson::GBGameServer server(5076);
+	GBGameServer server(5076);
 
 	server.AddStub(1, Test);
 

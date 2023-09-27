@@ -1,6 +1,9 @@
 #pragma once
 
+#define NOMINMAX
+
 #include "../../core/client/GBClient.h"
+#include "../../flatbuffers/include/flatbuffers/flatbuffers.h"
 
 #include <string>
 
@@ -10,6 +13,14 @@ namespace GenericBoson
 	{
 	public:
 		virtual ~GBGameClient() = default;
+
+		template<typename FLATBUFFER_TABLE>
+		void AddStub(const int messageID, void(*stub)(const FLATBUFFER_TABLE& player))
+		{
+
+		}
+
+		bool GetKeepLooping();
 
 		virtual int Connect(const std::string_view address, const int port) override;
 	private:

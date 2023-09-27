@@ -12,38 +12,28 @@
 using namespace GenericBoson;
 using namespace GenericBoson::GameTest;
 
+void Test(const Player& player)
+{
+	std::cout << "hp : " << player.hp() << '\n';
+	std::cout << "name : " << player.name() << '\n';
+}
+
 int main()
 {
+	using namespace std::literals::chrono_literals;
+
 	GBGameClient client;
 
 	client.Connect("127.0.0.1", 5076);
 
 	wprintf(L"Connected to server.\n");
 
-	bool keepLooping = false;
-	char buffer[1024] = { 0, };
-	do {
-		const auto receivedBytes = recv(ConnectSocket, buffer, 1024, 0);
+	client.AddStub(1, Test);
 
-		if (receivedBytes)
-		{
-			std::cout << receivedBytes << " received.\n";
-
-			auto pPlayer = GetPlayer(buffer);
-
-			std::cout << "Name : " << pPlayer->name()->c_str() << '\n';
-			std::cout << "Hp : " << pPlayer->hp() << '\n';
-		}
-	} while (keepLooping);
-
-
-	iResult = closesocket(ConnectSocket);
-	if (iResult == SOCKET_ERROR) {
-		wprintf(L"closesocket function failed with error: %ld\n", WSAGetLastError());
-		WSACleanup();
-		return 1;
+	while (client.GetKeepLooping())
+	{
+		std::this_thread::sleep_for(1ms);
 	}
 
-	WSACleanup();
 	return 0;
 }

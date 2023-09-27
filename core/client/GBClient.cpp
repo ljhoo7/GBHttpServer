@@ -1,11 +1,24 @@
 #include "stdafx.h"
 
 #include "GBClient.h"
+#include "../server/GBUtil.h"
 
 #include <string_view>
 
 namespace GenericBoson
 {
+	GBClient::~GBClient()
+	{
+		const auto result = closesocket(ConnectSocket);
+		if (iResult == SOCKET_ERROR)
+		{
+			auto errorString = GetWSALastErrorString();
+			// #ToDo logging error string
+		}
+
+		WSACleanup();
+	}
+
 	int InitializeWinSock()
 	{
 		return WSAStartup(MAKEWORD(2, 2), &m_wsaData);
