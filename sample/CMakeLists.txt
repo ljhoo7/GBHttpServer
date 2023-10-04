@@ -19,7 +19,7 @@ target_link_directories(GameServerSample PRIVATE $ENV{BOOST_ROOT}/stage/lib)
 #set_property(TARGET HttpSample PROPERTY CXX_STANDARD 20)
 
 target_link_libraries(GameServerSample PRIVATE GBServerFrameworkCore GBGameServerFramework ws2_32.lib)
-target_link_libraries(GameClientSample PRIVATE GBServerFrameworkCore GBGameServerFramework ws2_32.lib)
+target_link_libraries(GameClientSample PRIVATE GBClientFrameworkCore GBGameClientFramework ws2_32.lib)
 
 set_property(TARGET GameServerSample PROPERTY CXX_STANDARD 20)
 set_property(TARGET GameClientSample PROPERTY CXX_STANDARD 20)

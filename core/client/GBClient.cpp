@@ -9,8 +9,8 @@ namespace GenericBoson
 {
 	GBClient::~GBClient()
 	{
-		const auto result = closesocket(ConnectSocket);
-		if (iResult == SOCKET_ERROR)
+		const auto result = closesocket(m_socket);
+		if (result == SOCKET_ERROR)
 		{
 			auto errorString = GetWSALastErrorString();
 			// #ToDo logging error string
@@ -19,35 +19,42 @@ namespace GenericBoson
 		WSACleanup();
 	}
 
-	int InitializeWinSock()
+	WSADATA InitializeWinSock()
 	{
-		return WSAStartup(MAKEWORD(2, 2), &m_wsaData);
-	}
-
-	int CreateSocket()
-	{
-		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (m_socket == INVALID_SOCKET) {
-			int errorCode = WSAGetLastError());
-			WSACleanup();
-			return errorCode;
+		WSADATA wsaData;
+		const auto result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+		if (result)
+		{
+			// #ToDo error logging
 		}
 
-		return NO_ERROR;
+		return wsaData;
 	}
 
-	int Connect(const std::string_view address, const int port)
+	SOCKET CreateSocket()
+	{
+		const auto result = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (result == INVALID_SOCKET) {
+			int errorCode = WSAGetLastError();
+			// # ToDo error logging
+			WSACleanup();
+		}
+
+		return result;
+	}
+
+	int ConnectInternal(SOCKET socket, const std::string_view address, const int port)
 	{
 		sockaddr_in addr;
 		addr.sin_family = AF_INET;
 		addr.sin_addr.s_addr = inet_addr(address.data());
 		addr.sin_port = htons(port);
 
-		if (connect(m_socket, (SOCKADDR*)&clientService, sizeof(clientService))
+		if (connect(socket, (SOCKADDR*)&addr, sizeof(addr))
 			== SOCKET_ERROR)
 		{
 			int errorCode = WSAGetLastError();
-			if (closesocket(m_socket) == SOCKET_ERROR)
+			if (closesocket(socket) == SOCKET_ERROR)
 			{
 				// #ToDo error logging
 			}
@@ -76,7 +83,7 @@ namespace GenericBoson
 			return errorCode;
 		}
 
-		errorCode = Connect(address, port);
+		errorCode = ConnectInternal(m_socket, address, port);
 		if (errorCode)
 		{
 			// #ToDo error logging

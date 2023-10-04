@@ -14,6 +14,8 @@ namespace GenericBoson
 	protected:
 		virtual int Connect(const std::string_view address, const int port);
 	private:
+		int InitializeWinSock();
+	private:
 		WSADATA m_wsaData;
 		SOCKET m_socket;
 	};
