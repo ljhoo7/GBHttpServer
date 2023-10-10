@@ -12,49 +12,43 @@ namespace GenericBoson
 		const auto result = closesocket(m_socket);
 		if (result == SOCKET_ERROR)
 		{
-			auto errorString = GetWSALastErrorString();
 			// #ToDo logging error string
 		}
 
 		WSACleanup();
 	}
 
-	WSADATA InitializeWinSock()
+	int GBClient::InitializeWinSock()
 	{
-		WSADATA wsaData;
-		const auto result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-		if (result)
-		{
-			// #ToDo error logging
-		}
-
-		return wsaData;
+		return WSAStartup(MAKEWORD(2, 2), &m_wsaData);
 	}
 
-	SOCKET CreateSocket()
+	int GBClient::CreateSocket()
 	{
-		const auto result = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (result == INVALID_SOCKET) {
+		const auto m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (m_socket == INVALID_SOCKET) {
 			int errorCode = WSAGetLastError();
 			// # ToDo error logging
 			WSACleanup();
+
+			return errorCode;
 		}
 
-		return result;
+		return NO_ERROR;
 	}
 
-	int ConnectInternal(SOCKET socket, const std::string_view address, const int port)
+	int GBClient::ConnectInternal(const std::string_view address, const int port)
 	{
 		sockaddr_in addr;
 		addr.sin_family = AF_INET;
 		addr.sin_addr.s_addr = inet_addr(address.data());
 		addr.sin_port = htons(port);
 
-		if (connect(socket, (SOCKADDR*)&addr, sizeof(addr))
+		if (connect(m_socket, (SOCKADDR*)&addr, sizeof(addr))
 			== SOCKET_ERROR)
 		{
 			int errorCode = WSAGetLastError();
-			if (closesocket(socket) == SOCKET_ERROR)
+			if (closesocket(m_socket) == SOCKET_ERROR)
 			{
 				// #ToDo error logging
 			}
@@ -68,28 +62,26 @@ namespace GenericBoson
 
 	int GBClient::Connect(const std::string_view address, const int port)
 	{
-		int errorCode = NO_ERROR;
-		errorCode = InitializeWinSock();
-		if (errorCode)
+		int result = NO_ERROR;
+		result = InitializeWinSock();
+		if (result)
 		{
-			// #ToDo error logging
-			return errorCode;
+			return result;
 		}
 
-		errorCode = CreateSocket();
-		if (errorCode)
+		result = CreateSocket();
+		if (result)
 		{
 			// #ToDo error logging
-			return errorCode;
+			return result;
 		}
 
-		errorCode = ConnectInternal(m_socket, address, port);
-		if (errorCode)
+		result = ConnectInternal(address, port);
+		if (result)
 		{
 			// #ToDo error logging
-			return errorCode;
 		}
 
-		return errorCode;
+		return result;
 	}
 }

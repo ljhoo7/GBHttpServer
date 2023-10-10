@@ -4,6 +4,11 @@
 
 namespace GenericBoson
 {
+	GBGameClient::~GBGameClient()
+	{
+		m_keepLooping = false;
+	}
+
 	bool GBGameClient::GetKeepLooping()
 	{
 		return false;

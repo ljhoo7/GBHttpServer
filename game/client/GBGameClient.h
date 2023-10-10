@@ -12,7 +12,7 @@ namespace GenericBoson
 	class GBGameClient : public GBClient
 	{
 	public:
-		virtual ~GBGameClient() = default;
+		virtual ~GBGameClient();
 
 		template<typename FLATBUFFER_TABLE>
 		void AddStub(const int messageID, void(*stub)(const FLATBUFFER_TABLE& player))
@@ -24,5 +24,7 @@ namespace GenericBoson
 
 		virtual int Connect(const std::string_view address, const int port) override;
 	private:
+
+		std::atomic_bool m_keepLooping = true;
 	};
 }
