@@ -2,6 +2,7 @@
 
 #define NOMINMAX
 
+#include "../shared/GBGameShared.h"
 #include "../../core/client/GBClient.h"
 #include "../../flatbuffers/include/flatbuffers/flatbuffers.h"
 
@@ -9,16 +10,10 @@
 
 namespace GenericBoson
 {
-	class GBGameClient : public GBClient
+	class GBGameClient : public GBClient, public GBGameShared
 	{
 	public:
 		virtual ~GBGameClient();
-
-		template<typename FLATBUFFER_TABLE>
-		void AddStub(const int messageID, void(*stub)(const FLATBUFFER_TABLE& player))
-		{
-
-		}
 
 		bool GetKeepLooping();
 

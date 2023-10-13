@@ -50,5 +50,7 @@ namespace GenericBoson
 
 			return true;
 		};
+
+		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task);
 	};
 }

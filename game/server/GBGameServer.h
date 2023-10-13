@@ -7,6 +7,8 @@
 #include "flatbuffers/flatbuffers.h"
 #include "winsock2.h"
 
+#include "../shared/GBGameShared.h"
+
 #include <format>
 #include <unordered_map>
 #include <functional>
@@ -15,18 +17,13 @@ namespace GenericBoson
 {
 	struct GBExpandedOverlapped;
 
-	class GBGameServer : public GBServer
+	class GBGameServer : public GBServer, public GBGameShared
 	{
 	public:
 		GBGameServer(uint16_t portNum) : GBServer(portNum) {}
 		virtual ~GBGameServer() = default;
 
-		
-
-		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task);
-
 	private:
-
 		bool Gather(GBExpandedOverlapped* pEol, const DWORD transferredBytes);
 
 		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
