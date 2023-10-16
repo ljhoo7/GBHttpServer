@@ -2,6 +2,7 @@
 
 #include "GBUtil.h"
 #include "GBExpandedOverlapped.h"
+#include "../shared/GBShared.h"
 #include "boost/thread/future.hpp"
 #include "boost/thread/executors/executor.hpp"
 #include "winsock2.h"
@@ -55,6 +56,8 @@ namespace GenericBoson
 		void SendThreadFunction();
 
 		void ThreadFunction();
+	private:
+		GBShared m_shared;
 	private:
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;

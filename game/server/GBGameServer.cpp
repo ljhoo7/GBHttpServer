@@ -16,7 +16,7 @@ namespace GenericBoson
 		{
 		case VectoredIO::STATE::ID:
 		{
-			if (Gather(pEol, transferredBytes))
+			if (Gather(pEol->m_gatherInput, transferredBytes))
 			{
 				messageID = reinterpret_cast<decltype(messageID)>(pEol->m_gatherInput.m_buffer);
 				pEol->m_gatherInput.m_length = sizeof(pEol->m_gatherInput.m_length);
@@ -25,7 +25,7 @@ namespace GenericBoson
 		break;
 		case VectoredIO::STATE::LENGTH:
 		{
-			if (Gather(pEol, transferredBytes))
+			if (Gather(pEol->m_gatherInput, transferredBytes))
 			{
 				pEol->m_gatherInput.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(pEol->m_gatherInput.m_buffer);
 			}
@@ -33,7 +33,7 @@ namespace GenericBoson
 		break;
 		case VectoredIO::STATE::PAYLOAD:
 		{
-			if (Gather(pEol, transferredBytes))
+			if (Gather(pEol->m_gatherInput, transferredBytes))
 			{
 				const auto m_pStub = m_stubs.find(messageID);
 				if (m_pStub == m_stubs.end())
@@ -78,28 +78,19 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBGameServer::Gather(GBExpandedOverlapped* pEol, 
-		const DWORD transferredBytes)
-	{
-		if (pEol->m_gatherInput.m_length <= pEol->m_gatherInput.m_offset + transferredBytes)
-		{
-			pEol->m_gatherInput.m_offset = 0;
-			pEol->m_gatherInput.AdvanceState();
-
-			return true;
-		}
-
-		pEol->m_gatherInput.m_offset += transferredBytes;
-
-		return false;
-	}
-
 	void GBGameServer::OnConnected(GBExpandedOverlapped* pEol)
 	{
 		if (m_connectedTask)
 		{
 			m_connectedTask(pEol);
 		}
+	}
+
+	void GBGameServer::SetConnectedTask(
+		const std::function<void(GBExpandedOverlapped* pEol)>& task
+	)
+	{
+		m_connectedTask = task;
 	}
 
 	ThreadSafeBufferAllocator GBGameServer::g_bufferAllocator;
