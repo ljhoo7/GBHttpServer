@@ -17,4 +17,19 @@ namespace GenericBoson
 
 		return false;
 	}
+
+	bool GBShared::ErrorLog(const std::string_view msg)
+	{
+
+	}
+
+	bool GBShared::WarningLog(const std::string_view msg)
+	{
+
+	}
+
+	bool GBShared::InfoLog(const std::string_view msg)
+	{
+
+	}
 }

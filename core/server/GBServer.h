@@ -40,10 +40,6 @@ namespace GenericBoson
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
 		virtual void OnConnected(GBExpandedOverlapped* pEol) = 0;
 
-		virtual bool ErrorLog(const std::string_view msg) = 0;
-		virtual bool WarningLog(const std::string_view msg) = 0;
-		virtual bool InfoLog(const std::string_view msg) = 0;
-
 		void Send(GBExpandedOverlapped* pEol);
 
 		//// \return true - all completed, false - not yet gathering completed.

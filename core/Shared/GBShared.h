@@ -41,9 +41,13 @@ namespace GenericBoson
 		STATE m_state = STATE::ID;
 	};
 
-	class GBShared
+	class GBShared final
 	{
 	public:
 		bool Gather(VectoredIO& vectoredIO, const DWORD transferredBytes);
+
+		bool ErrorLog(const std::string_view msg);
+		bool WarningLog(const std::string_view msg);
+		bool InfoLog(const std::string_view msg);
 	};
 }
