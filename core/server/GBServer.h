@@ -23,7 +23,7 @@ namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
-	class GBServer
+	class GBServer : public GBShared
 	{
 	public:
 		std::string Start();
@@ -52,8 +52,6 @@ namespace GenericBoson
 		void SendThreadFunction();
 
 		void ThreadFunction();
-	private:
-		GBShared m_shared;
 	private:
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;

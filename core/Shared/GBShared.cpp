@@ -3,7 +3,7 @@
 namespace GenericBoson
 {
 	bool GBShared::Gather(VectoredIO& vectoredIO,
-		const DWORD transferredBytes)
+		const unsigned long transferredBytes)
 	{
 		if (vectoredIO.m_length <= vectoredIO.m_offset + transferredBytes)
 		{
@@ -20,16 +20,16 @@ namespace GenericBoson
 
 	bool GBShared::ErrorLog(const std::string_view msg)
 	{
-
+		return true;
 	}
 
 	bool GBShared::WarningLog(const std::string_view msg)
 	{
-
+		return true;
 	}
 
 	bool GBShared::InfoLog(const std::string_view msg)
 	{
-
+		return true;
 	}
 }

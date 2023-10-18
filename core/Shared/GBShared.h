@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 namespace GenericBoson
 {
 	typedef size_t BUFFER_SIZE_TYPE;
@@ -41,13 +43,13 @@ namespace GenericBoson
 		STATE m_state = STATE::ID;
 	};
 
-	class GBShared final
+	class GBShared
 	{
 	public:
-		bool Gather(VectoredIO& vectoredIO, const DWORD transferredBytes);
+		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);
 
-		bool ErrorLog(const std::string_view msg);
-		bool WarningLog(const std::string_view msg);
-		bool InfoLog(const std::string_view msg);
+		virtual bool ErrorLog(const std::string_view msg);
+		virtual bool WarningLog(const std::string_view msg);
+		virtual bool InfoLog(const std::string_view msg);
 	};
 }

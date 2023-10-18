@@ -15,7 +15,7 @@ namespace GenericBoson
 {
 	struct GBExpandedOverlapped;
 
-	class GBGameServer : public GBServer
+	class GBGameServer : public GBServer, public GBGameShared
 	{
 	public:
 		GBGameServer(uint16_t portNum) : GBServer(portNum) {}
@@ -66,9 +66,6 @@ namespace GenericBoson
 		virtual bool InfoLog(const std::string_view msg) override;
 
 		virtual void OnConnected(GBExpandedOverlapped* pEol) override;
-
-	private:
-		GBGameShared m_gameShared;
 	private:
 		const int MESSAGE_ID_SIZE = 2;
 		const int LENGTH_SIZE = 2;
