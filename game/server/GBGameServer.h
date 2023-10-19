@@ -58,7 +58,7 @@ namespace GenericBoson
 		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task);
 
 	private:
-		virtual bool OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
+		virtual bool OnReceived(VectoredIO& inputData, const DWORD transferredBytes) override;
 		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) override;
 
 		virtual bool ErrorLog(const std::string_view msg) override;

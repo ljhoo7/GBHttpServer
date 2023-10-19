@@ -189,26 +189,24 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool ret = OnReceived(pEol, transferredBytes);
+				bool ret = OnReceived(pEol->m_inputData, transferredBytes);
 				if (false == ret)
 				{
 					continue;
 				}
 
-				//// 개더링이 끝나지 않았거나, 끝났어도 받은게 전혀없다면, 더 받으려고 한다.
-				//if (true == gatheringNotFinished || true == gatheringFinishedButNothing)
-				//{
-				//	int issueRecvResult = IssueRecv(pEol, BUFFER_SIZE - pEol->m_receiveOffset);
-				//	int lastError = WSAGetLastError();
+				if (pEol->m_inputData.GetState() == VectoredIO::STATE::ID
+					|| transferredBytes == 0)
+				{
+					int issueRecvResult = IssueRecv(pEol, pEol->m_inputData.m_length - pEol->m_inputData.m_offset);
+					int lastError = WSAGetLastError();
 
-				//	if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
-				//	{
-				//		// #ToDo
-				//		// Issue receiving failed.
-				//	}
-
-				//	return false;
-				//}
+					if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
+					{
+						// #ToDo logging
+						// Issue receiving failed.
+					}
+				}
 			}
 			break;
 			case IO_TYPE::SEND:
@@ -229,7 +227,7 @@ namespace GenericBoson
 		DWORD flag = 0;
 		WSABUF wsaBuffer;
 		wsaBuffer.len = lengthToReceive;
-		wsaBuffer.buf = &pEol->m_gatherInput.m_buffer[pEol->m_gatherInput.m_offset];
+		wsaBuffer.buf = &pEol->m_inputData.m_buffer[pEol->m_inputData.m_offset];
 		int recvResult = WSARecv(pEol->m_socket, &wsaBuffer, 1, nullptr, &flag, pEol, nullptr);
 
 		return recvResult;

@@ -8,32 +8,32 @@
 
 namespace GenericBoson
 {
-	bool GBGameServer::OnReceived(GBExpandedOverlapped* pEol, const DWORD transferredBytes)
+	bool GBGameServer::OnReceived(VectoredIO& inputData, const DWORD transferredBytes)
 	{
 		static BUFFER_SIZE_TYPE messageID = 0;
 
-		switch (pEol->m_gatherInput.GetState())
+		switch (inputData.GetState())
 		{
 		case VectoredIO::STATE::ID:
 		{
-			if (Gather(pEol->m_gatherInput, transferredBytes))
+			if (Gather(inputData, transferredBytes))
 			{
-				messageID = reinterpret_cast<decltype(messageID)>(pEol->m_gatherInput.m_buffer);
-				pEol->m_gatherInput.m_length = sizeof(pEol->m_gatherInput.m_length);
+				messageID = reinterpret_cast<decltype(messageID)>(inputData.m_buffer);
+				inputData.m_length = sizeof(inputData.m_length);
 			}
 		}
 		break;
 		case VectoredIO::STATE::LENGTH:
 		{
-			if (Gather(pEol->m_gatherInput, transferredBytes))
+			if (Gather(inputData, transferredBytes))
 			{
-				pEol->m_gatherInput.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(pEol->m_gatherInput.m_buffer);
+				inputData.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(inputData.m_buffer);
 			}
 		}
 		break;
 		case VectoredIO::STATE::PAYLOAD:
 		{
-			if (Gather(pEol->m_gatherInput, transferredBytes))
+			if (Gather(inputData, transferredBytes))
 			{
 				const auto m_pStub = m_stubs.find(messageID);
 				if (m_pStub == m_stubs.end())
@@ -42,8 +42,8 @@ namespace GenericBoson
 					return false;
 				}
 
-				m_pStub->second->CallStub(pEol->m_gatherInput.m_buffer);
-				pEol->m_gatherInput.m_length = sizeof(messageID);
+				m_pStub->second->CallStub(inputData.m_buffer);
+				inputData.m_length = sizeof(messageID);
 			}
 		}
 		break;
@@ -54,7 +54,6 @@ namespace GenericBoson
 		break;
 		}
 
-		IssueRecv(pEol, pEol->m_gatherInput.m_length - pEol->m_gatherInput.m_offset);
 		return true;
 	}
 

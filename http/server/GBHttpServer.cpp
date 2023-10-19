@@ -31,7 +31,7 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBServer::OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes)
+	bool GBServer::OnReceived(VectoredIO& eol, DWORD receivedBytes)
 	{
 		bool succeeded = false;
 
