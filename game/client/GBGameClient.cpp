@@ -6,12 +6,16 @@ namespace GenericBoson
 {
 	GBGameClient::~GBGameClient()
 	{
-		m_keepLooping = false;
+		m_keepLooping.store(false);
 	}
 
 	bool GBGameClient::GetKeepLooping()
 	{
-		return false;
+		// peek receive
+
+		// peek send
+
+		return m_keepLooping.load();
 	}
 	int GBGameClient::Connect(const std::string_view address, const int port)
 	{
