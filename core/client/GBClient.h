@@ -1,5 +1,9 @@
 #pragma once
 
+#define FD_SETSIZE 2
+
+#include "../Shared/GBShared.h"
+
 #include "winsock2.h"
 #include "MSWSock.h"
 
@@ -7,7 +11,7 @@
 
 namespace GenericBoson
 {
-	class GBClient
+	class GBClient : public GBShared
 	{
 	public:
 		virtual ~GBClient();

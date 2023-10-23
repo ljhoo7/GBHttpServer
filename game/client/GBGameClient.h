@@ -13,6 +13,8 @@ namespace GenericBoson
 	class GBGameClient : public GBClient, public GBGameShared
 	{
 	public:
+		GBGameClient()
+		{}
 		virtual ~GBGameClient();
 
 		bool GetKeepLooping();
@@ -20,6 +22,13 @@ namespace GenericBoson
 		virtual int Connect(const std::string_view address, const int port) override;
 	private:
 
-		std::atomic_bool m_keepLooping = true;
+		std::atomic_bool	m_keepLooping = true;
+
+		fd_set				m_sockets;
+		timeval				m_peekInterval
+		{
+			.tv_sec = 0,
+			.tv_usec = 500
+		};
 	};
 }
