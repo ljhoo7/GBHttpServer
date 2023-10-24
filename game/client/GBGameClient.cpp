@@ -22,6 +22,10 @@ namespace GenericBoson
 			// Data is available now.
 			switch (retval)
 			{
+			case 1:
+				break;
+			case 2:
+				break;
 			}
 		}
 
