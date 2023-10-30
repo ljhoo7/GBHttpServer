@@ -24,6 +24,9 @@ namespace GenericBoson
 
 		std::atomic_bool	m_keepLooping = true;
 
+		VectoredIO			m_readBuffer;
+		VectoredIO			m_writeBuffer;
+
 		fd_set				m_sockets;
 		timeval				m_peekInterval
 		{

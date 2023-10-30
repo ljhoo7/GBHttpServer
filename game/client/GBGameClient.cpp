@@ -20,12 +20,12 @@ namespace GenericBoson
 		else if (retval)
 		{
 			// Data is available now.
-			switch (retval)
+			for (int k = 0; k < FD_SETSIZE; ++k)
 			{
-			case 1:
-				break;
-			case 2:
-				break;
+				if (FD_ISSET(k, &m_sockets))
+				{
+					int readBytes = read(k, );
+				}
 			}
 		}
 
@@ -35,6 +35,8 @@ namespace GenericBoson
 	{
 		FD_ZERO(&m_sockets);
 		FD_SET(0, &m_sockets);
+
+		static_assert(FD_SETSIZE == 2);
 
 		return __super::Connect(address, port);
 	}
