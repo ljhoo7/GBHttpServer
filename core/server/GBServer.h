@@ -23,12 +23,18 @@ namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
-	class GBServer : public GBShared
+	class GBServer
 	{
 	public:
 		std::string Start();
 
-		GBServer(uint16_t portNum) : m_port(portNum) {};
+		GBServer(uint16_t portNum) : m_port(portNum)
+		{
+			if (!m_pShared)
+			{
+				m_pShared = std::make_unique<GBShared>();
+			}
+		}
 		virtual ~GBServer();
 
 		bool GetKeepLooping() const
@@ -52,6 +58,8 @@ namespace GenericBoson
 		void SendThreadFunction();
 
 		void ThreadFunction();
+	public:
+		std::unique_ptr<GBShared> m_pShared;
 	private:
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;

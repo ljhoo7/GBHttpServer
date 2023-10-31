@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string_view>
+#include <format>
+#include <cassert>
 
 namespace GenericBoson
 {
@@ -46,10 +48,15 @@ namespace GenericBoson
 	class GBShared
 	{
 	public:
-		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);
-
 		virtual bool ErrorLog(const std::string_view msg);
 		virtual bool WarningLog(const std::string_view msg);
 		virtual bool InfoLog(const std::string_view msg);
+
+		virtual bool OnGatheringCompleted(VectoredIO& inputData, const BUFFER_SIZE_TYPE messageID) {};
+	
+		bool OnReceived(VectoredIO& inputData, const unsigned long transferredBytes);
+		bool OnSent(VectoredIO& outputData, const unsigned long transferredBytes);
+	private:
+		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);
 	};
 }

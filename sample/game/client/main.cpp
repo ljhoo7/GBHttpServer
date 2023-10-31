@@ -1,6 +1,5 @@
 #define NOMINMAX
 
-#include "winsock2.h"
 #include "../flatbufferschema/player_generated.h"
 
 #include <iostream>

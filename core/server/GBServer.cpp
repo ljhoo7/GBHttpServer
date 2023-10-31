@@ -183,13 +183,13 @@ namespace GenericBoson
 				if (SOCKET_ERROR == issueRecvResult && WSA_IO_PENDING != lastError)
 				{
 					// #ToDo
-					// Issue receiving failed.
+					// Issue receiving failed.k
 				}
 			}
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool ret = OnReceived(pEol->m_inputData, transferredBytes);
+				bool ret = m_pShared->OnReceived(pEol->m_inputData, transferredBytes);
 				if (false == ret)
 				{
 					continue;

@@ -15,7 +15,7 @@ namespace GenericBoson
 
 		if (retval == -1)
 		{
-			ErrorLog("");
+			m_pShared->ErrorLog("");
 		}
 		else if (retval)
 		{
@@ -24,7 +24,8 @@ namespace GenericBoson
 			{
 				if (FD_ISSET(k, &m_sockets))
 				{
-					int readBytes = read(k, );
+					int readBytes = recv(k, m_inputData.m_buffer, BUFFER_SIZE, 0);
+					bool ret = m_pShared->OnReceived(m_inputData, readBytes);
 				}
 			}
 		}
