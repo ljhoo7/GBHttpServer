@@ -44,7 +44,7 @@ namespace GenericBoson
 			size_t size, offset;
 			char* pFlatRawBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
 
-			char* buffer = pEol->m_scatterOutput.m_buffer;
+			char* buffer = pEol->m_outputData.m_buffer;
 
 			memcpy_s(buffer, BUFFER_SIZE, &messageID, sizeof(messageID));
 			buffer += sizeof(messageID);
@@ -53,7 +53,7 @@ namespace GenericBoson
 			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer, size);
 			buffer += size;
 
-			pEol->m_scatterOutput.m_offset = size + sizeof(messageID) + sizeof(size);
+			pEol->m_outputData.m_offset = size + sizeof(messageID) + sizeof(size);
 
 			__super::Send(pEol);
 

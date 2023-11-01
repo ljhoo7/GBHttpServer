@@ -52,7 +52,7 @@ namespace GenericBoson
 		virtual bool WarningLog(const std::string_view msg);
 		virtual bool InfoLog(const std::string_view msg);
 
-		virtual bool OnGatheringCompleted(VectoredIO& inputData, const BUFFER_SIZE_TYPE messageID) {};
+		virtual bool OnGatheringCompleted(VectoredIO& inputData, const BUFFER_SIZE_TYPE messageID) { return false; };
 	
 		bool OnReceived(VectoredIO& inputData, const unsigned long transferredBytes);
 		bool OnSent(VectoredIO& outputData, const unsigned long transferredBytes);

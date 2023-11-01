@@ -14,6 +14,6 @@ namespace GenericBoson
 		SOCKET m_socket = INVALID_SOCKET;
 		IO_TYPE m_type = IO_TYPE::ACCEPT;
 
-		VectoredIO m_inputData, m_scatterOutput;
+		VectoredIO m_inputData, m_outputData;
 	};
 }

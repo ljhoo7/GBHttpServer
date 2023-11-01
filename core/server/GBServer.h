@@ -36,8 +36,6 @@ namespace GenericBoson
 			return m_keepLooping;
 		}
 	protected:
-		virtual bool OnReceived(VectoredIO& inputData, const DWORD transferredBytes) = 0;
-		virtual bool OnSent(GBExpandedOverlapped* pEol, const DWORD transferredBytes) = 0;
 		virtual void OnConnected(GBExpandedOverlapped* pEol) = 0;
 
 		void Send(GBExpandedOverlapped* pEol);
