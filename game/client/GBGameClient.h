@@ -13,20 +13,20 @@ namespace GenericBoson
 	class GBGameClient : public GBClient
 	{
 	public:
-		GBGameClient() : m_pShared{ std::make_unique<GBGameShared>()}, GBClient()
-		{}
 		virtual ~GBGameClient();
 
 		template<typename FLATBUFFER_TABLE>
 		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
 		{
-			return m_pShared->AddStubInternal(messageID, Stub);
+			return m_GameShared.AddStubInternal(messageID, Stub);
 		}
 
 		bool GetKeepLooping();
 
 		virtual int Connect(const std::string_view address, const int port) override;
 	private:
+		GBGameShared m_GameShared;
+
 		std::atomic_bool	m_keepLooping = true;
 
 		VectoredIO			m_inputData;

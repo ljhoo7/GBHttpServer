@@ -17,13 +17,13 @@ namespace GenericBoson
 	class GBGameServer : public GBServer
 	{
 	public:
-		GBGameServer(uint16_t portNum) : m_pShared{ std::make_unique<GBGameShared>() }, GBServer(portNum) {}
+		GBGameServer(uint16_t portNum) : GBServer(portNum) {}
 		virtual ~GBGameServer() = default;
 
 		template<typename FLATBUFFER_TABLE>
 		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
 		{
-			return m_pShared->AddStubInternal(messageID, Stub);
+			return m_GameShared.AddStubInternal(messageID, Stub);
 		}
 
 		template<typename CALLABLE>
@@ -33,7 +33,7 @@ namespace GenericBoson
 			if (!pEol)
 			{
 				// #ToDo
-				ErrorLog("");
+				m_GameShared.ErrorLog("");
 				return false;
 			}
 
@@ -63,12 +63,10 @@ namespace GenericBoson
 		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task);
 
 	private:
-		virtual bool ErrorLog(const std::string_view msg) override;
-		virtual bool WarningLog(const std::string_view msg) override;
-		virtual bool InfoLog(const std::string_view msg) override;
-
 		virtual void OnConnected(GBExpandedOverlapped* pEol) override;
 	private:
+		GBGameShared m_GameShared;
+
 		const int MESSAGE_ID_SIZE = 2;
 		const int LENGTH_SIZE = 2;
 

@@ -13,13 +13,6 @@ namespace GenericBoson
 	class GBClient
 	{
 	public:
-		GBClient()
-		{
-			if (!m_pShared)
-			{
-				m_pShared = std::make_unique<GBShared>();
-			}
-		}
 		virtual ~GBClient();
 	protected:
 		virtual int Connect(const std::string_view address, const int port);
@@ -27,9 +20,9 @@ namespace GenericBoson
 		int InitializeWinSock();
 		int CreateSocket();
 		int ConnectInternal(const std::string_view address, const int port);
-	public:
-		std::unique_ptr<GBShared> m_pShared;
 	private:
+		GBShared m_CoreShared;
+
 		WSADATA m_wsaData;
 		SOCKET m_socket;
 	};

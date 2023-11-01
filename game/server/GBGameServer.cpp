@@ -8,21 +8,6 @@
 
 namespace GenericBoson
 {
-	bool GBGameServer::ErrorLog(const std::string_view msg)
-	{
-		return true;
-	}
-
-	bool GBGameServer::WarningLog(const std::string_view msg)
-	{
-		return true;
-	}
-
-	bool GBGameServer::InfoLog(const std::string_view msg)
-	{
-		return true;
-	}
-
 	void GBGameServer::OnConnected(GBExpandedOverlapped* pEol)
 	{
 		if (m_connectedTask)

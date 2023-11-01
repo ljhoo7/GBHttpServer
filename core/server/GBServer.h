@@ -28,13 +28,7 @@ namespace GenericBoson
 	public:
 		std::string Start();
 
-		GBServer(uint16_t portNum) : m_port(portNum)
-		{
-			if (!m_pShared)
-			{
-				m_pShared = std::make_unique<GBShared>();
-			}
-		}
+		GBServer(uint16_t portNum) : m_port(portNum) {}
 		virtual ~GBServer();
 
 		bool GetKeepLooping() const
@@ -58,9 +52,9 @@ namespace GenericBoson
 		void SendThreadFunction();
 
 		void ThreadFunction();
-	public:
-		std::unique_ptr<GBShared> m_pShared;
 	private:
+		GBShared m_CoreShared;
+
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;

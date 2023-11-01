@@ -15,7 +15,7 @@ namespace GenericBoson
 
 		if (retval == -1)
 		{
-			m_pShared->ErrorLog("");
+			m_GameShared.ErrorLog("");
 		}
 		else if (retval)
 		{
@@ -25,7 +25,7 @@ namespace GenericBoson
 				if (FD_ISSET(k, &m_sockets))
 				{
 					int readBytes = recv(k, m_inputData.m_buffer, BUFFER_SIZE, 0);
-					bool ret = m_pShared->OnReceived(m_inputData, readBytes);
+					bool ret = m_GameShared.OnReceived(m_inputData, readBytes);
 				}
 			}
 		}

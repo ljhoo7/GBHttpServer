@@ -189,7 +189,7 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool ret = m_pShared->OnReceived(pEol->m_inputData, transferredBytes);
+				bool ret = m_CoreShared.OnReceived(pEol->m_inputData, transferredBytes);
 				if (false == ret)
 				{
 					continue;
