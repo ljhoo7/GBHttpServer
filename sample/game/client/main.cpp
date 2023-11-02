@@ -23,7 +23,11 @@ int main()
 
 	GBGameClient client;
 
-	client.Connect("127.0.0.1", 5076);
+	if (int result = client.Connect("127.0.0.1", 5076))
+	{
+		std::cout << std::format("Connect to server failed. error - {}\n", result);
+		return -1;
+	}
 
 	wprintf(L"Connected to server.\n");
 

@@ -25,7 +25,7 @@ namespace GenericBoson
 
 	int GBClient::CreateSocket()
 	{
-		const auto m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if (m_socket == INVALID_SOCKET) {
 			int errorCode = WSAGetLastError();
 			// # ToDo error logging

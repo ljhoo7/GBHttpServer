@@ -11,7 +11,7 @@ namespace GenericBoson
 
 	bool GBGameClient::GetKeepLooping()
 	{
-        int retval = select(1, &m_sockets, NULL, NULL, &m_peekInterval);
+        int retval = select(m_socket + 1, &m_reads, NULL, NULL, &m_peekInterval);
 
 		if (retval == -1)
 		{
@@ -20,9 +20,9 @@ namespace GenericBoson
 		else if (retval)
 		{
 			// Data is available now.
-			for (int k = 0; k < FD_SETSIZE; ++k)
+			for (int k = 0; k < m_socket + 1; ++k)
 			{
-				if (FD_ISSET(k, &m_sockets))
+				if (FD_ISSET(k, &m_reads))
 				{
 					int readBytes = recv(k, m_inputData.m_buffer, BUFFER_SIZE, 0);
 					bool ret = m_GameShared.OnReceived(m_inputData, readBytes);
@@ -30,14 +30,14 @@ namespace GenericBoson
 			}
 		}
 
+		//int readBytes = recv(m_socket, m_inputData.m_buffer, BUFFER_SIZE, 0);
+
 		return m_keepLooping.load();
 	}
 	int GBGameClient::Connect(const std::string_view address, const int port)
 	{
-		FD_ZERO(&m_sockets);
-		FD_SET(0, &m_sockets);
-
-		static_assert(FD_SETSIZE == 2);
+		FD_ZERO(&m_reads);
+		FD_SET(0, &m_reads);
 
 		return __super::Connect(address, port);
 	}

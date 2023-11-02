@@ -32,7 +32,7 @@ namespace GenericBoson
 		VectoredIO			m_inputData;
 		VectoredIO			m_outputData;
 
-		fd_set				m_sockets;
+		fd_set				m_reads;
 		timeval				m_peekInterval
 		{
 			.tv_sec = 0,

@@ -1,7 +1,5 @@
 #pragma once
 
-#define FD_SETSIZE 2
-
 #include "../Shared/GBShared.h"
 
 #include "winsock2.h"
@@ -20,7 +18,7 @@ namespace GenericBoson
 		int InitializeWinSock();
 		int CreateSocket();
 		int ConnectInternal(const std::string_view address, const int port);
-	private:
+	protected:
 		GBShared m_CoreShared;
 
 		WSADATA m_wsaData;
