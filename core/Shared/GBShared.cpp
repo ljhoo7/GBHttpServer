@@ -1,5 +1,7 @@
 #include "GBShared.h"
 
+#include <iostream>
+
 namespace GenericBoson
 {
 	bool GBShared::Gather(VectoredIO& vectoredIO,
@@ -18,18 +20,26 @@ namespace GenericBoson
 		return false;
 	}
 
+	void PrintMessage(const std::string_view msg)
+	{
+		//std::cout << msg.data() << "\n";
+	}
+
 	bool GBShared::ErrorLog(const std::string_view msg)
 	{
+		PrintMessage(msg);
 		return true;
 	}
 
 	bool GBShared::WarningLog(const std::string_view msg)
 	{
+		PrintMessage(msg);
 		return true;
 	}
 
 	bool GBShared::InfoLog(const std::string_view msg)
 	{
+		PrintMessage(msg);
 		return true;
 	}
 

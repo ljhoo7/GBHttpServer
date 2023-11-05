@@ -11,10 +11,13 @@ namespace GenericBoson
 
 	bool GBGameClient::GetKeepLooping()
 	{
-        int retval = select(m_socket + 1, &m_reads, NULL, NULL, &m_peekInterval);
+		fd_set readsCopy = m_reads, writesCopy = m_writes;
+
+        int retval = select(m_socket + 1, &readsCopy, &writesCopy, NULL, &m_peekInterval);
 
 		if (retval == -1)
 		{
+			int errorCode = WSAGetLastError();
 			m_GameShared.ErrorLog("");
 		}
 		else if (retval)
@@ -22,23 +25,36 @@ namespace GenericBoson
 			// Data is available now.
 			for (int k = 0; k < m_socket + 1; ++k)
 			{
-				if (FD_ISSET(k, &m_reads))
+				if (FD_ISSET(k, &readsCopy))
 				{
 					int readBytes = recv(k, m_inputData.m_buffer, BUFFER_SIZE, 0);
 					bool ret = m_GameShared.OnReceived(m_inputData, readBytes);
+
+					FD_CLR(m_socket, &readsCopy);
+				}
+
+				if (FD_ISSET(k, &writesCopy))
+				{
+					FD_CLR(m_socket, &writesCopy);
 				}
 			}
 		}
 
-		//int readBytes = recv(m_socket, m_inputData.m_buffer, BUFFER_SIZE, 0);
-
+		FD_ZERO(&m_reads);
 		return m_keepLooping.load();
 	}
 	int GBGameClient::Connect(const std::string_view address, const int port)
 	{
 		FD_ZERO(&m_reads);
-		FD_SET(0, &m_reads);
+		FD_ZERO(&m_writes);
 
-		return __super::Connect(address, port);
+		if (int result = __super::Connect(address, port))
+		{
+			return result;
+		}
+
+		FD_SET(m_socket, &m_reads);
+		FD_SET(m_socket, &m_writes);
+		return 0;
 	}
 }
