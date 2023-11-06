@@ -11,9 +11,13 @@ namespace GenericBoson
 
 	bool GBGameClient::GetKeepLooping()
 	{
-		fd_set readsCopy = m_reads, writesCopy = m_writes;
+		timeval timeout;
 
-        int retval = select(m_socket + 1, &readsCopy, &writesCopy, NULL, &m_peekInterval);
+		timeout.tv_sec = 5;
+		timeout.tv_usec = 0;
+
+		fd_set readsCopy = m_reads, writesCopy = m_writes;
+        int retval = select(m_socket + 1, &readsCopy, 0, 0, &m_peekInterval);
 
 		if (retval == -1)
 		{
@@ -35,7 +39,7 @@ namespace GenericBoson
 
 				if (FD_ISSET(k, &writesCopy))
 				{
-					FD_CLR(m_socket, &writesCopy);
+					FD_CLR(m_socket, &writesCopy); 
 				}
 			}
 		}
@@ -54,7 +58,7 @@ namespace GenericBoson
 		}
 
 		FD_SET(m_socket, &m_reads);
-		FD_SET(m_socket, &m_writes);
+		//FD_SET(m_socket, &m_writes);
 		return 0;
 	}
 }
