@@ -33,6 +33,7 @@ int main()
 
 	client.AddStub(1, Test);
 
+	std::this_thread::sleep_for(1000ms);
 	while (client.GetKeepLooping())
 	{
 		std::this_thread::sleep_for(1ms);

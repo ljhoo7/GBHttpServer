@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "GBGameClient.h"
+#include <iostream>
 
 namespace GenericBoson
 {
@@ -11,18 +12,18 @@ namespace GenericBoson
 
 	bool GBGameClient::GetKeepLooping()
 	{
-		timeval timeout;
+		timeval peekInterval;
 
-		timeout.tv_sec = 5;
-		timeout.tv_usec = 0;
+		peekInterval.tv_sec = 0;
+		peekInterval.tv_usec = 0;
 
 		fd_set readsCopy = m_reads, writesCopy = m_writes;
-        int retval = select(m_socket + 1, &readsCopy, 0, 0, &m_peekInterval);
+        int retval = select(m_socket + 1, &readsCopy, 0, 0, &peekInterval);
 
 		if (retval == -1)
 		{
 			int errorCode = WSAGetLastError();
-			m_GameShared.ErrorLog("");
+			m_GameShared.ErrorLog("select failed. error code - {}");
 		}
 		else if (retval)
 		{

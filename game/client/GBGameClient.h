@@ -33,10 +33,5 @@ namespace GenericBoson
 		VectoredIO			m_outputData;
 
 		fd_set				m_reads, m_writes;
-		timeval				m_peekInterval
-		{
-			.tv_sec = 5,
-			.tv_usec = 0
-		};
 	};
 }
