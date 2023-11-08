@@ -262,7 +262,12 @@ namespace GenericBoson
 				GBExpandedOverlapped* pEol = nullptr;
 				{
 					std::scoped_lock lock(m_sendLock);
-					pEol = itSendQueue.front();
+
+					if(!itSendQueue.empty())
+					{
+						pEol = itSendQueue.front();
+						itSendQueue.pop();
+					}
 				}
 
 				if (pEol)
