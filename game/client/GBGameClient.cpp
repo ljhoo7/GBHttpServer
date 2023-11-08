@@ -18,7 +18,7 @@ namespace GenericBoson
 		peekInterval.tv_usec = 0;
 
 		fd_set readsCopy = m_reads, writesCopy = m_writes;
-        int retval = select(m_socket + 1, &readsCopy, 0, 0, &peekInterval);
+        int retval = select(m_socket + 1, &readsCopy, &writesCopy, 0, &peekInterval);
 
 		if (retval == -1)
 		{
@@ -59,7 +59,7 @@ namespace GenericBoson
 		}
 
 		FD_SET(m_socket, &m_reads);
-		//FD_SET(m_socket, &m_writes);
+		FD_SET(m_socket, &m_writes);
 		return 0;
 	}
 }
