@@ -39,21 +39,22 @@ namespace GenericBoson
 
 			::flatbuffers::FlatBufferBuilder fbb((size_t)BUFFER_SIZE, &g_bufferAllocator);
 
-			fbb.Finish(std::forward<CALLABLE>(callable)(fbb));
+			fbb.FinishSizePrefixed(std::forward<CALLABLE>(callable)(fbb));
 
-			size_t size, offset;
+			size_t size, offset, tableSize;
+			tableSize = fbb.GetSize();
 			char* pFlatRawBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
 
 			char* buffer = pEol->m_outputData.m_buffer;
 
 			memcpy_s(buffer, BUFFER_SIZE, &messageID, sizeof(messageID));
 			buffer += sizeof(messageID);
-			memcpy_s(buffer, BUFFER_SIZE, &size, sizeof(size));
-			buffer += sizeof(size);
-			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer, size);
-			buffer += size;
+			memcpy_s(buffer, BUFFER_SIZE, &tableSize, sizeof(tableSize));
+			buffer += sizeof(tableSize);
+			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer, tableSize);
+			buffer += tableSize;
 
-			pEol->m_outputData.m_offset = size + sizeof(messageID) + sizeof(size);
+			pEol->m_outputData.m_offset = tableSize + sizeof(messageID) + sizeof(tableSize);
 
 			__super::Send(pEol);
 
