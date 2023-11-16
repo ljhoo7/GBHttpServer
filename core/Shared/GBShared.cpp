@@ -57,6 +57,7 @@ namespace GenericBoson
 
 				// set length size to be read
 				inputData.m_length = sizeof(inputData.m_length);
+
 				return true;
 			}
 		}
@@ -70,6 +71,7 @@ namespace GenericBoson
 				inputData.m_length = *reinterpret_cast<int32_t*>(
 					&inputData.m_buffer[sizeof(inputData.m_messageID)]
 				);
+
 				return true;
 			}
 		}
@@ -82,8 +84,6 @@ namespace GenericBoson
 
 				// set ID size to be read
 				inputData.m_length = sizeof(inputData.m_messageID);
-
-				return true;
 			}
 		}
 		break;

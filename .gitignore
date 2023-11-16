@@ -33,3 +33,4 @@
 /.vs
 /UnitTester/obj
 /out/build/x64-debug
+/flatbuffers

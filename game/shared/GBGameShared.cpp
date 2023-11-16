@@ -14,5 +14,7 @@ namespace GenericBoson
 
 		const auto payloadStartOffset = sizeof(inputData.m_messageID) + sizeof(inputData.m_length);
 		pStub->second->CallStub(&inputData.m_buffer[payloadStartOffset]);
+
+		return true;
 	}
 }
