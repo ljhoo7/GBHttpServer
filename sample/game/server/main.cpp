@@ -31,7 +31,7 @@ int main()
 			[](auto& fbb){
 				auto name = fbb.CreateString("Slime");
 				auto pPlayer = CreatePlayer(fbb, nullptr, 99, name);
-
+				
 				return pPlayer;
 			});
 		});

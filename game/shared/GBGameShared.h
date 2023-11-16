@@ -30,6 +30,6 @@ namespace GenericBoson
 	protected:
 		std::unordered_map<int, std::shared_ptr<IStubAdaptor>> m_stubs;
 
-		virtual bool OnGatheringCompleted(VectoredIO& inputData, const BUFFER_SIZE_TYPE messageID) override;
+		virtual bool OnGatheringCompleted(VectoredIO& inputData) override;
 	};
 }

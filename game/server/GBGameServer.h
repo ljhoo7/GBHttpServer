@@ -27,7 +27,7 @@ namespace GenericBoson
 		}
 
 		template<typename CALLABLE>
-		bool Send(GBExpandedOverlapped* pEol, const int messageID,
+		bool Send(GBExpandedOverlapped* pEol, const int32_t messageID,
 			CALLABLE&& callable)
 		{
 			if (!pEol)
@@ -39,11 +39,13 @@ namespace GenericBoson
 
 			::flatbuffers::FlatBufferBuilder fbb((size_t)BUFFER_SIZE, &g_bufferAllocator);
 
-			fbb.FinishSizePrefixed(std::forward<CALLABLE>(callable)(fbb));
+			// Do not use FinishSizePrefixed because it makes buffer invalid.
+			fbb.Finish(std::forward<CALLABLE>(callable)(fbb));
 
-			size_t size, offset, tableSize;
-			tableSize = fbb.GetSize();
+			size_t size, offset;
 			char* pFlatRawBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
+
+			int32_t tableSize = size - offset;
 
 			char* buffer = pEol->m_outputData.m_buffer;
 
@@ -51,7 +53,7 @@ namespace GenericBoson
 			buffer += sizeof(messageID);
 			memcpy_s(buffer, BUFFER_SIZE, &tableSize, sizeof(tableSize));
 			buffer += sizeof(tableSize);
-			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer, tableSize);
+			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer + offset, tableSize);
 			buffer += tableSize;
 
 			pEol->m_outputData.m_offset = tableSize + sizeof(messageID) + sizeof(tableSize);

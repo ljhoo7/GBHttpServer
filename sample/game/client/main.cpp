@@ -11,10 +11,10 @@
 using namespace GenericBoson;
 using namespace GenericBoson::GameTest;
 
-void Test(const Player& player)
+void Test(const Player& pPlayer)
 {
-	std::cout << "hp : " << player.hp() << '\n';
-	std::cout << "name : " << player.name() << '\n';
+	std::cout << "hp : " << pPlayer.hp() << '\n';
+	std::cout << "name : " << pPlayer.name()->c_str() << '\n';
 }
 
 int main()

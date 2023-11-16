@@ -38,8 +38,10 @@ namespace GenericBoson
 		}
 
 	public:
-		char m_buffer[BUFFER_SIZE];
-		BUFFER_SIZE_TYPE m_length = 0, m_offset = 0;
+		char m_buffer[BUFFER_SIZE] = { 1, };
+
+		int32_t m_messageID = 0;
+		int32_t m_length = 0, m_offset = 0;
 
 	private:
 		STATE m_state = STATE::ID;
@@ -52,8 +54,9 @@ namespace GenericBoson
 		virtual bool WarningLog(const std::string_view msg);
 		virtual bool InfoLog(const std::string_view msg);
 
-		virtual bool OnGatheringCompleted(VectoredIO& inputData, const BUFFER_SIZE_TYPE messageID) { return false; };
+		virtual bool OnGatheringCompleted(VectoredIO& inputData) { return false; };
 	
+		bool ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes);
 		bool OnReceived(VectoredIO& inputData, const unsigned long transferredBytes);
 		bool OnSent(VectoredIO& outputData, const unsigned long transferredBytes);
 	private:

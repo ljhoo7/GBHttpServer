@@ -7,6 +7,7 @@ namespace GenericBoson
 	bool GBShared::Gather(VectoredIO& vectoredIO,
 		const unsigned long transferredBytes)
 	{
+		// offset means previous received size
 		if (vectoredIO.m_length <= vectoredIO.m_offset + transferredBytes)
 		{
 			vectoredIO.m_offset = 0;
@@ -43,18 +44,20 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool GBShared::OnReceived(VectoredIO& inputData, const unsigned long transferredBytes)
+	bool GBShared::ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes)
 	{
-		static BUFFER_SIZE_TYPE messageID = 0;
-
 		switch (inputData.GetState())
 		{
 		case VectoredIO::STATE::ID:
 		{
 			if (Gather(inputData, transferredBytes))
 			{
-				messageID = reinterpret_cast<decltype(messageID)>(inputData.m_buffer);
+				// store received ID
+				inputData.m_messageID = *reinterpret_cast<int32_t*>(&inputData.m_buffer[0]);
+
+				// set length size to be read
 				inputData.m_length = sizeof(inputData.m_length);
+				return true;
 			}
 		}
 		break;
@@ -62,7 +65,12 @@ namespace GenericBoson
 		{
 			if (Gather(inputData, transferredBytes))
 			{
-				inputData.m_length = reinterpret_cast<BUFFER_SIZE_TYPE>(inputData.m_buffer);
+				// store received length and set payload size to be read
+				
+				inputData.m_length = *reinterpret_cast<int32_t*>(
+					&inputData.m_buffer[sizeof(inputData.m_messageID)]
+				);
+				return true;
 			}
 		}
 		break;
@@ -70,16 +78,33 @@ namespace GenericBoson
 		{
 			if (Gather(inputData, transferredBytes))
 			{
-				OnGatheringCompleted(inputData, messageID);
-				inputData.m_length = sizeof(messageID);
+				OnGatheringCompleted(inputData);
+
+				// set ID size to be read
+				inputData.m_length = sizeof(inputData.m_messageID);
+
+				return true;
 			}
 		}
 		break;
 		default:
 		{
-			assert(false);
+			std::abort();
 		}
 		break;
+		}
+
+		return false;
+	}
+
+	bool GBShared::OnReceived(VectoredIO& inputData, const unsigned long transferredBytes)
+	{
+		while (1)
+		{
+			if (!ReadWholePartialMessages(inputData, transferredBytes))
+			{
+				break;
+			}
 		}
 
 		return true;
