@@ -13,6 +13,7 @@
 #include <string>
 #include <atomic>
 #include <unordered_map>
+#include <limits>
 
 namespace flatbuffers
 {
@@ -44,7 +45,7 @@ namespace GenericBoson
 		//virtual bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
 		//virtual bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes) = 0;
 		int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
-		int IssueSend(GBExpandedOverlapped* pEol);
+		int IssueSend(GBExpandedOverlapped* pEol, const unsigned long throttling = 30);//(std::numeric_limits<unsigned long>::max)());
 	private:
 		std::pair<bool, std::string> SetListeningSocket();
 		void SendThreadFunction();

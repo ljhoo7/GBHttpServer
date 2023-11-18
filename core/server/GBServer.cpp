@@ -233,13 +233,32 @@ namespace GenericBoson
 		return recvResult;
 	}
 
-	int GBServer::IssueSend(GBExpandedOverlapped* pEol)
+	int GBServer::IssueSend(GBExpandedOverlapped* pEol, const unsigned long throttling
+	/* = std::numeric_limits<unsigned long>::max()*/)
 	{
 		WSABUF bufToSend;
-		DWORD sentBytes = 0;
-		bufToSend.buf = pEol->m_outputData.m_buffer;
-		bufToSend.len = pEol->m_outputData.m_offset;
-		int sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
+		int sendResult = 0, totalSentBytes = 0;
+		std::decay_t<decltype(throttling)> bytesToSend = pEol->m_outputData.m_offset;
+
+		while(0 < bytesToSend)
+		{
+			bufToSend.buf = pEol->m_outputData.m_buffer + totalSentBytes;
+			bufToSend.len = (std::min)(bytesToSend, throttling);
+
+			DWORD sentBytes;
+			sendResult = WSASend(pEol->m_socket, &bufToSend, 1, &sentBytes, 0, pEol, nullptr);
+			bytesToSend -= sentBytes;
+			totalSentBytes += sentBytes;
+
+			if (sendResult)
+			{
+				break;
+			}
+
+			// #test
+			using namespace std::literals::chrono_literals;
+			std::this_thread::sleep_for(1s);
+		}
 
 		return sendResult;
 	}
