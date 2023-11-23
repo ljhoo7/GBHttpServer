@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "GBUtil.h"
+#include "Util.h"
 #include "Winsock2.h"
 
 namespace GenericBoson

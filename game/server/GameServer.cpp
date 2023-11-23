@@ -2,8 +2,8 @@
 
 #define NOMINMAX
 
-#include "GBGameServer.h"
-#include "../../core/server/GBExpandedOverlapped.h"
+#include "GameServer.h"
+#include "../../core/server/ExpandedOverlapped.h"
 
 
 namespace GenericBoson

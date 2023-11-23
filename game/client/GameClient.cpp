@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "GBGameClient.h"
+#include "GameClient.h"
 #include <iostream>
 
 namespace GenericBoson

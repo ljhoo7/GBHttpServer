@@ -6,7 +6,7 @@
 #include <future>
 #include <chrono>
 
-#include "../../game/client/GBGameClient.h"
+#include "../../game/client/GameClient.h"
 
 using namespace GenericBoson;
 using namespace GenericBoson::GameTest;

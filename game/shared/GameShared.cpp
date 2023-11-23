@@ -1,5 +1,5 @@
-#include "../../core/Shared/GBShared.h"
-#include "GBGameShared.h"
+#include "../../core/Shared/Shared.h"
+#include "GameShared.h"
 
 namespace GenericBoson
 {

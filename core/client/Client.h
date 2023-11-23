@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Shared/GBShared.h"
+#include "../Shared/Shared.h"
 
 #include "winsock2.h"
 

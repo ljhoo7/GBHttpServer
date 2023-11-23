@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "GBServer.h"
+#include "Server.h"
 
 namespace GenericBoson
 {
@@ -255,10 +255,16 @@ namespace GenericBoson
 				break;
 			}
 
-			// #test
-			using namespace std::literals::chrono_literals;
-			std::this_thread::sleep_for(1s);
+#ifdef _DEBUG
+			if(bufToSend.len == throttling)
+			{
+				// #test
+				using namespace std::literals::chrono_literals;
+				// prevent de-fragmenting for test
+				std::this_thread::sleep_for(1s);
+			}
 		}
+#endif // _DEBUG
 
 		return sendResult;
 	}

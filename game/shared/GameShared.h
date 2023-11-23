@@ -1,7 +1,7 @@
 #pragma once
 
 #include "StubAdaptor.h"
-#include "../../core/Shared/GBShared.h"
+#include "../../core/Shared/Shared.h"
 
 #include <format>
 #include <memory>

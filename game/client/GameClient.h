@@ -2,8 +2,8 @@
 
 #define NOMINMAX
 
-#include "../shared/GBGameShared.h"
-#include "../../core/client/GBClient.h"
+#include "../shared/GameShared.h"
+#include "../../core/client/Client.h"
 #include "../../flatbuffers/include/flatbuffers/flatbuffers.h"
 
 #include <string>

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "GBClient.h"
-#include "../server/GBUtil.h"
+#include "Client.h"
+#include "../server/Util.h"
 
 #include <string_view>
 

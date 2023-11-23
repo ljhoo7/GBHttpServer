@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GBUtil.h"
-#include "GBExpandedOverlapped.h"
-#include "../shared/GBShared.h"
+#include "Util.h"
+#include "ExpandedOverlapped.h"
+#include "../shared/Shared.h"
 #include "boost/thread/future.hpp"
 #include "boost/thread/executors/executor.hpp"
 #include "winsock2.h"

@@ -1,4 +1,4 @@
-#include "GBShared.h"
+#include "Shared.h"
 
 #include <iostream>
 

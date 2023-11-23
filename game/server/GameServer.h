@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../core/server/GBServer.h"
+#include "../../core/server/Server.h"
 #include "BufferAllocator.h"
 
 #include "flatbuffers/flatbuffers.h"
 
-#include "../shared/GBGameShared.h"
+#include "../shared/GameShared.h"
 
 #include <unordered_map>
 #include <functional>

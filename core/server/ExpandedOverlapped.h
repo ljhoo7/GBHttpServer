@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shared/GBShared.h"
+#include "../shared/Shared.h"
 
 #include "boost/lockfree/queue.hpp"
 #include "winsock2.h"
