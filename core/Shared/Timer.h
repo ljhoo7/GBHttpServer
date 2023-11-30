@@ -5,15 +5,20 @@
 
 namespace GenericBoson
 {
-	class GBTimer
+	class ITimer
+	{
+
+	};
+
+	class Timer
 	{
 	public:
-		GBTimer()
-			: m_thread(&GBTimer::OnTimerStart, this)
+		Timer()
+			: m_thread(&Timer::OnTimerStart, this)
 		{
 		}
 
-		~GBTimer()
+		~Timer()
 		{
 			if (m_thread.joinable())
 			{
@@ -21,13 +26,20 @@ namespace GenericBoson
 			}
 		}
 
-		void OnTimerStart()
-		{
-		}
-
 		virtual void OnTime() = 0;
 	private:
+		void OnTimerStart()
+		{
+			const auto startTime = std::chrono::steady_clock::now();
+
+			while (m_keepGoing)
+			{
+			}
+		}
 		
+	public:
+		std::atomic_bool m_keepGoing = true;
+	private:
 		std::thread m_thread;
 	};
 }
