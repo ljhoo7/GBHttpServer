@@ -7,18 +7,18 @@ namespace GenericBoson
 {
 	class ITimer
 	{
-
+		virtual void OnTime() = 0;
 	};
 
-	class Timer
+	class TimerManager
 	{
 	public:
-		Timer()
-			: m_thread(&Timer::OnTimerStart, this)
+		TimerManager()
+			: m_thread(&TimerManager::OnStart, this)
 		{
 		}
 
-		~Timer()
+		~TimerManager()
 		{
 			if (m_thread.joinable())
 			{
@@ -26,9 +26,8 @@ namespace GenericBoson
 			}
 		}
 
-		virtual void OnTime() = 0;
 	private:
-		void OnTimerStart()
+		void OnStart()
 		{
 			const auto startTime = std::chrono::steady_clock::now();
 
