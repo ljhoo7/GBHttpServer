@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Singleton.h"
+
 #include <thread>
 #include <chrono>
 #include <queue>
@@ -9,32 +11,39 @@ namespace GenericBoson
 {
 	struct TimerComparer
 	{
-		bool operator()(const ITimer& lhs, const ITimer& rhs) { return lhs.StartTimeMs() < rhs.StartTimeMs() };
+		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->StartTimeNs() < rhs->StartTimeNs(); };
 	};
 
 	class ITimer
 	{
 	public:
-		ITimer(const int64_t startTimeMs, const int64_t periodMs) 
-			: m_StartTimeMs(startTimeMs), m_PeriodMs(periodMs) 
+		ITimer(const int64_t startTimeNs, const int64_t periodNs) 
+			: m_StartTimeNs(startTimeNs), m_PeriodNs(periodNs) 
 		{}
+
+		virtual ~ITimer() = default;
 
 		virtual void OnTime() = 0;
 
-		int64_t StartTimeMs() const
+		int64_t StartTimeNs() const
 		{
-			return m_StartTimeMs;
+			return m_StartTimeNs;
 		}
 
-		int64_t PeriodMs() const
+		void StartTimeNs(const int64_t startTimeMs)
 		{
-			return m_StartTimeMs;
+			m_StartTimeNs = startTimeMs;
+		}
+
+		int64_t PeriodNs() const
+		{
+			return m_StartTimeNs;
 		}
 	private:
-		int64_t m_StartTimeMs, m_PeriodMs;
+		int64_t m_StartTimeNs, m_PeriodNs;
 	};
 
-	class TimerManager
+	class TimerManager : public Singleton<TimerManager>
 	{
 	public:
 		TimerManager()
@@ -50,25 +59,64 @@ namespace GenericBoson
 			}
 		}
 
-		bool AddTimer(const ITimer& timer)
+		bool AddTimer(const std::shared_ptr<ITimer>& pTimer)
 		{
 			std::lock_guard<std::shared_mutex> lock(m_Lock);
-			m_Timers.push(timer);
+			m_Timers.push(pTimer);
 		}
 
-		std::pair<ITimer, int64_t> GetTimer() const
+		std::pair<std::shared_ptr<ITimer>, int64_t> GetFirstTimer()
 		{
 			std::shared_lock<std::shared_mutex> lock(m_Lock);
+
+			if (m_Timers.empty())
+			{
+				return { nullptr, 0 };
+			}
+
+			const auto pFirst = m_Timers.top();
+			const int64_t currentTimeNs = std::chrono::steady_clock::now().time_since_epoch().count();
+			if (currentTimeNs < pFirst->StartTimeNs())
+			{
+				return {nullptr, pFirst->StartTimeNs() - currentTimeNs};
+			}
+
+			// correction
+			pFirst->StartTimeNs(currentTimeNs);
+
+			m_Timers.pop();
+
+			if (m_Timers.empty())
+			{
+				return { pFirst, pFirst->PeriodNs()};
+			}
+
+			const auto& pSecond = m_Timers.top();
+			const auto intervalNs = pSecond->StartTimeNs() - pFirst->StartTimeNs();
+			if (intervalNs < pFirst->PeriodNs())
+			{
+				return { pFirst, intervalNs };
+			}
+
+			return { pFirst, pFirst->PeriodNs() };
 		}
 
 	private:
 		void OnStart()
 		{
-			const auto startTime = std::chrono::steady_clock::now();
-
 			while (m_KeepGoing)
 			{
-				
+				const auto& [pFirst, waitTimeNs] = GetFirstTimer();
+
+				std::this_thread::sleep_for(std::chrono::nanoseconds(waitTimeNs));
+
+				if (!pFirst)
+				{
+					continue;
+				}
+
+				pFirst->StartTimeNs(pFirst->StartTimeNs() + pFirst->PeriodNs());
+				AddTimer(pFirst);
 			}
 		}
 		
@@ -78,6 +126,6 @@ namespace GenericBoson
 		std::thread m_Thread;
 
 		mutable std::shared_mutex m_Lock;
-		std::priority_queue<ITimer, std::vector<ITimer>, TimerComparer> m_Timers;
+		std::priority_queue<std::shared_ptr<ITimer>, std::vector<std::shared_ptr<ITimer>>, TimerComparer> m_Timers;
 	};
 }
