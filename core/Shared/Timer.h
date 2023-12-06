@@ -9,11 +9,6 @@
 
 namespace GenericBoson
 {
-	struct TimerComparer
-	{
-		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->StartTimeNs() < rhs->StartTimeNs(); };
-	};
-
 	class ITimer
 	{
 	public:
@@ -41,6 +36,11 @@ namespace GenericBoson
 		}
 	private:
 		int64_t m_StartTimeNs, m_PeriodNs;
+	};
+
+	struct TimerComparer
+	{
+		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->StartTimeNs() < rhs->StartTimeNs(); };
 	};
 
 	class TimerManager : public Singleton<TimerManager>
