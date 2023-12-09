@@ -13,34 +13,24 @@ namespace GenericBoson
 	{
 	public:
 		ITimer(const int64_t startTimeNs, const int64_t periodNs) 
-			: m_StartTimeNs(startTimeNs), m_PeriodNs(periodNs) 
+			: m_PeriodNs(periodNs) 
 		{}
 
 		virtual ~ITimer() = default;
 
 		virtual void OnTime() = 0;
 
-		int64_t StartTimeNs() const
-		{
-			return m_StartTimeNs;
-		}
-
-		void StartTimeNs(const int64_t startTimeMs)
-		{
-			m_StartTimeNs = startTimeMs;
-		}
-
 		int64_t PeriodNs() const
 		{
-			return m_StartTimeNs;
+			return m_PeriodNs;
 		}
 	private:
-		int64_t m_StartTimeNs, m_PeriodNs;
+		int64_t m_PeriodNs;
 	};
 
 	struct TimerComparer
 	{
-		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->StartTimeNs() < rhs->StartTimeNs(); };
+		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->PeriodNs() < rhs->PeriodNs(); };
 	};
 
 	class TimerManager : public Singleton<TimerManager>
@@ -71,34 +61,18 @@ namespace GenericBoson
 
 			if (m_Timers.empty())
 			{
-				return { nullptr, 0 };
+				return { nullptr, DEFAULT_WAIT_TIME_NS };
 			}
 
 			const auto pFirst = m_Timers.top();
-			const int64_t currentTimeNs = std::chrono::steady_clock::now().time_since_epoch().count();
-			if (currentTimeNs < pFirst->StartTimeNs())
-			{
-				return {nullptr, pFirst->StartTimeNs() - currentTimeNs};
-			}
-
-			// correction
-			pFirst->StartTimeNs(currentTimeNs);
-
 			m_Timers.pop();
 
 			if (m_Timers.empty())
 			{
-				return { pFirst, pFirst->PeriodNs()};
+				return { pFirst, DEFAULT_WAIT_TIME_NS };
 			}
 
-			const auto& pSecond = m_Timers.top();
-			const auto intervalNs = pSecond->StartTimeNs() - pFirst->StartTimeNs();
-			if (intervalNs < pFirst->PeriodNs())
-			{
-				return { pFirst, intervalNs };
-			}
-
-			return { pFirst, pFirst->PeriodNs() };
+			return { pFirst, m_Timers.top()->PeriodNs() };
 		}
 
 	private:
@@ -115,8 +89,7 @@ namespace GenericBoson
 					continue;
 				}
 
-				pFirst->StartTimeNs(pFirst->StartTimeNs() + pFirst->PeriodNs());
-				AddTimer(pFirst);
+				pFirst->OnTime();
 			}
 		}
 		
@@ -124,6 +97,8 @@ namespace GenericBoson
 		std::atomic_bool m_KeepGoing = true;
 	private:
 		std::thread m_Thread;
+
+		static const int64_t DEFAULT_WAIT_TIME_NS = 10;
 
 		mutable std::shared_mutex m_Lock;
 		std::priority_queue<std::shared_ptr<ITimer>, std::vector<std::shared_ptr<ITimer>>, TimerComparer> m_Timers;

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(GenericBosonTest)
 
 # GoogleTest requires at least C++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(googletest)
 add_executable(
   GenericBosonTest
   timer_test.cpp
-)
+ "shared_mutex_test.cpp")
 target_link_libraries(
   GenericBosonTest
   GTest::gtest_main
