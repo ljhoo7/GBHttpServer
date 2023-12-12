@@ -9,19 +9,22 @@ namespace GenericBoson
 	class Singleton
 	{
 	public:
-		SUBJECT* GetInstance()
+		static SUBJECT* GetInstance()
 		{
-			SUBJECT* pInstance = m_pInstance.load(std::memory_order_relaxed);
+			static std::mutex g_Lock;
+			static std::atomic<SUBJECT*> g_pInstance;
+
+			SUBJECT* pInstance = g_pInstance.load(std::memory_order_relaxed);
 			std::atomic_thread_fence(std::memory_order_acquire);
 			if (pInstance == nullptr)
 			{
-				std::lock_guard<std::mutex> lock(m_Lock);
-				pInstance = m_pInstance.load(std::memory_order_relaxed);
+				std::lock_guard<std::mutex> lock(g_Lock);
+				pInstance = g_pInstance.load(std::memory_order_relaxed);
 				if (pInstance == nullptr)
 				{
 					pInstance = new SUBJECT;
 					std::atomic_thread_fence(std::memory_order_release);
-					m_pInstance.store(pInstance, std::memory_order_relaxed);
+					g_pInstance.store(pInstance, std::memory_order_relaxed);
 				}
 			}
 
@@ -32,9 +35,5 @@ namespace GenericBoson
 		Singleton(const Singleton&) = delete;
 		Singleton(const Singleton&&) = delete;
 		Singleton& operator=(const Singleton&) = delete;
-	public:
-	private:
-		std::mutex m_Lock;
-		std::atomic<SUBJECT*> m_pInstance;
 	};
 }

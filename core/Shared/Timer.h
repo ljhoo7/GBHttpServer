@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ProcessExitObserver.h"
 #include "Singleton.h"
 
 #include <thread>
@@ -12,7 +13,7 @@ namespace GenericBoson
 	class ITimer
 	{
 	public:
-		ITimer(const int64_t startTimeNs, const int64_t periodNs) 
+		ITimer(const int64_t periodNs) 
 			: m_PeriodNs(periodNs) 
 		{}
 
@@ -20,7 +21,7 @@ namespace GenericBoson
 
 		virtual void OnTime() = 0;
 
-		int64_t PeriodNs() const
+		int64_t PeriodMs() const
 		{
 			return m_PeriodNs;
 		}
@@ -30,7 +31,7 @@ namespace GenericBoson
 
 	struct TimerComparer
 	{
-		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->PeriodNs() < rhs->PeriodNs(); };
+		bool operator()(const std::shared_ptr<ITimer>& lhs, const std::shared_ptr<ITimer>& rhs) { return lhs->PeriodMs() < rhs->PeriodMs(); };
 	};
 
 	class TimerManager : public Singleton<TimerManager>
@@ -49,40 +50,35 @@ namespace GenericBoson
 			}
 		}
 
-		bool AddTimer(const std::shared_ptr<ITimer>& pTimer)
+		void AddTimer(const std::shared_ptr<ITimer>& pTimer)
 		{
 			std::lock_guard<std::shared_mutex> lock(m_Lock);
 			m_Timers.push(pTimer);
 		}
 
-		std::pair<std::shared_ptr<ITimer>, int64_t> GetFirstTimer()
+		std::shared_ptr<ITimer> GetFirstTimer()
 		{
 			std::shared_lock<std::shared_mutex> lock(m_Lock);
 
 			if (m_Timers.empty())
 			{
-				return { nullptr, DEFAULT_WAIT_TIME_NS };
+				return nullptr;
 			}
 
 			const auto pFirst = m_Timers.top();
 			m_Timers.pop();
 
-			if (m_Timers.empty())
-			{
-				return { pFirst, DEFAULT_WAIT_TIME_NS };
-			}
-
-			return { pFirst, m_Timers.top()->PeriodNs() };
+			return pFirst;
 		}
 
 	private:
 		void OnStart()
 		{
-			while (m_KeepGoing)
+			while (ProcessExitSubject::GetInstance()->KeepGoing())
 			{
-				const auto& [pFirst, waitTimeNs] = GetFirstTimer();
+				const auto pFirst = GetFirstTimer();
 
-				std::this_thread::sleep_for(std::chrono::nanoseconds(waitTimeNs));
+				std::this_thread::sleep_for(std::chrono::milliseconds(pFirst->PeriodMs()));
 
 				if (!pFirst)
 				{
@@ -94,11 +90,10 @@ namespace GenericBoson
 		}
 		
 	public:
-		std::atomic_bool m_KeepGoing = true;
 	private:
 		std::thread m_Thread;
 
-		static const int64_t DEFAULT_WAIT_TIME_NS = 10;
+		static const int64_t DEFAULT_WAIT_TIME_MS = 10;
 
 		mutable std::shared_mutex m_Lock;
 		std::priority_queue<std::shared_ptr<ITimer>, std::vector<std::shared_ptr<ITimer>>, TimerComparer> m_Timers;
