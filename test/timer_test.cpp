@@ -27,10 +27,7 @@ namespace GenericBoson
 
 	struct TimerTest : public ::testing::Test
 	{
-		virtual void SetUp() override
-		{
-			
-		}
+		virtual void SetUp() override {}
 		static void SetUpTestCase() {}
 		static void TearDownTestCase() {}
 	};

@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <shared_mutex>
+#include <future>
+
 namespace GenericBoson
 {
 	struct SharedMutexest : public ::testing::Test
@@ -7,13 +10,45 @@ namespace GenericBoson
 		virtual void SetUp() override {}
 		static void SetUpTestCase() {}
 		static void TearDownTestCase() {}
+
+		template<typename MUTEX>
+		void LockSleep(MUTEX& mutex)
+		{
+			std::shared_lock lock();
+			
+		}
 	};
 
-	// Demonstrate some basic assertions.
-	TEST(SharedMutexest, BasicAssertions) {
-		// Expect two strings not to be equal.
+	TEST(SharedMutexest, ReadLockOnlyTest) {
+		const std::shared_mutex sharedMutex;
+
+
+		const auto readFuture1 = std::async([&sharedMutex]() {
+				std::shared_lock lock(sharedMutex);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			});
+		
+		const auto readFuture2 = std::async([&sharedMutex]() {
+				std::shared_lock lock(sharedMutex);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			});
+
+		
+	}
+
+	TEST(SharedMutexest, ReadWithWriteLockTest) {
+		const std::shared_mutex sharedMutex;
+		const auto writeFuture = std::async([&sharedMutex]() {
+				std::lock_guard lock(sharedMutex);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			});
+
+		const auto readFuture = std::async([&sharedMutex]() {
+				std::shared_lock lock(sharedMutex);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			});
+
 		EXPECT_STRNE("hello", "world");
-		// Expect equality.
 		EXPECT_EQ(7 * 6, 42);
 	}
 }
