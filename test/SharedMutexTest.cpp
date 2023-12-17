@@ -20,8 +20,7 @@ namespace GenericBoson
 	};
 
 	TEST(SharedMutexest, ReadLockOnlyTest) {
-		const std::shared_mutex sharedMutex;
-
+		std::shared_mutex sharedMutex;
 
 		const auto readFuture1 = std::async([&sharedMutex]() {
 				std::shared_lock lock(sharedMutex);
@@ -37,7 +36,7 @@ namespace GenericBoson
 	}
 
 	TEST(SharedMutexest, ReadWithWriteLockTest) {
-		const std::shared_mutex sharedMutex;
+		std::shared_mutex sharedMutex;
 		const auto writeFuture = std::async([&sharedMutex]() {
 				std::lock_guard lock(sharedMutex);
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
