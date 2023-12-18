@@ -22,6 +22,8 @@ target_link_libraries(
   GenericBosonTest
   GTest::gtest_main
 )
+target_link_directories(GenericBosonTest PRIVATE $ENV{BOOST_ROOT}/stage/lib)
+target_include_directories(GenericBosonTest PRIVATE $ENV{BOOST_ROOT})
 
 include(GoogleTest)
 gtest_discover_tests(GenericBosonTest)

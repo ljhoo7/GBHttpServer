@@ -1,3 +1,8 @@
+#define BOOST_THREAD_VERSION 5
+
+#include "../core/Shared/StopWatch.h"
+#include "boost/thread/future.hpp"
+
 #include <gtest/gtest.h>
 
 #include <shared_mutex>
@@ -10,45 +15,46 @@ namespace GenericBoson
 		virtual void SetUp() override {}
 		static void SetUpTestCase() {}
 		static void TearDownTestCase() {}
-
-		template<typename MUTEX>
-		void LockSleep(MUTEX& mutex)
-		{
-			std::shared_lock lock();
-			
-		}
 	};
 
 	TEST(SharedMutexest, ReadLockOnlyTest) {
-		std::shared_mutex sharedMutex;
-
-		const auto readFuture1 = std::async([&sharedMutex]() {
-				std::shared_lock lock(sharedMutex);
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		const auto elapsedTimeMs = StopWatch::MeasureMs(
+			[]()
+			{
+				std::shared_mutex sharedMutex;
+				boost::when_all(
+					boost::async([&sharedMutex]() {
+						std::shared_lock lock(sharedMutex);
+						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+						}),
+					boost::async([&sharedMutex]() {
+						std::shared_lock lock(sharedMutex);
+						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+						})
+				);
 			});
-		
-		const auto readFuture2 = std::async([&sharedMutex]() {
-				std::shared_lock lock(sharedMutex);
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			});
 
-		
+		EXPECT_TRUE(999 <= elapsedTimeMs && elapsedTimeMs <= 1001);
 	}
 
 	TEST(SharedMutexest, ReadWithWriteLockTest) {
-		std::shared_mutex sharedMutex;
-		const auto writeFuture = std::async([&sharedMutex]() {
-				std::lock_guard lock(sharedMutex);
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		const auto elapsedTimeMs = StopWatch::MeasureMs(
+			[]()
+			{
+				std::shared_mutex sharedMutex;
+				boost::when_all(
+					boost::async([&sharedMutex]() {
+						std::shared_lock lock(sharedMutex);
+						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+						}),
+					boost::async([&sharedMutex]() {
+						std::unique_lock lock(sharedMutex);
+						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+						})
+				);
 			});
 
-		const auto readFuture = std::async([&sharedMutex]() {
-				std::shared_lock lock(sharedMutex);
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			});
-
-		EXPECT_STRNE("hello", "world");
-		EXPECT_EQ(7 * 6, 42);
+		EXPECT_TRUE(1999 <= elapsedTimeMs && elapsedTimeMs <= 2001);
 	}
 }
 
