@@ -1,5 +1,4 @@
 #include "TimerManager.h"
-#include "ITimer.h"
 
 #include <chrono>
 
