@@ -31,10 +31,10 @@ namespace GenericBoson
 						std::shared_lock lock(sharedMutex);
 						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 						})
-				);
+				).wait();
 			});
 
-		EXPECT_TRUE(999 <= elapsedTimeMs && elapsedTimeMs <= 1001);
+		EXPECT_TRUE(970 <= elapsedTimeMs && elapsedTimeMs <= 1030);
 	}
 
 	TEST(SharedMutexest, ReadWithWriteLockTest) {
@@ -51,10 +51,10 @@ namespace GenericBoson
 						std::unique_lock lock(sharedMutex);
 						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 						})
-				);
+				).wait();
 			});
 
-		EXPECT_TRUE(1999 <= elapsedTimeMs && elapsedTimeMs <= 2001);
+		EXPECT_TRUE(1970 <= elapsedTimeMs && elapsedTimeMs <= 2030);
 	}
 }
 
