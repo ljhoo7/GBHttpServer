@@ -1,0 +1,13 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "flatbuffer-build",
+      "appliesTo": "*.fbs",
+      "type": "launch",
+      "contextType": "custom",
+      "command": "flatc.exe",
+      "args": [ "--cpp", "-o sample/game/flatbufferschema", "${file}" ]
+    }
+  ]
+}

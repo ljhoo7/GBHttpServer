@@ -18,6 +18,11 @@ void Test(const Player& player)
 	std::cout << "name : " << player.name() << '\n';
 }
 
+void Pong(const int num)
+{
+	OutputDebugStringA(std::to_string(num).c_str());
+}
+
 int main()
 {
 	using namespace std::literals::chrono_literals;
@@ -25,6 +30,7 @@ int main()
 	GBGameServer server(5076);
 
 	server.AddStub(1, Test);
+	server.AddStub(2, Pong);
 
 	server.SetConnectedTask([&server](auto pEol) {
 		server.Send(pEol, 1, 

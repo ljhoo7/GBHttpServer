@@ -1,0 +1,8 @@
+namespace GenericBoson.GameTest;
+
+table PingPong
+{
+    num: int64;
+}
+
+root_type PingPong;
