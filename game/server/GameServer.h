@@ -6,6 +6,7 @@
 #include "flatbuffers/flatbuffers.h"
 
 #include "../shared/GameShared.h"
+#include "../shared/Constant.h"
 
 #include <unordered_map>
 #include <functional>
@@ -23,6 +24,9 @@ namespace GenericBoson
 		template<typename FLATBUFFER_TABLE>
 		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
 		{
+			static_assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
+			static_assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
+
 			return m_GameShared.AddStubInternal(messageID, Stub);
 		}
 

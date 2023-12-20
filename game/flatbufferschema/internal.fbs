@@ -1,4 +1,4 @@
-namespace GenericBoson.GameTest;
+namespace GenericBoson.GameInternal;
 
 table PingPong
 {

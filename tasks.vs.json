@@ -7,7 +7,7 @@
       "type": "launch",
       "contextType": "custom",
       "command": "flatc.exe",
-      "args": [ "--cpp", "-o sample/game/flatbufferschema", "${file}" ]
+      "args": [ "--cpp", "-o ${fileDirname}", "${file}" ]
     }
   ]
 }
