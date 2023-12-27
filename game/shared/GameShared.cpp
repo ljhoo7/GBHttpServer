@@ -3,7 +3,7 @@
 
 namespace GenericBoson
 {
-	bool GBGameShared::OnGatheringCompleted(VectoredIO& inputData)
+	bool GameShared::OnGatheringCompleted(VectoredIO& inputData)
 	{
 		const auto pStub = m_stubs.find(inputData.m_messageID);
 		if (pStub == m_stubs.end())

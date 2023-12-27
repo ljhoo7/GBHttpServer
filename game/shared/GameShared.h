@@ -12,7 +12,7 @@ namespace GenericBoson
 	class VectoredIO;
 	struct GBExpandedOverlapped;
 
-	class GBGameShared : public GBShared
+	class GameShared : public Shared
 	{
 	public:
 		template<typename FLATBUFFER_TABLE>

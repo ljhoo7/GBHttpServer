@@ -52,7 +52,7 @@ namespace GenericBoson
 
 		void ThreadFunction();
 	private:
-		GBShared m_CoreShared;
+		Shared m_CoreShared;
 
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;

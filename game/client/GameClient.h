@@ -25,7 +25,7 @@ namespace GenericBoson
 
 		virtual int Connect(const std::string_view address, const int port) override;
 	private:
-		GBGameShared m_GameShared;
+		GameShared m_GameShared;
 
 		std::atomic_bool	m_keepLooping = true;
 

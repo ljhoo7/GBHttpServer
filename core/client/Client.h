@@ -19,7 +19,7 @@ namespace GenericBoson
 		int CreateSocket();
 		int ConnectInternal(const std::string_view address, const int port);
 	protected:
-		GBShared m_CoreShared;
+		Shared m_CoreShared;
 
 		WSADATA m_wsaData;
 		SOCKET m_socket;

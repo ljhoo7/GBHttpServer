@@ -72,7 +72,7 @@ namespace GenericBoson
 	private:
 		virtual void OnConnected(GBExpandedOverlapped* pEol) override;
 	private:
-		GBGameShared m_GameShared;
+		GameShared m_GameShared;
 
 		const int MESSAGE_ID_SIZE = 2;
 		const int LENGTH_SIZE = 2;
