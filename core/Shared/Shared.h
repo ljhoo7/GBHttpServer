@@ -50,6 +50,35 @@ namespace GenericBoson
 	class Shared
 	{
 	public:
+		class Concept
+		{
+		public:
+			virtual void Send() = 0;
+		};
+
+		template<typename SERVICE, typename SEND_STRATEGY>
+		class Model : public Concept
+		{
+		public:
+			explicit Model(SERVICE service, 
+				SEND_STRATEGY sendStrategy)
+				: m_service{ std::move(service) }
+				, m_sendStrategy{ std::move(sendStrategy) }
+			{}
+		private:
+			SERVICE m_service;
+			SEND_STRATEGY m_sendStrategy;
+		};
+
+		template<typename SERVICE, typename SEND_STRATEGY>
+		Shared(SERVICE service, SEND_STRATEGY sendStrategy)
+		{
+			m_pImpl = std::make_unique<Model<SERVICE>>(
+				std::move(service),
+				std::move(sendStrategy)
+			);
+		}
+
 		virtual bool ErrorLog(const std::string_view msg);
 		virtual bool WarningLog(const std::string_view msg);
 		virtual bool InfoLog(const std::string_view msg);
@@ -61,5 +90,7 @@ namespace GenericBoson
 		bool OnSent(VectoredIO& outputData, const unsigned long transferredBytes);
 	private:
 		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);
+
+		std::unique_ptr<Concept> m_pImpl;
 	};
 }
