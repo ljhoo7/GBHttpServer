@@ -5,7 +5,7 @@
 
 #include "flatbuffers/flatbuffers.h"
 
-#include "../shared/GameShared.h"
+#include "../shared/PrivateGameShared.h"
 #include "../shared/Constant.h"
 
 #include <unordered_map>
@@ -24,8 +24,8 @@ namespace GenericBoson
 		template<typename FLATBUFFER_TABLE>
 		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
 		{
-			static_assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
-			static_assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
+			assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
+			assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
 
 			return m_GameShared.AddStubInternal(messageID, Stub);
 		}
@@ -72,7 +72,7 @@ namespace GenericBoson
 	private:
 		virtual void OnConnected(GBExpandedOverlapped* pEol) override;
 	private:
-		GameShared m_GameShared;
+		PrivateGameShared m_GameShared;
 
 		const int MESSAGE_ID_SIZE = 2;
 		const int LENGTH_SIZE = 2;

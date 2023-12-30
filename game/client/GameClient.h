@@ -2,7 +2,7 @@
 
 #define NOMINMAX
 
-#include "../shared/GameShared.h"
+#include "../shared/PrivateGameShared.h"
 #include "../../core/client/Client.h"
 #include "../../flatbuffers/include/flatbuffers/flatbuffers.h"
 
@@ -25,7 +25,7 @@ namespace GenericBoson
 
 		virtual int Connect(const std::string_view address, const int port) override;
 	private:
-		GameShared m_GameShared;
+		PrivateGameShared m_GameShared;
 
 		std::atomic_bool	m_keepLooping = true;
 
