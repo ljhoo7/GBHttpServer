@@ -65,6 +65,8 @@ namespace GenericBoson
 				: m_service{ std::move(service) }
 				, m_sendStrategy{ std::move(sendStrategy) }
 			{}
+
+			void Send() override { m_sendStrategy(m_service); }
 		private:
 			SERVICE m_service;
 			SEND_STRATEGY m_sendStrategy;
@@ -91,6 +93,12 @@ namespace GenericBoson
 	private:
 		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);
 
+		friend void Send(const Shared& shared)
+		{
+			shared.m_pImpl->Send();
+		}
+
+	private:
 		std::unique_ptr<Concept> m_pImpl;
 	};
 }
