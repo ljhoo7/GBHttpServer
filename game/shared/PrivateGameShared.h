@@ -10,7 +10,7 @@
 namespace GenericBoson
 {
 	class VectoredIO;
-	struct GBExpandedOverlapped;
+	struct ExpandedOverlapped;
 
 	class PrivateGameShared : public PrivateShared
 	{

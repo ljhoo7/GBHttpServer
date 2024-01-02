@@ -1,14 +1,17 @@
-#prgma once
+#pragma once
+
+#include <memory>
 
 namespace GenericBoson
 {
+	class ExpandedOverlapped;
 	class Intersection
 	{
 	public:
 		class Concept
 		{
 		public:
-			virtual void Send() = 0;
+			virtual void Send(ExpandedOverlapped* pEol) = 0;
 		};
 
 		template<typename SERVICE, typename SEND_STRATEGY>
@@ -21,14 +24,14 @@ namespace GenericBoson
 				, m_sendStrategy{ std::move(sendStrategy) }
 			{}
 
-			void Send() override { m_sendStrategy(m_service); }
+			void Send(ExpandedOverlapped* pEol) override { m_service.m_sendStrategy(pEol); }
 		private:
 			SERVICE m_service;
 			SEND_STRATEGY m_sendStrategy;
 		};
 
 		template<typename SERVICE, typename SEND_STRATEGY>
-		PrivateShared(SERVICE service, SEND_STRATEGY sendStrategy)
+		Intersection(SERVICE service, SEND_STRATEGY sendStrategy)
 		{
 			m_pImpl = std::make_unique<Model<SERVICE>>(
 				std::move(service),
@@ -37,9 +40,9 @@ namespace GenericBoson
 		}
 
 	private:
-		friend void Send(const PrivateShared& shared)
+		friend void Send(const Intersection& shared, ExpandedOverlapped* pEol)
 		{
-			shared.m_pImpl->Send();
+			shared.m_pImpl->Send(pEol);
 		}
 
 	private:

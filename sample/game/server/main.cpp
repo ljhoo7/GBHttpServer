@@ -27,7 +27,7 @@ int main()
 {
 	using namespace std::literals::chrono_literals;
 
-	GBGameServer server(5076);
+	GameServer server(5076);
 
 	server.AddStub(1, Test);
 

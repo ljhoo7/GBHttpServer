@@ -13,13 +13,13 @@
 
 namespace GenericBoson
 {
-	struct GBExpandedOverlapped;
+	struct ExpandedOverlapped;
 
-	class GBGameServer : public GBServer
+	class GameServer : public Server
 	{
 	public:
-		GBGameServer(uint16_t portNum) : GBServer(portNum) {}
-		virtual ~GBGameServer() = default;
+		GameServer(uint16_t portNum) : Server(portNum) {}
+		virtual ~GameServer() = default;
 
 		template<typename FLATBUFFER_TABLE>
 		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
@@ -31,7 +31,7 @@ namespace GenericBoson
 		}
 
 		template<typename CALLABLE>
-		bool Send(GBExpandedOverlapped* pEol, const int32_t messageID,
+		bool Send(ExpandedOverlapped* pEol, const int32_t messageID,
 			CALLABLE&& callable)
 		{
 			if (!pEol)
@@ -67,17 +67,19 @@ namespace GenericBoson
 			return true;
 		};
 
-		void SetConnectedTask(const std::function<void(GBExpandedOverlapped* pEol)>& task);
+		void SendPing(ExpandedOverlapped* pEol);
+
+		void SetConnectedTask(const std::function<void(ExpandedOverlapped* pEol)>& task);
 
 	private:
-		virtual void OnConnected(GBExpandedOverlapped* pEol) override;
+		virtual void OnConnected(ExpandedOverlapped* pEol) override;
 	private:
 		PrivateGameShared m_GameShared;
 
 		const int MESSAGE_ID_SIZE = 2;
 		const int LENGTH_SIZE = 2;
 
-		std::function<void(GBExpandedOverlapped* pEol)> m_connectedTask;
+		std::function<void(ExpandedOverlapped* pEol)> m_connectedTask;
 		
 		static ThreadSafeBufferAllocator g_bufferAllocator;
 	};

@@ -24,28 +24,28 @@ namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
-	class GBServer
+	class Server
 	{
 	public:
 		std::string Start();
 
-		GBServer(uint16_t portNum) : m_port(portNum) {}
-		virtual ~GBServer();
+		Server(uint16_t portNum) : m_port(portNum) {}
+		virtual ~Server();
 
 		bool GetKeepLooping() const
 		{
 			return m_keepLooping;
 		}
 	protected:
-		virtual void OnConnected(GBExpandedOverlapped* pEol) = 0;
+		virtual void OnConnected(ExpandedOverlapped* pEol) = 0;
 
-		void Send(GBExpandedOverlapped* pEol);
+		void Send(ExpandedOverlapped* pEol);
 
 		//// \return true - all completed, false - not yet gathering completed.
-		//virtual bool OnReceived(GBExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
-		//virtual bool OnSent(GBExpandedOverlapped* pEol, DWORD sentBytes) = 0;
-		int IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive);
-		int IssueSend(GBExpandedOverlapped* pEol, const unsigned long throttling = 30);//(std::numeric_limits<unsigned long>::max)());
+		//virtual bool OnReceived(ExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
+		//virtual bool OnSent(ExpandedOverlapped* pEol, DWORD sentBytes) = 0;
+		int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
+		int IssueSend(ExpandedOverlapped* pEol, const unsigned long throttling = 30);//(std::numeric_limits<unsigned long>::max)());
 	private:
 		std::pair<bool, std::string> SetListeningSocket();
 		void SendThreadFunction();
@@ -60,8 +60,8 @@ namespace GenericBoson
 
 		// #ToDo lock free circular queue
 		std::mutex m_sendLock;
-		std::unordered_map<SOCKET, std::queue<GBExpandedOverlapped*>> m_sendQueues;
-		std::vector<GBExpandedOverlapped> m_sessions;
+		std::unordered_map<SOCKET, std::queue<ExpandedOverlapped*>> m_sendQueues;
+		std::vector<ExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;
 		sockaddr_in m_addr, m_client;

@@ -9,7 +9,7 @@
 
 namespace GenericBoson
 {
-	struct GBExpandedOverlapped : public WSAOVERLAPPED
+	struct ExpandedOverlapped : public WSAOVERLAPPED
 	{
 		SOCKET m_socket = INVALID_SOCKET;
 		IO_TYPE m_type = IO_TYPE::ACCEPT;

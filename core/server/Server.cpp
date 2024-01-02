@@ -4,7 +4,7 @@
 
 namespace GenericBoson
 {
-	std::string GBServer::Start()
+	std::string Server::Start()
 	{
 		bool result;
 		std::string errorMsg;
@@ -46,7 +46,7 @@ namespace GenericBoson
 		return {};
 	}
 
-	GBServer::~GBServer()
+	Server::~Server()
 	{
 		using namespace std::chrono_literals;
 
@@ -84,7 +84,7 @@ namespace GenericBoson
 		}
 	}
 
-	std::pair<bool, std::string> GBServer::SetListeningSocket()
+	std::pair<bool, std::string> Server::SetListeningSocket()
 	{
 #pragma region [1] Prepare and start listening port and IOCP
 		// [1] - 1. WinSock 2.2 초기화
@@ -103,10 +103,10 @@ namespace GenericBoson
 		m_threadPoolSize = 2 * std::thread::hardware_concurrency() - 1; // 1 is send task
 		for (int k = 0; k < m_threadPoolSize; ++k)
 		{
-			m_threadPool.emplace_back(&GBServer::ThreadFunction, this);
+			m_threadPool.emplace_back(&Server::ThreadFunction, this);
 		}
 
-		m_sendTask = boost::async(boost::bind(&GBServer::SendThreadFunction, this));
+		m_sendTask = boost::async(boost::bind(&Server::SendThreadFunction, this));
 
 		// [1] - 3.  소켓 만들기
 		m_listeningSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
@@ -161,11 +161,11 @@ namespace GenericBoson
 		return { true, {} };
 	}
 
-	void GBServer::ThreadFunction()
+	void Server::ThreadFunction()
 	{
 		DWORD transferredBytes;
 		u_long completionKey;
-		GBExpandedOverlapped* pEol = nullptr;
+		ExpandedOverlapped* pEol = nullptr;
 
 		while (true == m_keepLooping)
 		{
@@ -221,7 +221,7 @@ namespace GenericBoson
 		}
 	}
 
-	int GBServer::IssueRecv(GBExpandedOverlapped* pEol, ULONG lengthToReceive)
+	int Server::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
 	{
 		pEol->m_type = IO_TYPE::RECEIVE;
 		DWORD flag = 0;
@@ -233,7 +233,7 @@ namespace GenericBoson
 		return recvResult;
 	}
 
-	int GBServer::IssueSend(GBExpandedOverlapped* pEol, const unsigned long throttling
+	int Server::IssueSend(ExpandedOverlapped* pEol, const unsigned long throttling
 	/* = std::numeric_limits<unsigned long>::max()*/)
 	{
 		WSABUF bufToSend;
@@ -269,13 +269,13 @@ namespace GenericBoson
 		return sendResult;
 	}
 
-	void GBServer::Send(GBExpandedOverlapped* pEol)
+	void Server::Send(ExpandedOverlapped* pEol)
 	{
 		std::scoped_lock lock(m_sendLock);
 		m_sendQueues[pEol->m_socket].push(pEol);
 	}
 
-	void GBServer::SendThreadFunction()
+	void Server::SendThreadFunction()
 	{
 		using namespace std::chrono_literals;
 
@@ -284,7 +284,7 @@ namespace GenericBoson
 		{
 			for (auto& [_, itSendQueue] : m_sendQueues)
 			{
-				GBExpandedOverlapped* pEol = nullptr;
+				ExpandedOverlapped* pEol = nullptr;
 				{
 					std::scoped_lock lock(m_sendLock);
 

@@ -2,16 +2,18 @@
 
 #define NOMINMAX
 
-#include "../shared/HeartBeat.h"
-#include "../../core/Shared/TimerManager.h"
-
 #include "GameServer.h"
+
 #include "../../core/server/ExpandedOverlapped.h"
+
+#include "../shared/HeartBeat.h"
+#include "../flatbufferschema/internal_generated.h"
+#include "../../core/Shared/TimerManager.h"
 
 
 namespace GenericBoson
 {
-	void GBGameServer::OnConnected(GBExpandedOverlapped* pEol)
+	void GameServer::OnConnected(ExpandedOverlapped* pEol)
 	{
 		const auto pTimer = std::make_shared<HeartBeat>(1000);
 		TimerManager::GetInstance()->AddTimer(pTimer);
@@ -22,12 +24,21 @@ namespace GenericBoson
 		}
 	}
 
-	void GBGameServer::SetConnectedTask(
-		const std::function<void(GBExpandedOverlapped* pEol)>& task
+	void PongStub(const GameInternal::PingPong& pingPong) 
+	{
+	}
+
+	void GameServer::SendPing(ExpandedOverlapped* pEol)
+	{
+		
+	}
+
+	void GameServer::SetConnectedTask(
+		const std::function<void(ExpandedOverlapped* pEol)>& task
 	)
 	{
 		m_connectedTask = task;
 	}
 
-	ThreadSafeBufferAllocator GBGameServer::g_bufferAllocator;
+	ThreadSafeBufferAllocator GameServer::g_bufferAllocator;
 }
