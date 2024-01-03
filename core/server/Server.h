@@ -27,9 +27,12 @@ namespace GenericBoson
 	class Server
 	{
 	public:
+		Server() = default;
+		Server(uint16_t portNum) : m_port(portNum) {}
+		Server(const Server&) = default;
+
 		std::string Start();
 
-		Server(uint16_t portNum) : m_port(portNum) {}
 		virtual ~Server();
 
 		bool GetKeepLooping() const

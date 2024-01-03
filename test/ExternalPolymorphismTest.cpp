@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../server/GameServer.h"
+#include "../game/server/GameServer.h"
 #include "../core/Shared/ExternalPolymorphism.h"
 
 namespace GenericBoson
@@ -14,9 +14,12 @@ namespace GenericBoson
 
 	TEST_F(ExternalPolymorphismTest, BasicTest)
 	{
-		Server server(5076);
+		GameServer server(5076);
 
-		Intersection intersection(server, Server::Send);
+		Intersection intersection(server, &GameServer::SendPing);
+
+		ExpandedOverlapped eol;
+		SendPing(intersection, &eol);
 
 		EXPECT_TRUE(true);
 	}

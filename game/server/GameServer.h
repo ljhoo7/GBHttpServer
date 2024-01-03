@@ -1,5 +1,7 @@
 #pragma once
 
+#define NOMINMAX
+
 #include "../../core/server/Server.h"
 #include "BufferAllocator.h"
 
@@ -18,7 +20,9 @@ namespace GenericBoson
 	class GameServer : public Server
 	{
 	public:
+		GameServer() = default;
 		GameServer(uint16_t portNum) : Server(portNum) {}
+		GameServer(const GameServer& server) = default;
 		virtual ~GameServer() = default;
 
 		template<typename FLATBUFFER_TABLE>

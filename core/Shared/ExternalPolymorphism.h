@@ -11,7 +11,7 @@ namespace GenericBoson
 		class Concept
 		{
 		public:
-			virtual void Send(ExpandedOverlapped* pEol) = 0;
+			virtual void SendPing(ExpandedOverlapped* pEol) = 0;
 		};
 
 		template<typename SERVICE, typename SEND_STRATEGY>
@@ -24,7 +24,7 @@ namespace GenericBoson
 				, m_sendStrategy{ std::move(sendStrategy) }
 			{}
 
-			void Send(ExpandedOverlapped* pEol) override { m_service.m_sendStrategy(pEol); }
+			void SendPing(ExpandedOverlapped* pEol) override { m_service.m_sendStrategy(pEol); }
 		private:
 			SERVICE m_service;
 			SEND_STRATEGY m_sendStrategy;
@@ -40,9 +40,9 @@ namespace GenericBoson
 		}
 
 	private:
-		friend void Send(const Intersection& shared, ExpandedOverlapped* pEol)
+		friend void SendPing(const Intersection& shared, ExpandedOverlapped* pEol)
 		{
-			shared.m_pImpl->Send(pEol);
+			shared.m_pImpl->SendPing(pEol);
 		}
 
 	private:

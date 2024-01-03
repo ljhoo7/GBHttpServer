@@ -13,8 +13,14 @@
 
 namespace GenericBoson
 {
+	void PongStub(const GameInternal::PingPong& pingPong)
+	{
+	}
+
 	void GameServer::OnConnected(ExpandedOverlapped* pEol)
 	{
+		AddStub(1, PongStub);
+
 		const auto pTimer = std::make_shared<HeartBeat>(1000);
 		TimerManager::GetInstance()->AddTimer(pTimer);
 
@@ -22,10 +28,6 @@ namespace GenericBoson
 		{
 			m_connectedTask(pEol);
 		}
-	}
-
-	void PongStub(const GameInternal::PingPong& pingPong) 
-	{
 	}
 
 	void GameServer::SendPing(ExpandedOverlapped* pEol)

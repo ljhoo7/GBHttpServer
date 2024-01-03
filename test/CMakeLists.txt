@@ -17,7 +17,9 @@ FetchContent_MakeAvailable(googletest)
 add_executable(
   GenericBosonTest
   "TimerTest.cpp"
- "SharedMutexTest.cpp" "StopWatchTimerTest.cpp")
+ "SharedMutexTest.cpp" "StopWatchTimerTest.cpp"
+"ExternalPolymorphismTest.cpp")
+
 target_link_libraries(
   GenericBosonTest
   GTest::gtest_main
