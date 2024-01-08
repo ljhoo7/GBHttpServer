@@ -18,7 +18,7 @@ add_executable(
   GenericBosonTest
   "TimerTest.cpp"
  "SharedMutexTest.cpp" "StopWatchTimerTest.cpp"
-"ExternalPolymorphismTest.cpp")
+)
 
 target_link_libraries(
   GenericBosonTest

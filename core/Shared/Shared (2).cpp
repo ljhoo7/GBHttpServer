@@ -1,9 +1,9 @@
-#include "../../core/Shared/PrivateShared.h"
-#include "PrivateGameShared.h"
+#include "../../core/Shared/Shared.h"
+#include "Shared.h"
 
 namespace GenericBoson
 {
-	bool PrivateGameShared::OnGatheringCompleted(VectoredIO& inputData)
+	bool GameShared::OnGatheringCompleted(VectoredIO& inputData)
 	{
 		const auto pStub = m_stubs.find(inputData.m_messageID);
 		if (pStub == m_stubs.end())

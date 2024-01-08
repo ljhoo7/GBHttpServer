@@ -6,7 +6,7 @@
 
 namespace GenericBoson
 {
-	class PrivateShared;
+	class CoreShared;
 
 	class HeartBeat : public ITimer, public std::enable_shared_from_this<HeartBeat>
 	{
@@ -14,6 +14,6 @@ namespace GenericBoson
 		HeartBeat(const int64_t periodMs) : ITimer(periodMs) {}
 		void OnTime() override;
 	private:
-		//std::weak_ptr<PrivateShared> m_wpOwner;
+		//std::weak_ptr<CoreShared> m_wpOwner;
 	};
 }

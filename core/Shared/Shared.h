@@ -47,7 +47,7 @@ namespace GenericBoson
 		STATE m_state = STATE::ID;
 	};
 
-	class PrivateShared
+	class CoreShared
 	{
 	public:
 		virtual bool ErrorLog(const std::string_view msg);

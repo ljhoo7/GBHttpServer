@@ -1,7 +1,6 @@
 #pragma once
 
 #include "StubAdaptor.h"
-#include "../../core/Shared/PrivateShared.h"
 
 #include <format>
 #include <memory>
@@ -12,7 +11,7 @@ namespace GenericBoson
 	class VectoredIO;
 	struct ExpandedOverlapped;
 
-	class PrivateGameShared : public PrivateShared
+	class GameShared
 	{
 	public:
 		template<typename FLATBUFFER_TABLE>

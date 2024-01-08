@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Shared/PrivateShared.h"
+#include "../Shared/Shared.h"
 
 #include "winsock2.h"
 
@@ -19,7 +19,7 @@ namespace GenericBoson
 		int CreateSocket();
 		int ConnectInternal(const std::string_view address, const int port);
 	protected:
-		PrivateShared m_CoreShared;
+		CoreShared m_CoreShared;
 
 		WSADATA m_wsaData;
 		SOCKET m_socket;

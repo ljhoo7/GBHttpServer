@@ -1,10 +1,10 @@
-#include "PrivateShared.h"
+#include "Shared.h"
 
 #include <iostream>
 
 namespace GenericBoson
 {
-	bool PrivateShared::Gather(VectoredIO& vectoredIO,
+	bool CoreShared::Gather(VectoredIO& vectoredIO,
 		const unsigned long transferredBytes)
 	{
 		// offset means previous received size
@@ -26,25 +26,25 @@ namespace GenericBoson
 		//std::cout << msg.data() << "\n";
 	}
 
-	bool PrivateShared::ErrorLog(const std::string_view msg)
+	bool CoreShared::ErrorLog(const std::string_view msg)
 	{
 		PrintMessage(msg);
 		return true;
 	}
 
-	bool PrivateShared::WarningLog(const std::string_view msg)
+	bool CoreShared::WarningLog(const std::string_view msg)
 	{
 		PrintMessage(msg);
 		return true;
 	}
 
-	bool PrivateShared::InfoLog(const std::string_view msg)
+	bool CoreShared::InfoLog(const std::string_view msg)
 	{
 		PrintMessage(msg);
 		return true;
 	}
 
-	bool PrivateShared::ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes)
+	bool CoreShared::ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes)
 	{
 		switch (inputData.GetState())
 		{
@@ -97,7 +97,7 @@ namespace GenericBoson
 		return false;
 	}
 
-	bool PrivateShared::OnReceived(VectoredIO& inputData, const unsigned long transferredBytes)
+	bool CoreShared::OnReceived(VectoredIO& inputData, const unsigned long transferredBytes)
 	{
 		while (1)
 		{
@@ -110,7 +110,7 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool PrivateShared::OnSent(VectoredIO& outputData, const unsigned long transferredBytes)
+	bool CoreShared::OnSent(VectoredIO& outputData, const unsigned long transferredBytes)
 	{
 		return true;
 	}

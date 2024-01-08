@@ -2,7 +2,7 @@
 
 #include "Util.h"
 #include "ExpandedOverlapped.h"
-#include "../shared/PrivateShared.h"
+#include "../shared/Shared.h"
 #include "boost/thread/future.hpp"
 #include "boost/thread/executors/executor.hpp"
 #include "winsock2.h"
@@ -55,7 +55,7 @@ namespace GenericBoson
 
 		void ThreadFunction();
 	private:
-		PrivateShared m_CoreShared;
+		CoreShared m_CoreShared;
 
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;
