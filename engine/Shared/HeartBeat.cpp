@@ -1,4 +1,4 @@
-#include "../../core/Shared/TimerManager.h"
+#include "TimerManager.h"
 #include "HeartBeat.h"
 
 namespace GenericBoson

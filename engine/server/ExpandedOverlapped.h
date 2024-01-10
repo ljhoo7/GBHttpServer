@@ -2,7 +2,6 @@
 
 #include "../shared/Shared.h"
 
-#include "boost/lockfree/queue.hpp"
 #include "winsock2.h"
 
 #include <queue>

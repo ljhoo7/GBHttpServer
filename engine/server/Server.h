@@ -1,12 +1,18 @@
 #pragma once
 
-#include "Util.h"
-#include "ExpandedOverlapped.h"
-#include "../shared/Shared.h"
+#define NOMINMAX
+#define BOOST_THREAD_VERSION 5
+
 #include "boost/thread/future.hpp"
 #include "boost/thread/executors/executor.hpp"
 #include "winsock2.h"
 #include "MSWSock.h"
+
+#include "BufferAllocator.h"
+#include "Util.h"
+#include "ExpandedOverlapped.h"
+#include "../Shared/Shared.h"
+#include "../Shared/Constant.h"
 
 #include <thread>
 #include <vector>
@@ -39,8 +45,58 @@ namespace GenericBoson
 		{
 			return m_keepLooping;
 		}
+
+		template<typename FLATBUFFER_TABLE>
+		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
+		{
+			assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
+			assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
+
+			return m_CoreShared.AddStubInternal(messageID, Stub);
+		}
+
+		template<typename CALLABLE>
+		bool Send(ExpandedOverlapped* pEol, const int32_t messageID,
+			CALLABLE&& callable)
+		{
+			if (!pEol)
+			{
+				// #ToDo
+				m_CoreShared.ErrorLog("");
+				return false;
+			}
+
+			::flatbuffers::FlatBufferBuilder fbb((size_t)BUFFER_SIZE, &g_bufferAllocator);
+
+			// Do not use FinishSizePrefixed because it makes buffer invalid.
+			fbb.Finish(std::forward<CALLABLE>(callable)(fbb));
+
+			size_t size, offset;
+			char* pFlatRawBuffer = reinterpret_cast<char*>(fbb.ReleaseRaw(size, offset));
+
+			int32_t tableSize = size - offset;
+
+			char* buffer = pEol->m_outputData.m_buffer;
+
+			memcpy_s(buffer, BUFFER_SIZE, &messageID, sizeof(messageID));
+			buffer += sizeof(messageID);
+			memcpy_s(buffer, BUFFER_SIZE, &tableSize, sizeof(tableSize));
+			buffer += sizeof(tableSize);
+			memcpy_s(buffer, BUFFER_SIZE, pFlatRawBuffer + offset, tableSize);
+			buffer += tableSize;
+
+			pEol->m_outputData.m_offset = tableSize + sizeof(messageID) + sizeof(tableSize);
+
+			__super::Send(pEol);
+
+			return true;
+		};
+
+		void SendPing(ExpandedOverlapped* pEol);
+
+		void SetConnectedTask(const std::function<void(ExpandedOverlapped* pEol)>& task);
 	protected:
-		virtual void OnConnected(ExpandedOverlapped* pEol) = 0;
+		void OnConnected(ExpandedOverlapped* pEol);
 
 		void Send(ExpandedOverlapped* pEol);
 
@@ -82,5 +138,12 @@ namespace GenericBoson
 		std::atomic_bool m_keepLooping = true;
 
 		HANDLE m_IOCP = INVALID_HANDLE_VALUE;
+
+		const int MESSAGE_ID_SIZE = 2;
+		const int LENGTH_SIZE = 2;
+
+		std::function<void(ExpandedOverlapped* pEol)> m_connectedTask;
+
+		static ThreadSafeBufferAllocator g_bufferAllocator;
 	};
 }

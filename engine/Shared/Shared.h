@@ -3,9 +3,12 @@
 #include <string_view>
 #include <format>
 #include <cassert>
+#include <unordered_map>
 
 namespace GenericBoson
 {
+	class IStubAdaptor;
+
 	typedef size_t BUFFER_SIZE_TYPE;
 	constexpr BUFFER_SIZE_TYPE BUFFER_SIZE = 8 * 1024 + 200;
 
@@ -50,16 +53,29 @@ namespace GenericBoson
 	class CoreShared
 	{
 	public:
-		virtual bool ErrorLog(const std::string_view msg);
-		virtual bool WarningLog(const std::string_view msg);
-		virtual bool InfoLog(const std::string_view msg);
-
-		virtual bool OnGatheringCompleted(VectoredIO& inputData) { return false; };
+		bool ErrorLog(const std::string_view msg);
+		bool WarningLog(const std::string_view msg);
+		bool InfoLog(const std::string_view msg);
 	
 		bool ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes);
 		bool OnReceived(VectoredIO& inputData, const unsigned long transferredBytes);
 		bool OnSent(VectoredIO& outputData, const unsigned long transferredBytes);
+
+		template<typename FLATBUFFER_TABLE>
+		bool AddStubInternal(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
+		{
+			const auto [_, isInserted] = m_stubs.emplace(messageID,
+				std::make_shared<IStubAdaptor<FLATBUFFER_TABLE>>(Stub));
+
+			if (!isInserted)
+			{
+				throw std::format("Add stub failed. Message ID - {}", messageID);
+			}
+		}
 	private:
+		std::unordered_map<int, std::shared_ptr<IStubAdaptor>> m_stubs;
+
 		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);
+		bool OnGatheringCompleted(VectoredIO& inputData);
 	};
 }

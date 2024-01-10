@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 3.17.0)
 # enable_testing must be in main CMakeLists.txt for being searched by Test Explorer
 enable_testing()
 
-add_subdirectory ("core")
+add_subdirectory ("engine")
 add_subdirectory ("sample")
 add_subdirectory ("test")
 

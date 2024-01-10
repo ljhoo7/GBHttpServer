@@ -304,4 +304,26 @@ namespace GenericBoson
 			std::this_thread::sleep_for(1ms);
 		}
 	}
+
+	void Server::OnConnected(ExpandedOverlapped* pEol)
+	{
+		AddStub(1, PongStub);
+
+		const auto pTimer = std::make_shared<HeartBeat>(1000);
+		TimerManager::GetInstance()->AddTimer(pTimer);
+
+		if (m_connectedTask)
+		{
+			m_connectedTask(pEol);
+		}
+	}
+
+	void Server::SetConnectedTask(
+		const std::function<void(ExpandedOverlapped* pEol)>& task
+	)
+	{
+		m_connectedTask = task;
+	}
+
+	ThreadSafeBufferAllocator GameServer::g_bufferAllocator;
 }

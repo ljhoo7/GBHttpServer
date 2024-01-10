@@ -1,7 +1,5 @@
 #pragma once
 
-#define BOOST_THREAD_VERSION 5
-
 #include <string>
 #include <vector>
 #include <atomic>
