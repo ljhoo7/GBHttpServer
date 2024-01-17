@@ -23,7 +23,7 @@ add_executable(
 target_link_libraries(
   GenericBosonTest
   GTest::gtest_main
-  GBServerFrameworkCore GBGameServerFramework
+  GBServerFramework
 )
 target_link_directories(GenericBosonTest PRIVATE $ENV{BOOST_ROOT}/stage/lib)
 target_include_directories(GenericBosonTest PRIVATE $ENV{BOOST_ROOT})

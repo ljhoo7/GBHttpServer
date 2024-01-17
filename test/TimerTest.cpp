@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../core/Shared/TimerManager.h"
+#include "../engine/Shared/TimerManager.h"
 
 #include <memory>
 #include <atomic>

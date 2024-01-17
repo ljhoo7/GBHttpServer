@@ -14,6 +14,8 @@
 #include "../Shared/Shared.h"
 #include "../Shared/Constant.h"
 
+#include "flatbuffers/flatbuffers.h"
+
 #include <thread>
 #include <vector>
 #include <string>
@@ -30,7 +32,7 @@ namespace GenericBoson
 {
 	const int ISSUED_ACCEPTEX_COUNT = 100;// SOMAXCONN / sizeof(ExpandedOverlapped) / 200;
 
-	class Server
+	class Server : public Common
 	{
 	public:
 		Server() = default;
@@ -46,15 +48,6 @@ namespace GenericBoson
 			return m_keepLooping;
 		}
 
-		template<typename FLATBUFFER_TABLE>
-		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
-		{
-			assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
-			assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
-
-			return m_CoreShared.AddStubInternal(messageID, Stub);
-		}
-
 		template<typename CALLABLE>
 		bool Send(ExpandedOverlapped* pEol, const int32_t messageID,
 			CALLABLE&& callable)
@@ -62,7 +55,7 @@ namespace GenericBoson
 			if (!pEol)
 			{
 				// #ToDo
-				m_CoreShared.ErrorLog("");
+				ErrorLog("");
 				return false;
 			}
 
@@ -87,7 +80,7 @@ namespace GenericBoson
 
 			pEol->m_outputData.m_offset = tableSize + sizeof(messageID) + sizeof(tableSize);
 
-			__super::Send(pEol);
+			Send(pEol);
 
 			return true;
 		};
@@ -111,8 +104,6 @@ namespace GenericBoson
 
 		void ThreadFunction();
 	private:
-		CoreShared m_CoreShared;
-
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;
 		boost::future<void> m_sendTask;

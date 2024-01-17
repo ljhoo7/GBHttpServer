@@ -1,6 +1,6 @@
 #define BOOST_THREAD_VERSION 5
 
-#include "../core/Shared/StopWatch.h"
+#include "../engine/Shared/StopWatch.h"
 #include "boost/thread/future.hpp"
 
 #include <gtest/gtest.h>

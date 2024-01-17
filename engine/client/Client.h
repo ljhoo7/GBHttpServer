@@ -8,16 +8,10 @@
 
 namespace GenericBoson
 {
-	class GBClient
+	class Client : public Common
 	{
 	public:
-		virtual ~GBClient();
-
-		template<typename FLATBUFFER_TABLE>
-		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
-		{
-			return m_CoreShared.AddStubInternal(messageID, Stub);
-		}
+		virtual ~Client();
 
 		bool GetKeepLooping();
 
@@ -27,7 +21,6 @@ namespace GenericBoson
 		int CreateSocket();
 		int ConnectInternal(const std::string_view address, const int port);
 	private:
-		CoreShared m_CoreShared;
 
 		WSADATA m_wsaData;
 		SOCKET m_socket;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Server.h"
+#include "../Shared/HeartBeat.h"
 
 namespace GenericBoson
 {
@@ -189,7 +190,7 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::RECEIVE:
 			{
-				bool ret = m_CoreShared.OnReceived(pEol->m_inputData, transferredBytes);
+				bool ret = OnReceived(pEol->m_inputData, transferredBytes);
 				if (false == ret)
 				{
 					continue;
@@ -211,7 +212,7 @@ namespace GenericBoson
 			break;
 			case IO_TYPE::SEND:
 			{
-				bool ret = m_CoreShared.OnSent(pEol->m_outputData, transferredBytes);
+				bool ret = OnSent(pEol->m_outputData, transferredBytes);
 
 				// 소켓 닫기
 				//closesocket(pEol->m_socket);
@@ -307,7 +308,7 @@ namespace GenericBoson
 
 	void Server::OnConnected(ExpandedOverlapped* pEol)
 	{
-		AddStub(1, PongStub);
+		//AddStub(1, PongStub);
 
 		const auto pTimer = std::make_shared<HeartBeat>(1000);
 		TimerManager::GetInstance()->AddTimer(pTimer);
@@ -325,5 +326,5 @@ namespace GenericBoson
 		m_connectedTask = task;
 	}
 
-	ThreadSafeBufferAllocator GameServer::g_bufferAllocator;
+	ThreadSafeBufferAllocator Server::g_bufferAllocator;
 }

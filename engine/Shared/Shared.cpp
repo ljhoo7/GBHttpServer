@@ -5,7 +5,7 @@
 
 namespace GenericBoson
 {
-	bool CoreShared::Gather(VectoredIO& vectoredIO,
+	bool Common::Gather(VectoredIO& vectoredIO,
 		const unsigned long transferredBytes)
 	{
 		// offset means previous received size
@@ -27,25 +27,25 @@ namespace GenericBoson
 		//std::cout << msg.data() << "\n";
 	}
 
-	bool CoreShared::ErrorLog(const std::string_view msg)
+	bool Common::ErrorLog(const std::string_view msg)
 	{
 		PrintMessage(msg);
 		return true;
 	}
 
-	bool CoreShared::WarningLog(const std::string_view msg)
+	bool Common::WarningLog(const std::string_view msg)
 	{
 		PrintMessage(msg);
 		return true;
 	}
 
-	bool CoreShared::InfoLog(const std::string_view msg)
+	bool Common::InfoLog(const std::string_view msg)
 	{
 		PrintMessage(msg);
 		return true;
 	}
 
-	bool CoreShared::ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes)
+	bool Common::ReadWholePartialMessages(VectoredIO& inputData, const unsigned long transferredBytes)
 	{
 		switch (inputData.GetState())
 		{
@@ -98,7 +98,7 @@ namespace GenericBoson
 		return false;
 	}
 
-	bool CoreShared::OnReceived(VectoredIO& inputData, const unsigned long transferredBytes)
+	bool Common::OnReceived(VectoredIO& inputData, const unsigned long transferredBytes)
 	{
 		while (1)
 		{
@@ -111,12 +111,12 @@ namespace GenericBoson
 		return true;
 	}
 
-	bool CoreShared::OnSent(VectoredIO& outputData, const unsigned long transferredBytes)
+	bool Common::OnSent(VectoredIO& outputData, const unsigned long transferredBytes)
 	{
 		return true;
 	}
 
-	bool CoreShared::OnGatheringCompleted(VectoredIO& inputData)
+	bool Common::OnGatheringCompleted(VectoredIO& inputData)
 	{
 		const auto pStub = m_stubs.find(inputData.m_messageID);
 		if (pStub == m_stubs.end())

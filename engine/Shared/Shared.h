@@ -1,5 +1,8 @@
 #pragma once
 
+#include "StubAdaptor.h"
+#include "Constant.h"
+
 #include <string_view>
 #include <format>
 #include <cassert>
@@ -7,8 +10,6 @@
 
 namespace GenericBoson
 {
-	class IStubAdaptor;
-
 	typedef size_t BUFFER_SIZE_TYPE;
 	constexpr BUFFER_SIZE_TYPE BUFFER_SIZE = 8 * 1024 + 200;
 
@@ -50,7 +51,7 @@ namespace GenericBoson
 		STATE m_state = STATE::ID;
 	};
 
-	class CoreShared
+	class Common
 	{
 	public:
 		bool ErrorLog(const std::string_view msg);
@@ -62,17 +63,20 @@ namespace GenericBoson
 		bool OnSent(VectoredIO& outputData, const unsigned long transferredBytes);
 
 		template<typename FLATBUFFER_TABLE>
-		bool AddStubInternal(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
+		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
 		{
+			assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
+			assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
+
 			const auto [_, isInserted] = m_stubs.emplace(messageID,
-				std::make_shared<IStubAdaptor<FLATBUFFER_TABLE>>(Stub));
+				std::make_shared<StubAdaptor<FLATBUFFER_TABLE>>(Stub));
 
 			if (!isInserted)
 			{
 				throw std::format("Add stub failed. Message ID - {}", messageID);
 			}
 		}
-	private:
+	protected:
 		std::unordered_map<int, std::shared_ptr<IStubAdaptor>> m_stubs;
 
 		bool Gather(VectoredIO& vectoredIO, const unsigned long transferredBytes);

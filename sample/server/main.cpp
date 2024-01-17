@@ -1,9 +1,9 @@
 #define NOMINMAX
 
-#include "../../core/server/ExpandedOverlapped.h"
-#include "../../game/server/GameServer.h"
-
 #include "../flatbufferschema/player_generated.h"
+
+#include "../../engine/server/ExpandedOverlapped.h"
+#include "../../engine/server/Server.h"
 
 #include <iostream>
 #include <future>
@@ -27,7 +27,7 @@ int main()
 {
 	using namespace std::literals::chrono_literals;
 
-	GameServer server(5076);
+	Server server(5076);
 
 	server.AddStub(1, Test);
 

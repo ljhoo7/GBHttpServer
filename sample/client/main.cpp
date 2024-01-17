@@ -6,12 +6,12 @@
 #include <future>
 #include <chrono>
 
-#include "../../game/client/GameClient.h"
+#include "../../engine/client/Client.h"
 
 using namespace GenericBoson;
 using namespace GenericBoson::GameTest;
 
-void Test(const Player& pPlayer)
+void Test(const ::GenericBoson::GameTest::Player& pPlayer)
 {
 	std::cout << "hp : " << pPlayer.hp() << '\n';
 	std::cout << "name : " << pPlayer.name()->c_str() << '\n';
@@ -21,7 +21,7 @@ int main()
 {
 	using namespace std::literals::chrono_literals;
 
-	GBGameClient client;
+	Client client;
 
 	if (int result = client.Connect("127.0.0.1", 5076))
 	{

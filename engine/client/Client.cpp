@@ -7,7 +7,7 @@
 
 namespace GenericBoson
 {
-	GBClient::~GBClient()
+	Client::~Client()
 	{
 		m_keepLooping.store(false);
 
@@ -20,12 +20,12 @@ namespace GenericBoson
 		WSACleanup();
 	}
 
-	int GBClient::InitializeWinSock()
+	int Client::InitializeWinSock()
 	{
 		return WSAStartup(MAKEWORD(2, 2), &m_wsaData);
 	}
 
-	int GBClient::CreateSocket()
+	int Client::CreateSocket()
 	{
 		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if (m_socket == INVALID_SOCKET) {
@@ -39,7 +39,7 @@ namespace GenericBoson
 		return NO_ERROR;
 	}
 
-	int GBClient::ConnectInternal(const std::string_view address, const int port)
+	int Client::ConnectInternal(const std::string_view address, const int port)
 	{
 		sockaddr_in addr;
 		addr.sin_family = AF_INET;
@@ -62,7 +62,7 @@ namespace GenericBoson
 		return NO_ERROR;
 	}
 
-	bool GBClient::GetKeepLooping()
+	bool Client::GetKeepLooping()
 	{
 		timeval peekInterval;
 
@@ -75,7 +75,7 @@ namespace GenericBoson
 		if (retval == -1)
 		{
 			int errorCode = WSAGetLastError();
-			m_CoreShared.ErrorLog("select failed. error code - {}");
+			ErrorLog("select failed. error code - {}");
 		}
 		else if (retval)
 		{
@@ -85,7 +85,7 @@ namespace GenericBoson
 				if (FD_ISSET(k, &readsCopy))
 				{
 					int readBytes = recv(k, m_inputData.m_buffer, BUFFER_SIZE, 0);
-					bool ret = m_CoreShared.OnReceived(m_inputData, readBytes);
+					bool ret = OnReceived(m_inputData, readBytes);
 
 					FD_CLR(m_socket, &readsCopy);
 				}
@@ -101,7 +101,7 @@ namespace GenericBoson
 		return m_keepLooping.load();
 	}
 
-	int GBClient::Connect(const std::string_view address, const int port)
+	int Client::Connect(const std::string_view address, const int port)
 	{
 		FD_ZERO(&m_reads);
 		FD_ZERO(&m_writes);
