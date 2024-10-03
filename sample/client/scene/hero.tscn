@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3 uid="uid://cdptd3padu5th"]
+
+[ext_resource type="Script" path="res://script/hero.gd" id="1_aqco1"]
+[ext_resource type="Texture2D" uid="uid://44s3g1vxpgym" path="res://resource/Characters Overworld.png" id="1_sf1tc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ducic"]
+size = Vector2(16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mfltc"]
+atlas = ExtResource("1_sf1tc")
+region = Rect2(9, 34, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pmrg4"]
+atlas = ExtResource("1_sf1tc")
+region = Rect2(26, 34, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_47elu"]
+atlas = ExtResource("1_sf1tc")
+region = Rect2(43, 34, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ocv6o"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mfltc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pmrg4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_47elu")
+}],
+"loop": true,
+"name": &"down",
+"speed": 6.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_o27wv"]
+script/source = "extends AnimatedSprite2D
+
+
+"
+
+[node name="Hero" type="CharacterBody2D"]
+script = ExtResource("1_aqco1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(8, 8)
+shape = SubResource("RectangleShape2D_ducic")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+modulate = Color(1, 0.498039, 0.152941, 1)
+top_level = true
+sprite_frames = SubResource("SpriteFrames_ocv6o")
+animation = &"down"
+autoplay = "down"
+frame_progress = 0.884139
+centered = false
+script = SubResource("GDScript_o27wv")

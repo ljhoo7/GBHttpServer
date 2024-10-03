@@ -1,5 +1,5 @@
 file(GLOB GAME_SAMPLE_SERVER_SRC server/*.cpp game/server/*.h)
-file(GLOB GAME_SAMPLE_CLIENT_SRC client/*.cpp game/client/*.h)
+file(GLOB GAME_SAMPLE_CLIENT_SRC mock_client/*.cpp game/mock_client/*.h)
 
 add_executable(GameServerSample ${GAME_SAMPLE_SERVER_SRC})
 add_executable(GameClientSample ${GAME_SAMPLE_CLIENT_SRC})
