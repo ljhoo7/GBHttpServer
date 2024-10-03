@@ -34,3 +34,8 @@
 /UnitTester/obj
 /out/build/x64-debug
 /flatbuffers
+
+# Godot 4+ specific ignores
+.godot/
+/android/
+.user
