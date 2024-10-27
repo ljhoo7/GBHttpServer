@@ -36,7 +36,7 @@ namespace GenericBoson
 				return GetWSALastErrorString(lastSocketError);
 			}
 
-			// Associate this accept socket withd IOCP.
+			// Associate this accept socket with IOCP.
 			HANDLE associateAcceptSocketResult = CreateIoCompletionPort((HANDLE)m_sessions[k].m_socket, m_IOCP, (u_long)0, 0);
 			if (NULL == associateAcceptSocketResult)
 			{

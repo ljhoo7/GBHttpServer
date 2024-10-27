@@ -1,4 +1,3 @@
-@@ -1,43 +0,0 @@
 #define NOMINMAX
 
 #include "../flatbufferschema/player_generated.h"
@@ -42,4 +41,3 @@ int main()
 
 	return 0;
 }
-No newline at end of file
